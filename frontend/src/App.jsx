@@ -4,6 +4,7 @@ import Signup from './components/Signup.jsx';
 import { ThemeProvider } from './components/theme_Provider';
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router";
 import Home from './components/Home';
+import { ScaleLoader } from 'react-spinners';
 
 const Layout = () => (
     <>
