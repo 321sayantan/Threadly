@@ -5,7 +5,7 @@ import upload from '../middlewares/multer.js';
 
 const router = express.Router();
 
-router.route('/createPost').post(isAuthenticated, upload.single('postImage'), createPost);
+router.route('/createPost').post(isAuthenticated, upload.array('postImages', 5), createPost);
 router.route('/getAllPost').get(isAuthenticated, getAllPosts);
 router.route('/getUserPosts').get(isAuthenticated, getUserPosts);
 

@@ -1,21 +1,22 @@
-import { cn } from '@/lib/utils';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import React, { useState } from 'react'
+import { cn } from "@/lib/utils";
+import { ChevronLeft, ChevronRight, Cross, X } from "lucide-react";
+import React, { useState } from "react";
 
-const MediaCarousel = ({media}) => {
-    const [currentSlide, setCurrentSlide] = useState(0);
+const MediaCarousel = ({ media, createpost, setMedia }) => {
+  const [currentSlide, setCurrentSlide] = useState(0);
 
-      const next = () => {
-        setCurrentSlide((currentSlide + 1) % media.length);
-      };
+  const next = () => {
+    setCurrentSlide((currentSlide + 1) % media.length);
+  };
 
-      const prev = () => {
-        setCurrentSlide((currentSlide - 1 + media.length) % media.length);
-      };
+  const prev = () => {
+    setCurrentSlide((currentSlide - 1 + media.length) % media.length);
+  };
 
+  // aspect-auto md:aspect-[4/3]
   return (
     <div className="relative overflow-hidden mb-[-15px]">
-      <div className="relative aspect-square md:aspect-[4/3] w-full overflow-hidden rounded-md">
+      <div className="relative aspect-auto md:aspect-[4/3] w-full overflow-hidden rounded-md">
         {media.map((item, index) => (
           <div
             key={index}
@@ -26,11 +27,28 @@ const MediaCarousel = ({media}) => {
                 : "opacity-0 pointer-events-none"
             )}
           >
+            {createpost && (
+              <X
+                key={index}
+                className="absolute right-3  bg-gray-300 rounded-full p-1.5"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const newMedia = media.filter((_, idx) => idx !== index);
+                  setMedia(newMedia);
+                
+                  // Safely adjust currentSlide
+                  if (currentSlide >= newMedia.length) {
+                    setCurrentSlide(newMedia.length - 1); // Go to last valid slide
+                }
+              }}
+              />
+            )}
+
             {item.type === "image" ? (
               <img
                 src={item.src}
                 alt={item.alt || "Post image"}
-                className="h-full w-full object-cover"
+                className="h-full w-full object-contain"
               />
             ) : (
               <video
@@ -82,6 +100,6 @@ const MediaCarousel = ({media}) => {
       )}
     </div>
   );
-}
+};
 
-export default MediaCarousel
+export default MediaCarousel;

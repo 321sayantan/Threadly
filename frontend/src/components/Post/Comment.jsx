@@ -6,6 +6,7 @@ import { Send } from 'lucide-react';
 const Comment = () => {
     const [newComment, setNewComment] = useState('');
     const handlePostComment = () => {
+      setNewComment('');
     }
 
   return (

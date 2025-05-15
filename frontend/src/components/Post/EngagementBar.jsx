@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { Bookmark, Heart, MessageCircle, Share2 } from "lucide-react";
+import { CommentDialog } from "./CommentDialog";
 
 const EngagementBar = ({
   initialLikes,
@@ -12,6 +13,7 @@ const EngagementBar = ({
   const [liked, setLiked] = useState(false);
     const [likes, setLikes] = useState(initialLikes);
     const [saved, setSaved] = useState(initialSaved);
+    const [commentsDialogOpen, setCommentsDialogOpen] = useState(false);
 
   const handleLike = () => {
     if (liked) {
@@ -39,14 +41,21 @@ const EngagementBar = ({
             <span>{likes}</span>
           </Button>
 
-          <Button
-            variant="ghost"
-            size="sm"
-            className="flex items-center space-x-1 px-2 text-social-gray hover:text-social-blue"
-          >
-            <MessageCircle className="h-5 w-5" />
-            <span>{initialComments}</span>
-          </Button>
+          <CommentDialog
+            open={commentsDialogOpen}
+            setOpen={setCommentsDialogOpen}
+            commentBtn={
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex items-center space-x-1 px-2 text-social-gray hover:text-social-blue"
+                onClick={() => setCommentsDialogOpen(true)}
+              >
+                <MessageCircle className="h-5 w-5" />
+                <span>{initialComments}</span>
+              </Button>
+            }
+          />
 
           <Button
             variant="ghost"

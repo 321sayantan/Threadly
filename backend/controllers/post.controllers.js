@@ -7,29 +7,39 @@ import Comment from "../Models/comment.model.js";
 export const createPost = async (req, res) => {
   try {
     const caption = req.body.caption;
-    const image = req.file;
+    const images = req.files;
+    // console.log(req.body.postImages);
+    // console.log(images);
 
-    if (!image) {
+    if (images.length<=0) {
       return res
         .status(400)
         .json({ message: "Image is required", success: false });
     }
 
-    const imageBuffer = await sharp(image.buffer)
-      //   .resize({ width: 800, height: 800, fit: "inside" })
-      .resize(800, 800)
-      .toFormat("jpeg", { quality: 80 })
-      .toBuffer();
+    const uploadedImages = [];
+    for (const image of images) 
+    {
+      const imageBuffer = await sharp(image.buffer)
+        //   .resize({ width: 800, height: 800, fit: "inside" })
+        .resize(800, 800)
+        .toFormat("jpeg", { quality: 80 })
+        .toBuffer();
 
-    const fileuri = `data:image/jpeg;base64,${imageBuffer.toString("base64")}`;
+      const fileuri = `data:image/jpeg;base64,${imageBuffer.toString(
+        "base64"
+      )}`;
 
-    const cloudinaryimage = await cloudinary.uploader.upload(fileuri, {
-      folder: "Instagram Clone",
-    });
+      const cloudinaryimage = await cloudinary.uploader.upload(fileuri, {
+        folder: "Instagram Clone",
+      });
+
+      uploadedImages.push(cloudinaryimage.secure_url);
+    }
 
     const post = new Post({
       caption,
-      image: cloudinaryimage.secure_url,
+      images: uploadedImages,
       author: req.id,
     });
 

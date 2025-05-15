@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { FaRegEye } from "react-icons/fa";
@@ -25,6 +25,7 @@ import { toast } from "sonner";
 import { login } from "@/http/api";
 import clsx from "clsx";
 import { Loader2 } from "lucide-react";
+import useUserStore from "@/lib/store";
 
 export function Login() {
   const [email, setEmail] = useState("");
@@ -33,6 +34,8 @@ export function Login() {
   const [textboxType, setTextboxType] = useState("Password");
   const [togglePass, setTogglePass] = useState(true);
   const navigate = useNavigate();
+
+  const {user, setUser} = useUserStore();
 
   const togglePassword = () => {
     setTogglePass(!togglePass);
@@ -59,6 +62,7 @@ export function Login() {
     }
     else{
       toast.success(res.message);
+      setUser(res.userdata);
       navigate("/");
     }
     setLoading(false);
