@@ -1,11 +1,13 @@
 import React from 'react'
 import { Post } from './Post/Post'
+import useUserStore from '@/lib/store';
 
 const Posts = () => {
+  const { post } = useUserStore();
   return (
     <div>
         {
-            [1, 2, 3, 4, 5].map((post) => <Post key={post} />)
+            post.map((post) => <Post key={post._id} Post={post} />)
 
         }
     </div>

@@ -26,7 +26,7 @@ const EngagementBar = ({
 
   return (
     <div className="px-4">
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-2 mt-2">
         <div className="flex items-center space-x-4">
           <Button
             variant="ghost"
@@ -37,7 +37,7 @@ const EngagementBar = ({
               liked ? "text-red-500" : "text-social-gray hover:text-red-500"
             )}
           >
-            <Heart className={cn("h-5 w-5", liked && "fill-current")} />
+            <Heart className={cn("!h-5 !w-5", liked && "fill-current")} />
             <span>{likes}</span>
           </Button>
 
@@ -51,7 +51,7 @@ const EngagementBar = ({
                 className="flex items-center space-x-1 px-2 text-social-gray hover:text-social-blue"
                 onClick={() => setCommentsDialogOpen(true)}
               >
-                <MessageCircle className="h-5 w-5" />
+                <MessageCircle className="!h-5 !w-5" />
                 <span>{initialComments}</span>
               </Button>
             }
@@ -62,7 +62,7 @@ const EngagementBar = ({
             size="sm"
             className="flex items-center space-x-1 px-2 text-social-gray hover:text-social-purple"
           >
-            <Share2 className="h-5 w-5" />
+            <Share2 className="!h-5 !w-5" />
             <span>{initialShares}</span>
           </Button>
         </div>
@@ -78,16 +78,16 @@ const EngagementBar = ({
               : "text-social-gray hover:text-social-purple"
           )}
         >
-          <Bookmark className={cn("h-5 w-5", saved && "fill-current")} />
+          <Bookmark className={cn("!h-5 !w-5", saved && "fill-current")} />
         </Button>
       </div>
 
-      <div className="flex items-center text-xs text-social-gray">
+      <div className="flex items-center text-xs text-social-gray mb-4">
         <div className="flex -space-x-1 mr-2">
-          <div className="w-5 h-5 rounded-full bg-social-blue border border-white"></div>
-          <div className="w-5 h-5 rounded-full bg-social-purple-light border border-white"></div>
-          <div className="w-5 h-5 rounded-full bg-social-gray border border-white"></div>
-          <div className="w-5 h-5 rounded-full bg-social-gray border border-white"></div>
+          <div className="w-5 h-5 rounded-full bg-blue-500 border border-white"></div>
+          <div className="w-5 h-5 rounded-full bg-purple-500 border border-white"></div>
+          <div className="w-5 h-5 rounded-full bg-gray-500 border border-white"></div>
+          <div className="w-5 h-5 rounded-full bg-gray-600 border border-white"></div>
         </div>
         <p>
           Liked by <span className="font-medium">Sarah Chen</span> and{" "}

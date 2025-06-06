@@ -47,7 +47,7 @@ const samplePost = {
   };
 
 
-export const Post = () => {
+export const Post = ({Post}) => {
     const renderFormattedContent = (text) => {
     // Split by spaces to identify words
     return text.split(/\s+/).map((word, index, array) => {
@@ -80,12 +80,12 @@ export const Post = () => {
 
   return (
     <>
-      <Card className="w-[60%] m-auto mb-8 overflow-hidden border-social-gray-light shadow-sm hover:shadow-md transition-shadow">
+      <Card className="w-[600px] m-auto mb-8 overflow-hidden border-social-gray-light shadow-sm hover:shadow-md transition-shadow">
         {/* <PostHeader user={user} timestamp={timestamp} /> */}
         <PostHeader
           user={{
-            name: "Maya Patel",
-            avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+            name: `${Post.author.username}`,
+            avatar: `${Post.author.profilePicture}`,
             title: "UX/UI Designer • Digital Nomad • Creative Coach",
             isVerified: true,
             connectionDegree: 1,
@@ -93,19 +93,19 @@ export const Post = () => {
           timestamp="6h ago"
         />
 
-        {samplePost.content && (
-          <div className="px-4 text-sm">
+        {Post.caption!=="undefined" && (
+          <div className="px-4 mb-3 text-sm">
             <p className="whitespace-pre-line">
-              {renderFormattedContent(samplePost.content)}
+              {renderFormattedContent(Post.caption)}
             </p>
           </div>
         )}
 
-        {samplePost.media.length > 0 && <MediaCarousel media={samplePost.media} />}
+        {Post.images.length > 0 && <MediaCarousel media={Post.images} />}
 
         <EngagementBar
-          initialLikes={samplePost.engagement.likes}
-          initialComments={samplePost.engagement.comments}
+          initialLikes={Post.likes.length}
+          initialComments={Post.comments.length}
           initialShares={samplePost.engagement.shares}
           initialSaved={samplePost.engagement.saved}
         />

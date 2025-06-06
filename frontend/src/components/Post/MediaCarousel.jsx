@@ -15,7 +15,7 @@ const MediaCarousel = ({ media, createpost, setMedia }) => {
 
   // aspect-auto md:aspect-[4/3]
   return (
-    <div className="relative overflow-hidden mb-[-15px]">
+    <div className="relative overflow-hidden mb-[0px] bg-gray-100 dark:bg-gray-900">
       <div className="relative aspect-auto md:aspect-[4/3] w-full overflow-hidden rounded-md">
         {media.map((item, index) => (
           <div
@@ -44,9 +44,10 @@ const MediaCarousel = ({ media, createpost, setMedia }) => {
               />
             )}
 
-            {item.type === "image" ? (
+            {/* {item.type === "image" ? ( */}
+            {true ? (
               <img
-                src={item.src}
+                src={item.src || item}
                 alt={item.alt || "Post image"}
                 className="h-full w-full object-contain"
               />
@@ -89,8 +90,8 @@ const MediaCarousel = ({ media, createpost, setMedia }) => {
                 className={cn(
                   "w-2 h-2 rounded-full transition-all",
                   index === currentSlide
-                    ? "bg-social-purple w-4"
-                    : "bg-white/60 hover:bg-white/80"
+                    ? "bg-purple-700 w-4"
+                    : "dark:bg-white/60 dark:hover:bg-white/80 bg-gray-400"
                 )}
                 aria-label={`Go to slide ${index + 1}`}
               />

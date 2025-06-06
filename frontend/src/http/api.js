@@ -43,3 +43,14 @@ export const logout = async () => {
         return err.response.data;
     }
 }
+
+export const fetchAllPost = async ()  => {
+    try {
+        const res = await api.get('/post/getAllPost');
+        // console.log(res.data);
+        return res.data;
+
+    } catch (error) {
+        return error.response.data;
+    }
+}

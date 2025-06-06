@@ -4,8 +4,10 @@ import Feed from "./Feed";
 import { Outlet } from "react-router-dom";
 import RightSideBar from "./RightSideBar";
 import { ScaleLoader } from "react-spinners";
+import useGetAllPost from "@/hooks/useGetAllPost";
 
 const Home = () => {
+useGetAllPost();
 const [loading, setLoading] = useState(true);
 
   // Simulate a loading delay
@@ -17,7 +19,6 @@ const [loading, setLoading] = useState(true);
     return () => clearTimeout(timer); // Cleanup the timer on unmount
   }, []);
 
-
   return (
     <>
       {loading ? 
@@ -27,7 +28,7 @@ const [loading, setLoading] = useState(true);
       :
       (<div className="flex">
         <LeftSideBar />
-        <div className="flex-grow">
+        <div className="m-auto">
           <Feed />
           <Outlet />
         </div>

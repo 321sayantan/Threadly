@@ -22,7 +22,7 @@ export const createPost = async (req, res) => {
     {
       const imageBuffer = await sharp(image.buffer)
         //   .resize({ width: 800, height: 800, fit: "inside" })
-        .resize(800, 800)
+        // .resize(800, 800)
         .toFormat("jpeg", { quality: 80 })
         .toBuffer();
 

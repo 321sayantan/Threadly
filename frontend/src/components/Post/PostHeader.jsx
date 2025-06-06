@@ -29,10 +29,10 @@ const PostHeader = ({ user, timestamp }) => {
   };
 
   return (
-    <div className="flex items-center justify-between px-4">
+    <div className="flex items-center justify-between px-4 mb-3">
       <div className="flex items-center space-x-2">
-        <Avatar className="h-10 w-10 border-2 border-social-purple-light">
-          <AvatarImage src={user.avatar} alt={user.name} />
+        <Avatar className="!h-12 !w-12 border-2 border-social-purple-light">
+          <AvatarImage src={user.avatar} alt={user.name} className="object-cover"/>
           <AvatarFallback className="bg-social-purple-light text-white">
             {user.name.substring(0, 2).toUpperCase()}
           </AvatarFallback>
@@ -114,7 +114,7 @@ const PostHeader = ({ user, timestamp }) => {
               <span>Block user</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenu>        
       </div>
     </div>
   );
