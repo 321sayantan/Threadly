@@ -91,6 +91,7 @@ export const Post = ({Post}) => {
             connectionDegree: 1,
           }}
           timestamp="6h ago"
+          post = {Post}
         />
 
         {Post.caption!=="undefined" && (
@@ -108,6 +109,7 @@ export const Post = ({Post}) => {
           initialComments={Post.comments.length}
           initialShares={samplePost.engagement.shares}
           initialSaved={samplePost.engagement.saved}
+          post = {Post}
         />
 
         {/* <ProfessionalContext skills={skills} relevance={relevance} /> */}

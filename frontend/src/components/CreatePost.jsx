@@ -79,6 +79,7 @@ const CreatePost = () => {
         setOpen(true);
         // window.location.href = "/";
         setPost([res.data.post, ...post])
+        navigate(-1);
         toast.success(res.data.message);
       }
     } catch (error) {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,6 +8,8 @@ import {
   Share2,
   Ban,
   Clock,
+  Trash2,
+  Loader2,
 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import {
@@ -16,17 +18,34 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import useUserStore from "@/lib/store";
+import { toast } from "sonner";
+import { Toaster } from "../ui/sonner";
+import { deletePost } from "@/http/api";
 
 // import { toast } from "@/hooks/use-toast";
 
 
-const PostHeader = ({ user, timestamp }) => {
-  const handleAction = (action) => {
-    toast({
-      title: action,
-      description: `Action ${action.toLowerCase()} was triggered`,
-    });
+const PostHeader = ({ user, timestamp, post }) => {
+  const { user: currUser, post: Post, setPost } = useUserStore();
+
+  const handleAction = async (action) => {
+    if (action === "SavePost") {
+    } 
+    else if (action === "SharePost") {
+    } 
+    else if (action === "DeletePost") {
+      const res = await deletePost(post._id);
+      const updatedpost = Post.filter((postItem) => postItem._id !== post._id);
+      setPost(updatedpost);
+      console.log(res)
+      toast.success(res.message);
+    }
+    
   };
+
+  // console.log(currUser)
+  // console.log(post)
 
   return (
     <div className="flex items-center justify-between px-4 mb-3">
@@ -90,14 +109,22 @@ const PostHeader = ({ user, timestamp }) => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuItem onClick={() => handleAction("Save Post")}>
+            <DropdownMenuItem onClick={() => handleAction("SavePost")}>
               <Bookmark className="mr-2 h-4 w-4" />
               <span>Save post</span>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleAction("Share")}>
+            <DropdownMenuItem onClick={() => handleAction("SharePost")}>
               <Share2 className="mr-2 h-4 w-4" />
               <span>Share post</span>
             </DropdownMenuItem>
+
+            {currUser._id === post.author._id && (
+            <DropdownMenuItem onClick={() => handleAction("DeletePost")}>
+              <Trash2 className="mr-2 h-4 w-4" />
+              <span>Delete post</span>
+            </DropdownMenuItem>
+            )}
+
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => handleAction("Report")}

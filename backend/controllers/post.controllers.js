@@ -3,6 +3,7 @@ import cloudinary from "../utils/Cloudinary.js";
 import User from "../Models/user.model.js";
 import Post from "../Models/post.model.js";
 import Comment from "../Models/comment.model.js";
+import getPublicIdFromUrl from "../utils/extractImageID.js";
 
 export const createPost = async (req, res) => {
   try {
@@ -11,15 +12,14 @@ export const createPost = async (req, res) => {
     // console.log(req.body.postImages);
     // console.log(images);
 
-    if (images.length<=0) {
+    if (images.length <= 0) {
       return res
         .status(400)
         .json({ message: "Image is required", success: false });
     }
 
     const uploadedImages = [];
-    for (const image of images) 
-    {
+    for (const image of images) {
       const imageBuffer = await sharp(image.buffer)
         //   .resize({ width: 800, height: 800, fit: "inside" })
         // .resize(800, 800)
@@ -34,6 +34,7 @@ export const createPost = async (req, res) => {
         folder: "Instagram Clone",
       });
 
+      console.log(cloudinaryimage);
       uploadedImages.push(cloudinaryimage.secure_url);
     }
 
@@ -115,6 +116,7 @@ export const likePost = async (req, res) => {
     await post.save();
 
     //message notification to the post author
+    console.log("post liked")
 
     return res
       .status(200)
@@ -137,6 +139,8 @@ export const DislikePost = async (req, res) => {
 
     await post.updateOne({ $pull: { likes: userID } });
     await post.save();
+
+    console.log("post disliked")
 
     return res
       .status(200)
@@ -241,11 +245,23 @@ export const deletePost = async (req, res) => {
     user.posts.pull(postID);
     await user.save();
 
-    //delete post image from cloudinary
+    console.log(post);
+    post.images.map(async (url) => {
+      const imageID = getPublicIdFromUrl(url);
+      console.log(imageID);
+      const response = await cloudinary.uploader.destroy(imageID, (error, result) => {
+        if (error) {
+          console.error("Error deleting image:", error);
+        } else {
+          console.log("Image deleted successfully:", result);
+        }
+      });
+    });
 
-    return res
-      .status(200)
-      .json({ message: "Post Deleted Successfully", success: true });
+      return res
+        .status(200)
+        .json({ message: "Post Deleted Successfully!", success: true });
+        
   } catch (error) {
     console.log(error);
   }

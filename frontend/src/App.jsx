@@ -83,10 +83,9 @@ function AppRoutes() {
 
 export default function App() {
   const { Theme } = useUserStore();
-  console.log(Theme)
+  // console.log(Theme)
   return (
     <ThemeProvider defaultTheme={Theme} storageKey="vite-ui-theme">
-    {/* <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme"> */}
       <BrowserRouter>
         <AppRoutes />
       </BrowserRouter>

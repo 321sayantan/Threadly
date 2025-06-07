@@ -44,9 +44,41 @@ export const logout = async () => {
     }
 }
 
+export const deletePost = async (postid) => {
+    try{
+        const res = await api.get(`/post/deletePost/${postid}`);
+        return res.data;
+    }
+    catch (err){
+        return err.response.data;
+    }
+}
+
 export const fetchAllPost = async ()  => {
     try {
         const res = await api.get('/post/getAllPost');
+        // console.log(res.data);
+        return res.data;
+
+    } catch (error) {
+        return error.response.data;
+    }
+}
+
+export const likePost = async (postID)  => {
+    try {
+        const res = await api.get(`/post/likePost/${postID}`);
+        // console.log(res.data);
+        return res.data;
+
+    } catch (error) {
+        return error.response.data;
+    }
+}
+
+export const dislikePost = async (postID)  => {
+    try {
+        const res = await api.get(`/post/dislikePost/${postID}`);
         // console.log(res.data);
         return res.data;
 

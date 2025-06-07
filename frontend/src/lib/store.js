@@ -5,7 +5,7 @@ const userstore = (set) => ({
   bears: 0,
   increasePopulation: () => set((state) => ({ bears: state.bears + 1 })),
   ToggleTheme: false,
-  Theme: "",
+  Theme: "dark",
   user: {},
   post: [],
   setUser: (userdata) => set((state) => ({ user: userdata })),

@@ -15,7 +15,7 @@ const useGetAllPost = ()=>{
         }
         
         fetchPost();
-        console.log(11,post);
+        // console.log(11,post);
     },[])
     
 

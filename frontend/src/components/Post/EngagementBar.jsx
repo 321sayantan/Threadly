@@ -3,24 +3,49 @@ import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { Bookmark, Heart, MessageCircle, Share2 } from "lucide-react";
 import { CommentDialog } from "./CommentDialog";
+import { dislikePost, likePost } from "@/http/api";
+import useUserStore from "@/lib/store";
 
 const EngagementBar = ({
   initialLikes,
   initialComments,
   initialShares,
   initialSaved,
+  post,
 }) => {
-  const [liked, setLiked] = useState(false);
-    const [likes, setLikes] = useState(initialLikes);
-    const [saved, setSaved] = useState(initialSaved);
-    const [commentsDialogOpen, setCommentsDialogOpen] = useState(false);
+  const { user, post: Post, setPost } = useUserStore();
+  const like = post.likes.includes(user._id);
+  const [liked, setLiked] = useState(like);
+  const [likes, setLikes] = useState(initialLikes);
+  const [saved, setSaved] = useState(initialSaved);
+  const [commentsDialogOpen, setCommentsDialogOpen] = useState(false);
 
-  const handleLike = () => {
+  const handleLike = async () => {
     if (liked) {
-      setLikes(likes - 1);
+      if (likes > 0) {
+        await dislikePost(post._id);
+        setLikes(likes - 1);
+      }
     } else {
+      await likePost(post._id);
       setLikes(likes + 1);
     }
+
+    const updatePost = Post.map((p) => {
+      if (p._id === post._id && likes > 0) {
+        return {
+          ...p,
+          likes: liked
+            ? p.likes.filter((id) => id !== user._id) // Unlike
+            : [...p.likes, user._id], // Like
+        };
+      }
+      return p; // Return unchanged post
+    });
+
+    // console.log(updatePost);
+
+    setPost(updatePost);
     setLiked(!liked);
   };
 
