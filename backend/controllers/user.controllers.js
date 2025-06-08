@@ -135,6 +135,7 @@ export const getSuggestedUsers = async (req, res) => {
     const suggestedUser = await User.find({ _id: { $ne: req.id } }).select(
       "-password"
     ).limit(5);
+    console.log("user suggestion")
     if (suggestedUser.length === 0) {
       return res
         .status(401)

@@ -7,8 +7,8 @@ import { ScaleLoader } from "react-spinners";
 import useGetAllPost from "@/hooks/useGetAllPost";
 
 const Home = () => {
-useGetAllPost();
-const [loading, setLoading] = useState(true);
+  useGetAllPost();
+  const [loading, setLoading] = useState(true);
 
   // Simulate a loading delay
   useEffect(() => {
@@ -21,19 +21,20 @@ const [loading, setLoading] = useState(true);
 
   return (
     <>
-      {loading ? 
-      (<div className="flex justify-center items-center h-screen">
-        <ScaleLoader color='red' />
-      </div>)
-      :
-      (<div className="flex">
-        <LeftSideBar />
-        <div className="m-auto">
-          <Feed />
-          <Outlet />
+      {loading ? (
+        <div className="flex justify-center items-center h-screen">
+          <ScaleLoader color="red" />
         </div>
-        <RightSideBar />
-      </div>)}
+      ) : (
+        <div className="flex relative">
+          <LeftSideBar/>
+          <div className="m-auto">
+            <Feed />
+            <Outlet />
+          </div>
+          <RightSideBar />
+        </div>
+      )}
     </>
   );
 };

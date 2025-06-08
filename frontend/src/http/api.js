@@ -97,3 +97,14 @@ export const addComment = async (postID, data)  => {
         return error.response.data;
     }
 }
+
+export const suggestedUser = async ()  => {
+    try {
+        const res = await api.get("/user/suggestedUser");
+        console.log(res.data);
+        return res.data;
+
+    } catch (error) {
+        return error.response.data;
+    }
+}
