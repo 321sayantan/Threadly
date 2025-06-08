@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Card, CardContent } from "../ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { formatDistanceToNow } from "date-fns";
 
 const PostComments = ({ comments }) => {
     const getInitials = (name) => {
@@ -34,10 +35,9 @@ const PostComments = ({ comments }) => {
                       {comment.author.username}
                     </h4>
                     <span className="text-xs text-muted-foreground">
-                      {/* {formatDistanceToNow(comment.timestamp, {
+                      {formatDistanceToNow(comment.createdAt, {
                       addSuffix: true,
-                    })} */}
-                      0min
+                    })}
                     </span>
                   </div>
 
