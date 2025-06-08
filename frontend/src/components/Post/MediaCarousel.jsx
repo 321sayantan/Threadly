@@ -15,8 +15,8 @@ const MediaCarousel = ({ media, createpost, setMedia }) => {
 
   // aspect-auto md:aspect-[4/3]
   return (
-    <div className="relative overflow-hidden mb-[0px] bg-gray-100 dark:bg-gray-900">
-      <div className="relative aspect-auto md:aspect-[4/3] w-full overflow-hidden rounded-md">
+    <div className="relative overflow-hidden mb-[0px] bg-gray-100 dark:bg-black h-full flex items-center">
+      <div className="relative aspect-auto md:aspect-[4/3] h-[90%] w-full overflow-hidden rounded-md ">
         {media.map((item, index) => (
           <div
             key={index}
@@ -27,7 +27,7 @@ const MediaCarousel = ({ media, createpost, setMedia }) => {
                 : "opacity-0 pointer-events-none"
             )}
           >
-            {createpost && (
+            {/* {createpost && (
               <X
                 key={index}
                 className="absolute right-3  bg-gray-300 rounded-full p-1.5"
@@ -42,7 +42,7 @@ const MediaCarousel = ({ media, createpost, setMedia }) => {
                 }
               }}
               />
-            )}
+            )} */}
 
             {/* {item.type === "image" ? ( */}
             {true ? (

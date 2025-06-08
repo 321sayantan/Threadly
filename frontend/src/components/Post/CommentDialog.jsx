@@ -12,6 +12,7 @@ import { Link } from "react-router";
 import { MessageSquareOff, MoreHorizontal } from "lucide-react";
 import Comment from "./Comment";
 import PostComments from "./PostComments";
+import MediaCarousel from "./MediaCarousel";
 
 export const CommentDialog = ({ open, setOpen, commentBtn, post }) => {
   const getInitials = (name) => {
@@ -44,16 +45,18 @@ export const CommentDialog = ({ open, setOpen, commentBtn, post }) => {
         <DialogTrigger aschild>{commentBtn}</DialogTrigger>
         <DialogContent
           onInteractOutside={() => setOpen(false)}
-          className="p-0 flex flex-col h-[90%] !w-[80%] !max-w-none"
+          className="p-0 flex flex-col h-[90%] !w-[80%] !max-w-none border-gray-700"
         >
           <div className="flex flex-1">
-            <div className="w-1/2">
-              <img
+            <div className="w-1/2 h-full">
+              {/* <img
                 src="https://images.unsplash.com/photo-1591115765373-5207764f72e7?q=80&w=1170&auto=format&fit=crop"
                 alt="Team celebrating"
                 className="w-full h-full object-cover rounder-l-lg"
-              />
+              /> */}
+              <MediaCarousel media={post.images}/>
             </div>
+
 
             <div className="w-1/2 flex flex-col justify-between">
               <div>
