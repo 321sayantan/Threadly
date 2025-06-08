@@ -69,6 +69,7 @@ const EngagementBar = ({
           <CommentDialog
             open={commentsDialogOpen}
             setOpen={setCommentsDialogOpen}
+            post={post}
             commentBtn={
               <Button
                 variant="ghost"

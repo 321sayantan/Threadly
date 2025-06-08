@@ -9,10 +9,19 @@ import {
 } from "../ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Link } from "react-router";
-import { MoreHorizontal } from "lucide-react";
+import { MessageSquareOff, MoreHorizontal } from "lucide-react";
 import Comment from "./Comment";
+import PostComments from "./PostComments";
 
-export const CommentDialog = ({ open, setOpen, commentBtn }) => {
+export const CommentDialog = ({ open, setOpen, commentBtn, post }) => {
+  const getInitials = (name) => {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
   return (
     <>
       {/* <Dialog open={open}>
@@ -45,18 +54,21 @@ export const CommentDialog = ({ open, setOpen, commentBtn }) => {
                 className="w-full h-full object-cover rounder-l-lg"
               />
             </div>
+
             <div className="w-1/2 flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between p-4">
                   <div className="flex gap-3 items-center">
                     <Link>
                       <Avatar>
-                        <AvatarImage></AvatarImage>
-                        <AvatarFallback>CN</AvatarFallback>
+                        <AvatarImage src={post.author.profilePicture} className="object-cover"></AvatarImage>
+                        <AvatarFallback>
+                          {getInitials(post.author.username)}
+                        </AvatarFallback>
                       </Avatar>
                     </Link>
                     <div>
-                      <Link className="font-bold">username</Link>
+                      <Link className="font-bold">{post.author.username}</Link>
                     </div>
                   </div>
 
@@ -77,9 +89,17 @@ export const CommentDialog = ({ open, setOpen, commentBtn }) => {
                   </Dialog>
                 </div>
                 <hr className="" />
+                {post.comments.length > 0 ? (
+                  <PostComments comments={post.comments} />
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-96">
+                    No Comments
+                    <MessageSquareOff className="h-20 w-20 mt-5 text-gray-400" />
+                  </div>
+                )}
               </div>
-              <div className="pb-4">
-                <Comment />
+              <div className="pb-4 ">
+                <Comment post={post} />
               </div>
             </div>
           </div>

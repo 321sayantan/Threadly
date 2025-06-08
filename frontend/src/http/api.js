@@ -86,3 +86,14 @@ export const dislikePost = async (postID)  => {
         return error.response.data;
     }
 }
+
+export const addComment = async (postID, data)  => {
+    try {
+        const res = await api.post(`/post/addComment/${postID}`, data);
+        console.log(res.data);
+        return res.data;
+
+    } catch (error) {
+        return error.response.data;
+    }
+}

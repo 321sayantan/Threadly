@@ -2,10 +2,26 @@ import React, { useState } from 'react'
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { Send } from 'lucide-react';
+import useUserStore from '@/lib/store';
+import { addComment } from '@/http/api';
 
-const Comment = () => {
+const Comment = ({post}) => {
+  const {post: Post, setPost} = useUserStore();
     const [newComment, setNewComment] = useState('');
-    const handlePostComment = () => {
+
+    const handlePostComment = async () => {
+      const res = await addComment(post._id, {text: newComment});
+      console.log(res)
+      const newpostcomment = Post.map((p)=>{
+        if(p._id === post._id){
+          return {
+            ...p,
+            comments: [res.comment, ...p.comments]
+          }
+        }
+        return p;
+      })
+      setPost(newpostcomment)
       setNewComment('');
     }
 

@@ -113,7 +113,7 @@ export const Post = ({Post}) => {
         />
 
         {/* <ProfessionalContext skills={skills} relevance={relevance} /> */}
-        <Comment></Comment>
+        <Comment post={Post}></Comment>
       </Card>
     </>
   );

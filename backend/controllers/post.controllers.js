@@ -116,7 +116,7 @@ export const likePost = async (req, res) => {
     await post.save();
 
     //message notification to the post author
-    console.log("post liked")
+    // console.log("post liked")
 
     return res
       .status(200)
@@ -140,7 +140,7 @@ export const DislikePost = async (req, res) => {
     await post.updateOne({ $pull: { likes: userID } });
     await post.save();
 
-    console.log("post disliked")
+    // console.log("post disliked")
 
     return res
       .status(200)
@@ -166,8 +166,13 @@ export const addComment = async (req, res) => {
       text,
       author: userID,
       post: postID,
-    }).populate({ path: "author", select: "username, profilePicture" });
+    })
     await comment.save();
+
+    const populatedComment = await Comment.findById(comment._id).populate({
+      path: "author",
+      select: "username profilePicture",
+    });
 
     post.comments.push(comment._id);
     await post.save();
@@ -176,7 +181,7 @@ export const addComment = async (req, res) => {
 
     return res
       .status(200)
-      .json({ message: "Comment Added Successfully", success: true, comment });
+      .json({ message: "Comment Added Successfully", success: true, comment: populatedComment });
   } catch (error) {
     console.log(error);
   }
