@@ -29,10 +29,7 @@ export const CreatePostHeader = () => {
                 className="object-cover"
               />
               <AvatarFallback className="bg-social-purple dark:text-white text-black border">
-                {user.username
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
+                {user?.name?.substring(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
 

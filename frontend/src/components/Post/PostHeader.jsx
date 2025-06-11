@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,7 +11,13 @@ import {
   Trash2,
   Loader2,
 } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 import {
   Tooltip,
   TooltipContent,
@@ -21,28 +27,42 @@ import {
 import useUserStore from "@/lib/store";
 import { toast } from "sonner";
 import { Toaster } from "../ui/sonner";
-import { deletePost } from "@/http/api";
+import { deletePost, followOrUnfollow } from "@/http/api";
 import { Badge } from "../ui/badge";
 
 // import { toast } from "@/hooks/use-toast";
 
-
 const PostHeader = ({ user, timestamp, post }) => {
-  const { user: currUser, post: Post, setPost } = useUserStore();
+  const { user: currUser, setUser, post: Post, setPost } = useUserStore();
 
   const handleAction = async (action) => {
     if (action === "SavePost") {
-    } 
-    else if (action === "SharePost") {
-    } 
-    else if (action === "DeletePost") {
+    } else if (action === "SharePost") {
+    } else if (action === "DeletePost") {
       const res = await deletePost(post._id);
       const updatedpost = Post.filter((postItem) => postItem._id !== post._id);
       setPost(updatedpost);
-      console.log(res)
+      console.log(res);
       toast.success(res.message);
     }
-    
+  };
+
+  const handelFollowOrUnfollow = async (followedUserID) => {
+    try {
+      const res = await followOrUnfollow(followedUserID);
+      const updatedUser = currUser.following.includes(followedUserID) ?
+        {
+            ...currUser,
+            following: currUser.following.filter((id)=>{ id !== followedUserID})
+        }
+        : {
+            ...currUser,
+            following: [...currUser.following, followedUserID]
+        }
+      setUser(updatedUser);
+      toast.success(res.message);
+    } 
+    catch (error) { console.log(error)}
   };
 
   // console.log(currUser)
@@ -52,7 +72,11 @@ const PostHeader = ({ user, timestamp, post }) => {
     <div className="flex items-center justify-between px-4 mb-3">
       <div className="flex items-center space-x-2">
         <Avatar className="!h-12 !w-12 border-2 border-social-purple-light">
-          <AvatarImage src={user.avatar} alt={user.name} className="object-cover"/>
+          <AvatarImage
+            src={user.avatar}
+            alt={user.name}
+            className="object-cover"
+          />
           <AvatarFallback className="bg-social-purple-light dark:text-white text-black">
             {user.name.substring(0, 2).toUpperCase()}
           </AvatarFallback>
@@ -61,32 +85,9 @@ const PostHeader = ({ user, timestamp, post }) => {
           <div className="flex items-center">
             <p className="font-medium text-x">{user.name}</p>
 
-            {/* {user.isVerified && (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <svg
-                      className="w-4 h-4 ml-1 text-social-blue"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
-                    </svg>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Verified Account</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            )} */}
-
-            <Badge className="ml-2">Author</Badge>
-
-            {/* {user.connectionDegree && (
-              <span className="ml-1 text-xs text-social-gray">
-                • {user.connectionDegree}°
-              </span>
-            )} */}
+            {currUser._id === post.author._id && (
+              <Badge className="ml-2">Author</Badge>
+            )}
           </div>
           <p className="text-xs text-social-gray">{user.title}</p>
           <div className="flex items-center text-xs text-social-gray mt-0.5">
@@ -96,13 +97,19 @@ const PostHeader = ({ user, timestamp, post }) => {
         </div>
       </div>
       <div className="flex space-x-2">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-social-gray hover:text-purple-500"
-        >
-          + Follow
-        </Button>
+        {currUser._id !== post.author._id && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-social-gray hover:text-purple-500"
+            onClick={() => handelFollowOrUnfollow(post.author._id)}
+          >
+            {currUser.following?.includes(post.author._id)
+              ? "+ Following"
+              : "+ Follow"}
+          </Button>
+        )}
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -124,10 +131,10 @@ const PostHeader = ({ user, timestamp, post }) => {
             </DropdownMenuItem>
 
             {currUser._id === post.author._id && (
-            <DropdownMenuItem onClick={() => handleAction("DeletePost")}>
-              <Trash2 className="mr-2 h-4 w-4" />
-              <span>Delete post</span>
-            </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleAction("DeletePost")}>
+                <Trash2 className="mr-2 h-4 w-4" />
+                <span>Delete post</span>
+              </DropdownMenuItem>
             )}
 
             <DropdownMenuSeparator />
@@ -146,7 +153,7 @@ const PostHeader = ({ user, timestamp, post }) => {
               <span>Block user</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
-        </DropdownMenu>        
+        </DropdownMenu>
       </div>
     </div>
   );

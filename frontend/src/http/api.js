@@ -108,3 +108,14 @@ export const suggestedUser = async ()  => {
         return error.response.data;
     }
 }
+
+export const followOrUnfollow = async (userID)  => {
+    try {
+        const res = await api.post(`/user/followOrUnfollow/${userID}`);
+        console.log(res.data);
+        return res.data;
+
+    } catch (error) {
+        return error.response.data;
+    }
+}

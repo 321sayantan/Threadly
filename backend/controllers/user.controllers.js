@@ -184,7 +184,7 @@ export const followORunfollow = async (req, res) => {
       ]);
       return res
         .status(200)
-        .json({ message: "Unfollowed Successfully", success: true });
+        .json({ message: "Unfollowed Successfully", isFollowing: false, success: true });
     } else {
       //follow logic
       await promise.all([
@@ -199,7 +199,7 @@ export const followORunfollow = async (req, res) => {
       ]);
       return res
         .status(200)
-        .json({ message: "followed successfully", success: true });
+        .json({ message: "Followed Successfully", isFollowing: true, success: true });
     }
   } catch (error) {
     console.log(error);

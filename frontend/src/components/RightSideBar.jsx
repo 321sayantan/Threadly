@@ -1,24 +1,59 @@
-import React, { useEffect, useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { Building, Calendar, MapPin, Plus, UserPlus, Users } from 'lucide-react';
-import { Button } from './ui/button';
-import useUserStore from '@/lib/store';
-import { suggestedUser } from '@/http/api';
+import React, { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import {
+  Building,
+  Calendar,
+  MapPin,
+  Plus,
+  UserPlus,
+  Users,
+} from "lucide-react";
+import { Button } from "./ui/button";
+import useUserStore from "@/lib/store";
+import { followOrUnfollow, suggestedUser } from "@/http/api";
 import { format } from "date-fns";
+import { toast } from "sonner";
 
 const RightSideBar = () => {
-  const {user} = useUserStore();
+  const { user, setUser } = useUserStore();
   const [suggestedUsers, setSuggestedUsers] = useState([]);
-  
+
   const getSuggestedUser = async () => {
     const res = await suggestedUser();
     setSuggestedUsers(res.user);
-  }
+  };
 
-  useEffect(()=>{
+  const handleFollowUser = async (followedUserID) => {
+    try {
+      const res = await followOrUnfollow(followedUserID);
+      console.log(1, user);
+      const updatedUser = res.isFollowing
+        ? {
+            ...user,
+            following: [...user.following, followedUserID],
+          }
+          : {
+            ...user,
+            following: user.following.filter((id) => id !== followedUserID),
+          };
+
+      setUser(updatedUser);
+      // console.log(1,updatedUser);
+      // console.log(2, user)
+      toast.success(res.message);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
     getSuggestedUser();
-  },[])
+  }, []);
+
+  useEffect(() => {
+    console.log("User state after update:", user);
+  }, [user]);
 
   return (
     // <div className='w-[15%] h-screen fixed top-0 right-0 border-l-2 border-gray-500'>
@@ -38,10 +73,7 @@ const RightSideBar = () => {
                     className="object-cover"
                   />
                   <AvatarFallback className="dark:bg-purple-400 text-xl dark:text-white text-black">
-                    {user?.username
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
+                    {user.username.substring(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
 
@@ -87,8 +119,8 @@ const RightSideBar = () => {
                 </div>
 
                 <div className="flex items-center text-xs text-social-gray mt-3">
-                  <Calendar className="w-3 h-3 mr-1" />Joined {" "}
-                  {format(new Date(`${user?.updatedAt}`), "MMM yyyy")}
+                  <Calendar className="w-3 h-3 mr-1" />
+                  Joined {format(new Date(`${user?.updatedAt}`), "MMM yyyy")}
                 </div>
               </div>
             </CardContent>
@@ -104,51 +136,52 @@ const RightSideBar = () => {
             </CardHeader>
             <CardContent className="p-0">
               <div className="space-y-4">
-                {suggestedUsers.map((user) => (
+                {suggestedUsers.map((users) => (
                   <div
-                    key={user.id}
-                    className="px-6 py-3 hover:bg-social-gray-light/30 transition-colors"
+                    key={users._id}
+                    className="px-3 py-3 hover:bg-social-gray-light/30 transition-colors"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex items-center space-x-3 flex-1">
                         <Avatar className="w-12 h-12 border">
                           <AvatarImage
-                            src={user.profilePicture}
-                            alt={user.username}
+                            src={users.profilePicture}
+                            alt={users.username}
                             className="object-cover"
                           />
                           <AvatarFallback className="bg-social-purple-light dark:text-white text-black text-sm">
-                            {user.username
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")}
+                            {users.username.substring(0, 2).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
 
                         <div className="flex-1 min-w-0">
                           <h4 className="font-medium text-sm text-social-gray-dark truncate">
-                            {user.username}
+                            {users.username}
                           </h4>
                           <p className="text-xs text-social-gray truncate">
-                            {user?.title}
+                            {users?.title}
                           </p>
                           <p className="text-xs text-social-gray mt-1">
-                            {user?.mutualConnections} mutual connections
+                            {users?.mutualConnections} mutual connections
                           </p>
                         </div>
                       </div>
 
                       <Button
                         size="sm"
-                        variant={user?.isFollowing ? "outline" : "default"}
+                        variant={
+                          user?.following.includes(users._id)
+                            ? "outline"
+                            : "default"
+                        }
                         className={`ml-2 ${
-                          user.isFollowing
+                          user?.following.includes(users._id)
                             ? "border-social-gray text-social-gray-dark hover:bg-social-gray-light"
                             : "bg-social-purple hover:bg-social-purple-dark text-white"
                         }`}
-                        onClick={() => handleFollowUser(user.id)}
+                        onClick={() => handleFollowUser(users._id)}
                       >
-                        {user?.isFollowing ? (
+                        {user.following.includes(users._id) ? (
                           <>
                             <UserPlus className="w-3 h-3 mr-1" />
                             Following
@@ -179,6 +212,6 @@ const RightSideBar = () => {
       </div>
     </>
   );
-}
+};
 
 export default RightSideBar;
