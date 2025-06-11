@@ -22,6 +22,7 @@ import useUserStore from "@/lib/store";
 import { toast } from "sonner";
 import { Toaster } from "../ui/sonner";
 import { deletePost } from "@/http/api";
+import { Badge } from "../ui/badge";
 
 // import { toast } from "@/hooks/use-toast";
 
@@ -52,14 +53,15 @@ const PostHeader = ({ user, timestamp, post }) => {
       <div className="flex items-center space-x-2">
         <Avatar className="!h-12 !w-12 border-2 border-social-purple-light">
           <AvatarImage src={user.avatar} alt={user.name} className="object-cover"/>
-          <AvatarFallback className="bg-social-purple-light text-white">
+          <AvatarFallback className="bg-social-purple-light dark:text-white text-black">
             {user.name.substring(0, 2).toUpperCase()}
           </AvatarFallback>
         </Avatar>
         <div>
           <div className="flex items-center">
-            <p className="font-medium text-sm">{user.name}</p>
-            {user.isVerified && (
+            <p className="font-medium text-x">{user.name}</p>
+
+            {/* {user.isVerified && (
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -76,12 +78,15 @@ const PostHeader = ({ user, timestamp, post }) => {
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-            )}
-            {user.connectionDegree && (
+            )} */}
+
+            <Badge className="ml-2">Author</Badge>
+
+            {/* {user.connectionDegree && (
               <span className="ml-1 text-xs text-social-gray">
                 • {user.connectionDegree}°
               </span>
-            )}
+            )} */}
           </div>
           <p className="text-xs text-social-gray">{user.title}</p>
           <div className="flex items-center text-xs text-social-gray mt-0.5">

@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
-import { Bookmark, Heart, MessageCircle, Share2 } from "lucide-react";
+import { Bookmark, Heart, MessageCircle, Share2, UndoIcon } from "lucide-react";
 import { CommentDialog } from "./CommentDialog";
 import { dislikePost, likePost } from "@/http/api";
 import useUserStore from "@/lib/store";
@@ -14,11 +14,20 @@ const EngagementBar = ({
   post,
 }) => {
   const { user, post: Post, setPost } = useUserStore();
-  const like = post.likes.includes(user._id);
-  const [liked, setLiked] = useState(like);
+  const [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState(initialLikes);
   const [saved, setSaved] = useState(initialSaved);
   const [commentsDialogOpen, setCommentsDialogOpen] = useState(false);
+
+  function isLiked() {
+    post.likes.map((UserLiked) => {
+      if (UserLiked._id === user._id) setLiked(true);
+    });
+  }
+
+  useEffect(()=>{
+    isLiked();
+  },[])
 
   const handleLike = async () => {
     if (liked) {
@@ -32,12 +41,12 @@ const EngagementBar = ({
     }
 
     const updatePost = Post.map((p) => {
-      if (p._id === post._id && likes > 0) {
+      if (p._id === post._id && likes >= 0) {
         return {
           ...p,
           likes: liked
-            ? p.likes.filter((id) => id !== user._id) // Unlike
-            : [...p.likes, user._id], // Like
+            ? p.likes.filter((userLiked) => userLiked._id !== user._id) // Unlike
+            : [...p.likes, user], // Like
         };
       }
       return p; // Return unchanged post
@@ -110,15 +119,24 @@ const EngagementBar = ({
 
       <div className="flex items-center text-xs text-social-gray mb-4">
         <div className="flex -space-x-1 mr-2">
-          <div className="w-5 h-5 rounded-full bg-blue-500 border border-white"></div>
-          <div className="w-5 h-5 rounded-full bg-purple-500 border border-white"></div>
-          <div className="w-5 h-5 rounded-full bg-gray-500 border border-white"></div>
-          <div className="w-5 h-5 rounded-full bg-gray-600 border border-white"></div>
+          {post.likes?.slice(0, 3).map((img) => img?.profilePicture !== "" &&          
+          ( <div
+              key={img._id}
+              className="w-5 h-5 rounded-full border border-white bg-center bg-cover"
+              style={{ backgroundImage: `url(${img?.profilePicture})` }}
+              title={img?.username}
+            ></div>
+          ))}
         </div>
-        <p>
-          Liked by <span className="font-medium">Sarah Chen</span> and{" "}
-          <span className="font-medium">{likes - 1} others</span>
-        </p>
+        {post.likes.length >= 1 && (
+          <p>
+            Liked by{" "}
+            <span className="font-medium">{post.likes[0].username}</span>
+            {post.likes.length >= 2 && (
+              <span className="font-medium"> and {likes - 1} others</span>
+            )}
+          </p>
+        )}
       </div>
     </div>
   );

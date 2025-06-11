@@ -80,7 +80,7 @@ export const Post = ({ Post }) => {
     });
   };
 
-  console.log(Post);
+  // console.log(Post);
   const timestamp = Post?.createdAt
     ? formatDistanceToNow(Post?.createdAt, {
         addSuffix: true,

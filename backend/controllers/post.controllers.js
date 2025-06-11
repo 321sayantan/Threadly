@@ -23,7 +23,11 @@ export const createPost = async (req, res) => {
       const imageBuffer = await sharp(image.buffer)
         //   .resize({ width: 800, height: 800, fit: "inside" })
         // .resize(800, 800)
-        .toFormat("jpeg", { quality: 80 })
+        .toFormat("jpeg", {
+          // quality: 50,
+          // progressive: true,
+          // chromaSubsampling: "4:2:0",
+        })
         .toBuffer();
 
       const fileuri = `data:image/jpeg;base64,${imageBuffer.toString(
@@ -32,6 +36,11 @@ export const createPost = async (req, res) => {
 
       const cloudinaryimage = await cloudinary.uploader.upload(fileuri, {
         folder: "Instagram Clone",
+        transformation: [
+          { quality: "auto:low" }, // Aggressive compression
+          { fetch_format: "auto" }, // Use WebP/AVIF when possible
+          { width: 1000, crop: "scale" }, // Resize to a sensible width (optional)
+        ],
       });
 
       console.log(cloudinaryimage);
@@ -64,7 +73,8 @@ export const getAllPosts = async (req, res) => {
       .populate({
         path: "comments",
         populate: { path: "author", select: "-password" },
-      });
+      })
+      .populate({path: "likes", select:"username profilePicture"});
 
     if (!allPost) {
       return res.status(400).json({ message: "No Post Found", success: false });

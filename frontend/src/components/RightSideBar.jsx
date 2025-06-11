@@ -5,6 +5,7 @@ import { Building, Calendar, MapPin, Plus, UserPlus, Users } from 'lucide-react'
 import { Button } from './ui/button';
 import useUserStore from '@/lib/store';
 import { suggestedUser } from '@/http/api';
+import { format } from "date-fns";
 
 const RightSideBar = () => {
   const {user} = useUserStore();
@@ -24,19 +25,19 @@ const RightSideBar = () => {
     // <h1>Right SideBar</h1>
     // </div>
     <>
-      <div className="h-screen top-0 right-0 p-4">
+      <div className="h-screen top-0 right-0 py-5 px-6">
         <div className="w-80 space-y-6">
           {/* User Profile Card */}
           <Card className="border-social-gray-light">
             <CardContent className="px-6">
               <div className="flex flex-col items-center text-center">
-                <Avatar className="w-20 h-20 mb-4">
+                <Avatar className="w-20 h-20 mb-4 border">
                   <AvatarImage
                     src={user?.profilePicture}
                     alt={user?.username}
                     className="object-cover"
                   />
-                  <AvatarFallback className="bg-social-purple text-white">
+                  <AvatarFallback className="dark:bg-purple-400 text-xl dark:text-white text-black">
                     {user?.username
                       .split(" ")
                       .map((n) => n[0])
@@ -86,8 +87,8 @@ const RightSideBar = () => {
                 </div>
 
                 <div className="flex items-center text-xs text-social-gray mt-3">
-                  <Calendar className="w-3 h-3 mr-1" />
-                  {user?.updatedAt}
+                  <Calendar className="w-3 h-3 mr-1" />Joined {" "}
+                  {format(new Date(`${user?.updatedAt}`), "MMM yyyy")}
                 </div>
               </div>
             </CardContent>
@@ -110,12 +111,13 @@ const RightSideBar = () => {
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex items-center space-x-3 flex-1">
-                        <Avatar className="w-12 h-12">
+                        <Avatar className="w-12 h-12 border">
                           <AvatarImage
                             src={user.profilePicture}
                             alt={user.username}
+                            className="object-cover"
                           />
-                          <AvatarFallback className="bg-social-purple-light text-white text-sm">
+                          <AvatarFallback className="bg-social-purple-light dark:text-white text-black text-sm">
                             {user.username
                               .split(" ")
                               .map((n) => n[0])

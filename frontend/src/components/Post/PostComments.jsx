@@ -13,8 +13,8 @@ const PostComments = ({ comments }) => {
         .slice(0, 2);
     };
   return (
-    <div>
-      {comments.map((comment) => (
+    <div className=" overflow-y-auto max-h-130">
+      {comments?.map((comment) => (
         <Card className="m-2 p-0 border-border bg-card">
           <CardContent className="p-3">
             <div className="flex  space-x-3">
@@ -30,27 +30,26 @@ const PostComments = ({ comments }) => {
               </Avatar>
 
               <div className="flex-1 min-w-0">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <h4 className="text-sm font-semibold text-foreground">
-                      {comment.author.username}
-                    </h4>
-                    <span className="text-xs text-muted-foreground">
-                      {formatDistanceToNow(comment.createdAt, {
+                <div className="flex items-center space-x-2 mb-2">
+                  <h4 className="text-sm font-semibold text-foreground">
+                    {comment.author.username}
+                  </h4>
+                  <span className="text-xs text-muted-foreground">
+                    {formatDistanceToNow(comment.createdAt, {
                       addSuffix: true,
                     })}
-                    </span>
-                  </div>
+                  </span>
+                </div>
 
                 <p className="text-sm text-foreground leading-relaxed mb-0">
                   {comment.text}
                 </p>
-
               </div>
-                {/* {comment.likes !== undefined && ( */}
-                  <div className="flex items-center space-x-1 text-muted-foreground">
-                    <span className="text-x">❤️ {comment.likes}</span>
-                  </div>
-                {/* )} */}
+              {/* {comment.likes !== undefined && ( */}
+              <div className="flex items-center space-x-1 text-muted-foreground">
+                <span className="text-x">❤️ {comment.likes}</span>
+              </div>
+              {/* )} */}
             </div>
           </CardContent>
         </Card>
