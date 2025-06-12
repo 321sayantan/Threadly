@@ -2,6 +2,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { logout } from "@/http/api";
 import useUserStore from "@/lib/store";
 import {
+  Calendar,
+  CircuitBoardIcon,
   Heart,
   Home,
   LogOut,
@@ -60,6 +62,8 @@ const LeftSideBar = () => {
     { icon: <Home />, name: "Home" },
     { icon: <Search />, name: "Search" },
     { icon: <TrendingUp />, name: "Explore" },
+    { icon: <CircuitBoardIcon />, name: "Leaderboard" },
+    { icon: <Calendar />, name: "Events" },
     { icon: <MessageCircle />, name: "Messages" },
     { icon: <Heart />, name: "Notifications" },
     {
@@ -82,7 +86,7 @@ const LeftSideBar = () => {
   return (
     <div className="sticky top-0 left-0 h-screen w-[16%] border-r border-2 bg-white dark:bg-transparent">
       <div className="flex flex-col">
-        <h1 className="my-8 font-bold m-auto text-xl">LOGO</h1>
+        <h1 className="my-10 font-bold m-auto text-xl">LOGO</h1>
         {sideBaritems.map((item, index) => {
           return (
             <div

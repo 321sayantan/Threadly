@@ -29,13 +29,13 @@ export const CreatePostHeader = () => {
                 className="object-cover"
               />
               <AvatarFallback className="bg-social-purple dark:text-white text-black border">
-                {user?.name?.substring(0, 2).toUpperCase()}
+                {user?.username?.substring(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
 
             <div className="flex-1">
               <Textarea
-                placeholder="What's on your mind, John?"
+                placeholder={`What's on your mind, ${user.username}?`}
                 value={postContent}
                 onChange={(e) => setPostContent(e.target.value)}
                 // onClick={handleTextareaClick}

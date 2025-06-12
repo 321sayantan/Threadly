@@ -9,6 +9,7 @@ import { CommentDialog } from './components/Post/CommentDialog';
 import CreatePost from './components/CreatePost';
 import TestDialog from './components/TestDialog';
 import useUserStore from './lib/store';
+import ProfilePage from './components/ProfilePage/ProfilePage';
 
 
 let commentsDialogOpen = false;
@@ -67,6 +68,7 @@ function AppRoutes() {
           <Route path="signup" element={<Signup />} />
           {/* <Route path="test" element={<TestDialog />} /> */}
           <Route path="create-Post" element={<div />} /> {/* Dummy fallback */}
+          <Route path="profile" element={<ProfilePage/>} />
         </Route>
       </Routes>
 

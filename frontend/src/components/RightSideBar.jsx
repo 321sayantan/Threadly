@@ -176,8 +176,8 @@ const RightSideBar = () => {
                         }
                         className={`ml-2 ${
                           user?.following.includes(users._id)
-                            ? "border-social-gray text-social-gray-dark hover:bg-social-gray-light"
-                            : "bg-social-purple hover:bg-social-purple-dark text-white"
+                            ? "cursor-pointer"
+                            : "bg-gray-200 hover:bg-gray-300 dark:bg-transparent dark:text-white text-black cursor-pointer"
                         }`}
                         onClick={() => handleFollowUser(users._id)}
                       >
