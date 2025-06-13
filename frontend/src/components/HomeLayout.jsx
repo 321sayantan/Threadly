@@ -6,6 +6,7 @@ import RightSideBar from "./RightSideBar";
 import { ScaleLoader } from "react-spinners";
 import useGetAllPost from "@/hooks/useGetAllPost";
 
+
 const Home = () => {
   useGetAllPost();
   const [loading, setLoading] = useState(true);
@@ -28,11 +29,8 @@ const Home = () => {
       ) : (
         <div className="flex relative bg-gray-100 dark:bg-transparent">
           <LeftSideBar/>
-          <div className="m-auto">
-            <Feed />
-            <Outlet />
-          </div>
-          <RightSideBar />
+          <Outlet/>
+          <RightSideBar/>
         </div>
       )}
     </>

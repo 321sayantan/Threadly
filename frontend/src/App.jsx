@@ -1,27 +1,43 @@
-import React from 'react';
-import { Login } from './components/Login';
-import Signup from './components/Signup.jsx';
-import { ThemeProvider } from './components/theme_Provider';
-import { BrowserRouter, createBrowserRouter, Outlet, Route, RouterProvider, Routes, useLocation } from "react-router";
-import Home from './components/Home';
-import { ScaleLoader } from 'react-spinners';
-import { CommentDialog } from './components/Post/CommentDialog';
-import CreatePost from './components/CreatePost';
-import TestDialog from './components/TestDialog';
-import useUserStore from './lib/store';
-import ProfilePage from './components/ProfilePage/ProfilePage';
-
+import React from "react";
+import { Login } from "./components/Login";
+import Signup from "./components/Signup.jsx";
+import { ThemeProvider } from "./components/theme_Provider";
+import {
+  BrowserRouter,
+  createBrowserRouter,
+  Outlet,
+  Route,
+  RouterProvider,
+  Routes,
+  useLocation,
+} from "react-router";
+import HomeLayout from "./components/HomeLayout";
+import { ScaleLoader } from "react-spinners";
+import { CommentDialog } from "./components/Post/CommentDialog";
+import CreatePost from "./components/CreatePost";
+import TestDialog from "./components/TestDialog";
+import useUserStore from "./lib/store";
+import ProfilePage from "./components/ProfilePage/ProfilePage";
+import Feed from "./components/Feed";
+import LeftSideBar from "./components/LeftSideBar";
 
 let commentsDialogOpen = false;
 
 function setCommentsDialogOpen() {
   commentsDialogOpen = !commentsDialogOpen;
 }
+const AuthLayout = () => (
+  <>
+    <Outlet />
+  </>
+);
+
 const Layout = () => (
-    <>
-      <Outlet />
-    </>
-  );
+  <div className="flex relative bg-gray-100 dark:bg-transparent">
+    <LeftSideBar />
+    <Outlet />
+  </div>
+);
 
 // const router = createBrowserRouter([
 //   { path: "/",
@@ -32,7 +48,8 @@ const Layout = () => (
 //       {path: "/Signup", element: <Signup />},
 //       {path: "/createPost", element: <CreatePost/>},
 //       {path: "/test", element: <TestDialog/>},
-//     ] 
+//       {path: "/profile", element: <ProfilePage/>},
+//     ]
 //   }
 // ]);
 
@@ -46,36 +63,33 @@ const Layout = () => (
 //   );
 // }
 
-
-
-
-
-
-
-
 function AppRoutes() {
   const location = useLocation();
-  const state = location.state;  
+  const state = location.state;
   // const background = state && state.backgroundLocation;
   const background = location.state?.backgroundLocation;
 
   return (
     <>
       <Routes location={background || location}>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
+        <Route path="/" element={<HomeLayout />}>
+          <Route index element={<Feed />} />
+        </Route>
+
+        <Route element={<AuthLayout />}>
           <Route path="login" element={<Login />} />
           <Route path="signup" element={<Signup />} />
-          {/* <Route path="test" element={<TestDialog />} /> */}
-          <Route path="create-Post" element={<div />} /> {/* Dummy fallback */}
-          <Route path="profile" element={<ProfilePage/>} />
+        </Route>
+
+        <Route element={<Layout />}>
+          <Route path="profile/:id" element={<ProfilePage />} />
         </Route>
       </Routes>
 
       {/* Modal Route */}
       {background && (
         <Routes>
-          <Route path="/create-Post" element={<CreatePost/>} />
+          <Route path="/create-Post" element={<CreatePost />} />
           <Route path="/test" element={<TestDialog />} />
         </Routes>
       )}

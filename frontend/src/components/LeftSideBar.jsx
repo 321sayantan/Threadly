@@ -19,7 +19,7 @@ import { toast } from "sonner";
 import CreatePost from "./CreatePost";
 
 const LeftSideBar = () => {
-  const { Theme, ToggleTheme, setTheme } = useUserStore();
+  const { Theme, ToggleTheme, setTheme, user } = useUserStore();
   const navigate = useNavigate();
   const location = useLocation();
   const [isopen, setisopen] = useState(false);
@@ -42,8 +42,7 @@ const LeftSideBar = () => {
       // setisopen(true);
       navigate("/create-Post", { state: { backgroundLocation: location } });
     } else if (item.name === "Profile") {
-      // navigate("/test");
-      navigate("test", { state: { backgroundLocation: location } });
+      navigate(`/profile/${user._id}`);
     }
     else if(item.name === "Toggle"){
         setTheme(!ToggleTheme);
