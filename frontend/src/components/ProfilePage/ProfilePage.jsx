@@ -28,12 +28,18 @@ import { SuggestedUser } from "../SuggestedUser";
 import { format } from "date-fns";
 import EditProfileModal from "./EditProfileModal";
 import EditSkillsModal from "./EditSkillsModal";
+import EditExperience from "./EditExperience";
+import EditEducation from "./EditEducation";
+import EditCertificates from "./EditCertificates";
 
 const Profile = () => {
-  const {user} = useUserStore();
-  const [isProfileModalOpen, setProfileModal] = useState(false)
+  const { user } = useUserStore();
+  const [isProfileModalOpen, setProfileModal] = useState(false);
   const [isSkillsModalOpen, setSkillModal] = useState(false);
-  const experience={};
+  const [isEditExpModalOpen, setEditExpModal] = useState(false);
+  const [isEditEduModalOpen, setEditEduModal] = useState(false);
+  const [isEditCertificateModalOpen, setEditCertificateModal] = useState(false);
+  const experience = {};
   return (
     <div className="min-h-screen ">
       <div className="max-w-4xl mx-auto bg-transparent rounded-4xl border">
@@ -235,7 +241,7 @@ const Profile = () => {
               <Button
                 variant="outline"
                 size="sm"
-                // onClick={addExperience}
+                onClick={() => setEditExpModal(true)}
               >
                 <Plus className="h-4 w-4 mr-1" />
                 Add
@@ -256,7 +262,7 @@ const Profile = () => {
                     variant="ghost"
                     size="icon"
                     className="absolute top-0 right-0 h-8 w-8"
-                    // onClick={() => editExperience(experience)}
+                    onClick={() => setEditExpModal(true)}
                   >
                     <Pencil className="h-4 w-4" />
                     {/* <span className="sr-only">Edit experience</span> */}
@@ -322,9 +328,19 @@ const Profile = () => {
               </CardContent>
             </Card>
 
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Education
-            </h2>
+            <div className="flex justify-between">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                Education
+              </h2>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setEditEduModal(true)}
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                Add
+              </Button>
+            </div>
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -338,7 +354,7 @@ const Profile = () => {
                     variant="ghost"
                     size="icon"
                     className="absolute top-0 right-0 h-8 w-8"
-                    // onClick={() => editExperience(experience)}
+                    onClick={() => setEditEduModal(true)}
                   >
                     <Pencil className="h-4 w-4" />
                     {/* <span className="sr-only">Edit experience</span> */}
@@ -364,9 +380,20 @@ const Profile = () => {
               </CardContent>
             </Card>
 
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Certificates
-            </h2>
+            <div className="flex justify-between">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                Certificates
+              </h2>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setEditCertificateModal(true)}
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                Add
+              </Button>
+            </div>
+
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -388,7 +415,7 @@ const Profile = () => {
                     variant="ghost"
                     size="icon"
                     className="absolute top-0 right-0 h-8 w-8"
-                    // onClick={() => editExperience(experience)}
+                    onClick={() => setEditCertificateModal(true)}
                   >
                     <Pencil className="h-4 w-4" />
                     {/* <span className="sr-only">Edit experience</span> */}
@@ -482,6 +509,13 @@ const Profile = () => {
         isOpen={isSkillsModalOpen}
         onClose={setSkillModal}
         // skills={skills}
+      />
+
+      <EditExperience isOpen={isEditExpModalOpen} onClose={setEditExpModal} />
+      <EditEducation isOpen={isEditEduModalOpen} onClose={setEditEduModal} />
+      <EditCertificates
+        isOpen={isEditCertificateModalOpen}
+        onClose={setEditCertificateModal}
       />
     </div>
   );
