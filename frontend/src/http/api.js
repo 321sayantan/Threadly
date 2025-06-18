@@ -119,3 +119,23 @@ export const followOrUnfollow = async (userID)  => {
         return error.response.data;
     }
 }
+
+export const editUser = async(data) => {
+    try {
+        const res = await api.post("/user/profile/edit", data);
+        console.log(res)
+        return res.data;
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export const getUser = async(id) => {
+    try {
+        const res = await api.get(`/user/getUser/${id}`);
+        console.log(res)
+        return res.data;
+    } catch (error) {
+        console.log(error)
+    }
+}

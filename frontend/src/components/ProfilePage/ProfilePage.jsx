@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   MapPin,
   LinkIcon,
@@ -31,15 +31,43 @@ import EditSkillsModal from "./EditSkillsModal";
 import EditExperience from "./EditExperience";
 import EditEducation from "./EditEducation";
 import EditCertificates from "./EditCertificates";
+import { getUser } from "@/http/api";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 const Profile = () => {
-  const { user } = useUserStore();
+  const { user, setUser } = useUserStore();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isProfileModalOpen, setProfileModal] = useState(false);
   const [isSkillsModalOpen, setSkillModal] = useState(false);
   const [isEditExpModalOpen, setEditExpModal] = useState(false);
   const [isEditEduModalOpen, setEditEduModal] = useState(false);
   const [isEditCertificateModalOpen, setEditCertificateModal] = useState(false);
   const experience = {};
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await getUser(user._id); // Assuming user is defined here
+        console.log("Fetched user:", res.user);
+        setUser(res.user);
+      } catch (error) {
+        console.error("Fetch error:", error);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  const handelOptions = (action)=>{
+    if(action == "edit")
+      setProfileModal(true)
+  }
+
   return (
     <div className="min-h-screen ">
       <div className="max-w-4xl mx-auto bg-transparent rounded-4xl border">
@@ -47,7 +75,8 @@ const Profile = () => {
         <div className="relative ">
           <div className="h-48 md:h-64 bg-gray-500 relative overflow-hidden rounded-t-4xl">
             <img
-              src="https://img.lovepik.com/background/20211021/large/lovepik-blue-technology-banner-background-image_500362377.jpg"
+              // src="https://img.lovepik.com/background/20211021/large/lovepik-blue-technology-banner-background-image_500362377.jpg"
+              src={user.coverImage}
               alt="Cover photo"
               className="object-cover"
             />
@@ -112,15 +141,27 @@ const Profile = () => {
                   <UserPlus className="w-4 h-4 mr-2" />
                   Follow
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setProfileModal(true);
-                  }}
+
+                <DropdownMenu
+                  open={dropdownOpen}
+                  onOpenChange={setDropdownOpen}
                 >
-                  <MoreHorizontal className="w-4 h-4" />
-                </Button>
+                  <DropdownMenuTrigger aschild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-social-gray hover:text-social-purple"
+                    >
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuItem onClick={() => {setDropdownOpen(false); handelOptions("edit")}}>
+                      <Pencil className="mr-2 h-4 w-4" />
+                      <span>Edit</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
 
@@ -130,26 +171,28 @@ const Profile = () => {
                   {user.username}
                 </h1>
                 <p className="text-lg text-gray-600 mb-2  dark:text-white">
-                  Senior Software Engineer at TechCorp
+                  {user.title}
                 </p>
                 <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 ">
                   <div className="flex items-center gap-1 dark:text-white">
                     <MapPin className="w-4 h-4" />
-                    San Francisco, CA
+                    {user.location}
                   </div>
-                  <div className="flex items-center gap-1 dark:text-white">
-                    <LinkIcon className="w-4 h-4" />
-                    <Link href="#" className="text-blue-600 hover:underline">
-                      johndoe.dev
-                    </Link>
-                  </div>
+                  {user.links?.website && (
+                    <div className="flex items-center gap-1 dark:text-white">
+                      <LinkIcon className="w-4 h-4" />
+                      <Link href="#" className="text-blue-600 hover:underline">
+                        {user.links.website}
+                      </Link>
+                    </div>
+                  )}
                   <div className="flex items-center gap-1 dark:text-white">
                     <Calendar className="w-4 h-4" />
-                    Joined {format(new Date(`${user?.updatedAt}`), "MMM yyyy")}
+                    Joined {format(new Date(`${user?.createdAt}`), "MMM yyyy")}
                   </div>
                 </div>
               </div>
-              <div className="flex-1 self-end pb-4">
+              <div className="flex-1 self-end pb-4 ml-10">
                 <span>Connect With Me:</span>
                 <div className="flex gap-8 mt-2">
                   <LinkedinIcon />

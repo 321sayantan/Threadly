@@ -17,36 +17,7 @@ import { toast } from "sonner";
 import { SuggestedUser } from "./SuggestedUser";
 
 const RightSideBar = () => {
-  const { user, setUser } = useUserStore();
-  const [suggestedUsers, setSuggestedUsers] = useState([]);
-
-  const getSuggestedUser = async () => {
-    const res = await suggestedUser();
-    setSuggestedUsers(res.user);
-  };
-
-  const handleFollowUser = async (followedUserID) => {
-    try {
-      const res = await followOrUnfollow(followedUserID);
-      console.log(1, user);
-      const updatedUser = res.isFollowing
-        ? {
-            ...user,
-            following: [...user.following, followedUserID],
-          }
-          : {
-            ...user,
-            following: user.following.filter((id) => id !== followedUserID),
-          };
-
-      setUser(updatedUser);
-      // console.log(1,updatedUser);
-      // console.log(2, user)
-      toast.success(res.message);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const { user } = useUserStore();
   
   return (
     // <div className='w-[15%] h-screen fixed top-0 right-0 border-l-2 border-gray-500'>

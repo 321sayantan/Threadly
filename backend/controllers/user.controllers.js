@@ -100,8 +100,7 @@ export const getUser = async (req, res) => {
 export const editUser = async (req, res) => {
   try {
     const id = req.id;
-    const { bio, gender } = req.body;
-    const profilePicture = req.file;
+    const { username, title, location, links, bio, gender } = req.body;
 
     const user = await User.findById(id).select("-password");
     if (!user) {
@@ -110,15 +109,36 @@ export const editUser = async (req, res) => {
         .json({ message: "User not found", success: false });
     }
 
+    const parsedLinks = JSON.parse(links);
+    const profileImage = req.files.profilePicture?.[0];
+    const coverImage = req.files.coverImage?.[0];
+
+    if (username) user.username = username;
+    if (title) user.title = title;
+    if (location) user.location = location;
+    if (links) user.links = parsedLinks;
     if (bio) user.bio = bio;
     if (gender) user.gender = gender;
-    if (profilePicture) {
-      const fileUri = getDataUri(profilePicture);
+    
+
+    if (profileImage) {
+      console.log(profileImage);
+      const fileUri = getDataUri(profileImage);
       const cloudResponse = await Cloudinary.uploader.upload(fileUri, {
         folder: "Instagram Clone",
       });
       user.profilePicture = cloudResponse.secure_url;
     }
+
+    if (coverImage) {
+      console.log(coverImage);
+        const fileUri = getDataUri(coverImage);
+        const cloudResponse = await Cloudinary.uploader.upload(fileUri, {
+          folder: "Instagram Clone",
+        });
+        user.coverImage = cloudResponse.secure_url;
+    }
+    console.log("profile update")
 
     await user.save();
 

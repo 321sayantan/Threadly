@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '../ui/button';
@@ -6,31 +6,79 @@ import { Camera, Link, MapPin } from 'lucide-react';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
+import { editUser } from '@/http/api';
+import useUserStore from '@/lib/store';
+import { toast } from 'sonner';
 
 const EditProfileModal = ({ isOpen, onClose, profileData }) => {
 
+  const { setUser } = useUserStore();
+  const profileRef = useRef(null);
+  const coverRef = useRef(null);
+  const [profileImage, setProfileImage] = useState(null);
+  const [coverImage, setCoverImage] = useState(null);
+
   const [formData, setFormData] = useState({
-    name: profileData?.username || "",
+    username: profileData?.username || "",
     title: profileData?.title || "",
     location: profileData?.location || "",
-    website: profileData?.website || "",
+    links: profileData?.links || { website: "", linkedin: "", twitter: "", instagram: "" },
     bio: profileData?.bio || "",
+    gender: profileData?.gender || "",
   });
+  
+  const isValidUrl = (url) => {
+    try {
+      new URL(url); // throws if not valid
+      return true;
+    } catch (_) {
+      return false;
+    }
+  };
+  
+  const handleLinks = (e) =>{
+    const {name, value} = e.target;
+    setFormData((prev)=> ({...prev, links: {...prev.links, [name]: value}}));
+    if(!isValidUrl(value)){
+     e.target.style.borderColor = "red";
+    }
+    else{
+      e.target.style.borderColor = "transparent";
+    }
+  }
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    // Here you would typically save the data to your backend
-    console.log("Saving profile data:", formData);
-    onClose(formData);
+    const updatedData = new FormData();
+    Object.entries(formData).forEach(([name, value]) => {
+      console.log(name, value);
+      if (name == "links") updatedData.append(`${name}`, JSON.stringify(value));
+      else updatedData.append(`${name}`, value);
+    });
+
+    if (profileImage) updatedData.append("profilePicture", profileImage);
+    if (coverImage) updatedData.append("coverImage", coverImage);
+
+    const res = await editUser(updatedData);
+    console.log(res)
+    if(res.success){
+      setUser({...res.user});
+      toast.success(res.message)
+    }
+
+    // console.log("Saving profile data:", formData);
+    onClose();
   };
 
   return (
-    <div>
+    <>
       <Dialog open={isOpen} onOpenChange={onClose} className="max-h-[95%]">
         <DialogContent className="sm:max-w-[525px] max-h-[95%]">
           <DialogHeader>
@@ -44,11 +92,25 @@ const EditProfileModal = ({ isOpen, onClose, profileData }) => {
               <div className="space-y-6 py-4 ">
                 <div className="flex flex-col items-center gap-4">
                   <div className="relative w-full">
-                    <div className="h-36 bg-gradient-to-r from-blue-500 to-purple-600 rounded-md relative overflow-hidden">
+                    <div
+                      className="h-36 border rounded-md relative overflow-hidden bg-cover"
+                      style={{ backgroundImage: `url(${profileData?.coverImage})` }}
+                    >
+                      <input
+                        ref={coverRef}
+                        type="file"
+                        className="hidden"
+                        onChange={(e) => {
+                          setCoverImage(e.target.files[0]);
+                        }}
+                      />
                       <Button
                         size="icon"
                         variant="secondary"
                         className="absolute bottom-2 right-2 rounded-full"
+                        onClick={() => {
+                          coverRef.current.click();
+                        }}
                       >
                         <Camera className="h-4 w-4" />
                         <span className="sr-only">Change cover photo</span>
@@ -58,13 +120,27 @@ const EditProfileModal = ({ isOpen, onClose, profileData }) => {
 
                   <div className="relative mt-[-20%]">
                     <Avatar className="w-24 h-24 border-2 border-white shadow-md">
-                      <AvatarImage src="/placeholder.svg?height=96&width=96" />
+                      <AvatarImage
+                        src={profileData.profilePicture}
+                        className="object-cover"
+                      />
                       <AvatarFallback>JD</AvatarFallback>
                     </Avatar>
+                    <input
+                      ref={profileRef}
+                      type="file"
+                      className="hidden"
+                      onChange={(e) => {
+                        setProfileImage(e.target.files[0]);
+                      }}
+                    />
                     <Button
                       size="icon"
                       variant="secondary"
                       className="absolute bottom-0 right-0 rounded-full w-8 h-8"
+                      onClick={() => {
+                        profileRef.current.click();
+                      }}
                     >
                       <Camera className="h-4 w-4" />
                       <span className="sr-only">Change profile picture</span>
@@ -79,8 +155,8 @@ const EditProfileModal = ({ isOpen, onClose, profileData }) => {
                     </Label>
                     <Input
                       id="name"
-                      name="name"
-                      value={formData.name}
+                      name="username"
+                      value={formData.username}
                       onChange={handleChange}
                       className="col-span-3"
                     />
@@ -122,8 +198,8 @@ const EditProfileModal = ({ isOpen, onClose, profileData }) => {
                     <Input
                       id="website"
                       name="website"
-                      value={formData.website}
-                      onChange={handleChange}
+                      value={formData.links.website}
+                      onChange={handleLinks}
                       className="col-span-3"
                     />
                   </div>
@@ -135,9 +211,9 @@ const EditProfileModal = ({ isOpen, onClose, profileData }) => {
                     </Label>
                     <Input
                       id="website"
-                      name="website"
-                      value={formData.website}
-                      onChange={handleChange}
+                      name="linkedin"
+                      value={formData.links.linkedin}
+                      onChange={handleLinks}
                       className="col-span-3"
                     />
                   </div>
@@ -148,9 +224,9 @@ const EditProfileModal = ({ isOpen, onClose, profileData }) => {
                     </Label>
                     <Input
                       id="website"
-                      name="website"
-                      value={formData.website}
-                      onChange={handleChange}
+                      name="twitter"
+                      value={formData.links.twitter}
+                      onChange={handleLinks}
                       className="col-span-3"
                     />
                   </div>
@@ -161,9 +237,9 @@ const EditProfileModal = ({ isOpen, onClose, profileData }) => {
                     </Label>
                     <Input
                       id="website"
-                      name="website"
-                      value={formData.website}
-                      onChange={handleChange}
+                      name="instagram"
+                      value={formData.links.instagram}
+                      onChange={handleLinks}
                       className="col-span-3"
                     />
                   </div>
@@ -197,7 +273,7 @@ const EditProfileModal = ({ isOpen, onClose, profileData }) => {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   );
 };
 
