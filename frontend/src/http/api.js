@@ -44,6 +44,25 @@ export const logout = async () => {
     }
 }
 
+export const createPost = async (formdata) => {
+  try {
+    const res = await axios.post(
+      "http://localhost:8000/api/v1/post/createPost",
+      formdata,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true,
+      }
+    );
+
+    return res.data;
+  } catch (err) {
+    return err.response.data;
+  }
+};
+
 export const deletePost = async (postid) => {
     try{
         const res = await api.get(`/post/deletePost/${postid}`);

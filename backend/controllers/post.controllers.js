@@ -7,6 +7,7 @@ import getPublicIdFromUrl from "../utils/extractImageID.js";
 
 export const createPost = async (req, res) => {
   try {
+    const userID = req.id;
     const caption = req.body.caption;
     const images = req.files;
     // console.log(req.body.postImages);
@@ -50,11 +51,13 @@ export const createPost = async (req, res) => {
     const post = new Post({
       caption,
       images: uploadedImages,
-      author: req.id,
+      author: userID,
     });
 
     await post.populate({ path: "author", select: "-password" });
     await post.save();
+
+    await User.findByIdAndUpdate({_id: userID}, {$push: { posts: post._id }});
 
     return res
       .status(200)

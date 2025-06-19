@@ -7,6 +7,7 @@ import { Navigate, useNavigate } from "react-router";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import useUserStore from "@/lib/store";
+import { createPost } from "@/http/api";
 
 const readFileAsDataURL = (file) => {
   return new Promise((resolve) => {
@@ -63,24 +64,26 @@ const CreatePost = () => {
     }
 
     try {
-      const res = await axios.post(
-        "http://localhost:8000/api/v1/post/createPost",
-        formdata,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          withCredentials: true,
-        }
-      );
+      // const res = await axios.post(
+      //   "http://localhost:8000/api/v1/post/createPost",
+      //   formdata,
+      //   {
+      //     headers: {
+      //       "Content-Type": "multipart/form-data",
+      //     },
+      //     withCredentials: true,
+      //   }
+      // );
 
+      const res = await createPost(formdata);
       console.log(res);
-      if (res.data.success) {
+
+      if (res.success) {
         setOpen(true);
         // window.location.href = "/";
-        setPost([res.data.post, ...post])
+        setPost([res.post, ...post])
         navigate(-1);
-        toast.success(res.data.message);
+        toast.success(res.message);
       }
     } catch (error) {
       toast.error(error.message);
