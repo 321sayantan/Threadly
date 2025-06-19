@@ -4,6 +4,7 @@ import getDataUri from "../utils/datauri.js";
 import Cloudinary from "../utils/Cloudinary.js";
 import promise from 'promise';
 import bcrypt from "bcryptjs";
+import getPublicIdFromUrl from "../utils/extractImageID.js";
 
 export const register = async (req, res) => {
   try {
@@ -122,7 +123,22 @@ export const editUser = async (req, res) => {
     
 
     if (profileImage) {
-      console.log(profileImage);
+      //deleting previous image if any
+      if(user.profilePicture){
+        const imageID = getPublicIdFromUrl(user.profilePicture);
+        // console.log(imageID);
+        const response = await Cloudinary.uploader.destroy(
+          imageID,
+          (error, result) => {
+            if (error) {
+              console.error("Error deleting image:", error);
+            } else {
+              console.log("Image deleted successfully:", result);
+            }
+          }
+        );
+      }
+      //uploading new image
       const fileUri = getDataUri(profileImage);
       const cloudResponse = await Cloudinary.uploader.upload(fileUri, {
         folder: "Instagram Clone",
@@ -131,12 +147,28 @@ export const editUser = async (req, res) => {
     }
 
     if (coverImage) {
-      console.log(coverImage);
-        const fileUri = getDataUri(coverImage);
-        const cloudResponse = await Cloudinary.uploader.upload(fileUri, {
-          folder: "Instagram Clone",
-        });
-        user.coverImage = cloudResponse.secure_url;
+      //deleting previous image if any
+      if (user.coverImage) {
+        const imageID = getPublicIdFromUrl(user.coverImage);
+        // console.log(imageID);
+        const response = await Cloudinary.uploader.destroy(
+          imageID,
+          (error, result) => {
+            if (error) {
+              console.error("Error deleting image:", error);
+            } else {
+              console.log("Image deleted successfully:", result);
+            }
+          }
+        );
+      }
+      //uploading new image
+      // console.log(coverImage);
+      const fileUri = getDataUri(coverImage);
+      const cloudResponse = await Cloudinary.uploader.upload(fileUri, {
+        folder: "Instagram Clone",
+      });
+      user.coverImage = cloudResponse.secure_url;
     }
     console.log("profile update")
 

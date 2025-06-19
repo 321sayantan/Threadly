@@ -2,13 +2,24 @@ import React, { useRef, useState } from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '../ui/button';
-import { Camera, Link, MapPin } from 'lucide-react';
+import { Camera, Link, Loader2, MapPin } from 'lucide-react';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { editUser } from '@/http/api';
 import useUserStore from '@/lib/store';
 import { toast } from 'sonner';
+
+const readFileAsDataURL = (file) => {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      resolve(reader.result);
+    };
+
+    reader.readAsDataURL(file);
+  });
+};
 
 const EditProfileModal = ({ isOpen, onClose, profileData }) => {
 
@@ -17,6 +28,9 @@ const EditProfileModal = ({ isOpen, onClose, profileData }) => {
   const coverRef = useRef(null);
   const [profileImage, setProfileImage] = useState(null);
   const [coverImage, setCoverImage] = useState(null);
+  const [profileURL, setProfileURL] = useState(null);
+  const [coverURL, setcoverURL] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     username: profileData?.username || "",
@@ -53,9 +67,22 @@ const EditProfileModal = ({ isOpen, onClose, profileData }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleCoverImage = async(e)=>{
+    const file = e.target.files[0];
+    setCoverImage(file);
+    const datauri = await readFileAsDataURL(file);
+    setcoverURL(datauri);
+  }
+  const handleProfilePicture = async(e)=>{
+    const file = e.target.files[0];
+    setProfileImage(file);
+    const datauri = await readFileAsDataURL(file);
+    setProfileURL(datauri);
+  }
 
   const handleSubmit = async(e) => {
     e.preventDefault();
+    setIsLoading(true)
     const updatedData = new FormData();
     Object.entries(formData).forEach(([name, value]) => {
       console.log(name, value);
@@ -74,6 +101,7 @@ const EditProfileModal = ({ isOpen, onClose, profileData }) => {
     }
 
     // console.log("Saving profile data:", formData);
+    setIsLoading(false)
     onClose();
   };
 
@@ -94,18 +122,21 @@ const EditProfileModal = ({ isOpen, onClose, profileData }) => {
                   <div className="relative w-full">
                     <div
                       className="h-36 border rounded-md relative overflow-hidden bg-cover"
-                      style={{ backgroundImage: `url(${profileData?.coverImage})` }}
+                      style={{
+                        backgroundImage: `url(${
+                          coverURL ? coverURL : profileData?.coverImage
+                        })`,
+                      }}
                     >
                       <input
                         ref={coverRef}
                         type="file"
                         className="hidden"
-                        onChange={(e) => {
-                          setCoverImage(e.target.files[0]);
-                        }}
+                        onChange={handleCoverImage}
                       />
                       <Button
                         size="icon"
+                        type="button"
                         variant="secondary"
                         className="absolute bottom-2 right-2 rounded-full"
                         onClick={() => {
@@ -121,7 +152,7 @@ const EditProfileModal = ({ isOpen, onClose, profileData }) => {
                   <div className="relative mt-[-20%]">
                     <Avatar className="w-24 h-24 border-2 border-white shadow-md">
                       <AvatarImage
-                        src={profileData.profilePicture}
+                        src={profileURL ? profileURL : profileData.profilePicture}
                         className="object-cover"
                       />
                       <AvatarFallback>JD</AvatarFallback>
@@ -130,12 +161,11 @@ const EditProfileModal = ({ isOpen, onClose, profileData }) => {
                       ref={profileRef}
                       type="file"
                       className="hidden"
-                      onChange={(e) => {
-                        setProfileImage(e.target.files[0]);
-                      }}
+                      onChange={handleProfilePicture}
                     />
                     <Button
                       size="icon"
+                      type="button"
                       variant="secondary"
                       className="absolute bottom-0 right-0 rounded-full w-8 h-8"
                       onClick={() => {
@@ -148,7 +178,7 @@ const EditProfileModal = ({ isOpen, onClose, profileData }) => {
                   </div>
                 </div>
 
-                <div className="grid gap-4 overflow-auto max-h-80">
+                <div className="grid gap-4 overflow-auto max-h-80 pr-3">
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="name" className="text-right">
                       Name
@@ -267,7 +297,16 @@ const EditProfileModal = ({ isOpen, onClose, profileData }) => {
                 >
                   Cancel
                 </Button>
-                <Button type="submit">Save changes</Button>
+                <Button type="submit">
+                  {!isLoading ? (
+                    "Save changes"
+                  ) : (
+                    <>
+                      <Loader2 className="animate-spin" />
+                      <span>Updating...</span>
+                    </>
+                  )}
+                </Button>
               </DialogFooter>
             </form>
           </div>
