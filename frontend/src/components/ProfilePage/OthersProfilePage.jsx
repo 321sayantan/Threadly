@@ -40,14 +40,13 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Separator } from "@radix-ui/react-dropdown-menu";
-import OthersProfilePage from "./othersProfilePage";
 
-const Profile = ({User}) => {
+const OthersProfilePage = ({ User }) => {
   // const { user, setUser, userPosts } = useUserStore();
   // const [User, setUser] = useState({});
   // const { id: userId } = useParams();
 
-  console.log(111, User)
+  console.log(111, User);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const [isProfileModalOpen, setProfileModal] = useState(false);
@@ -161,13 +160,13 @@ const Profile = ({User}) => {
                     </div>
                   </div>
                   {/* <div className="text-center">
-                      <div className="text-xl font-bold text-gray-900 dark:text-white">
-                        89
-                      </div>
-                      <div className="text-sm text-gray-500 dark:text-white">
-                        Connections
-                      </div>
-                    </div> */}
+                        <div className="text-xl font-bold text-gray-900 dark:text-white">
+                          89
+                        </div>
+                        <div className="text-sm text-gray-500 dark:text-white">
+                          Connections
+                        </div>
+                      </div> */}
                 </div>
               </div>
 
@@ -196,15 +195,7 @@ const Profile = ({User}) => {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-48">
-                    <DropdownMenuItem
-                      onClick={() => {
-                        setDropdownOpen(false);
-                        handelOptions("edit");
-                      }}
-                    >
-                      <Pencil className="mr-2 h-4 w-4" />
-                      <span>Edit</span>
-                    </DropdownMenuItem>
+                    <DropdownMenuItem>Follow</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
@@ -270,15 +261,6 @@ const Profile = ({User}) => {
                   <div>
                     <div className="flex justify-between">
                       <h3 className="font-semibold mb-2">Skills</h3>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8"
-                        onClick={() => setSkillModal(true)}
-                      >
-                        <Pencil className="h-3 w-3 mr-1" />
-                        Edit
-                      </Button>
                     </div>
 
                     <div className="flex flex-wrap gap-2">
@@ -311,14 +293,6 @@ const Profile = ({User}) => {
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                 Experience
               </h2>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handelExperienceModal}
-              >
-                <Plus className="h-4 w-4 mr-1" />
-                Add
-              </Button>
             </div>
 
             <Card>
@@ -334,14 +308,6 @@ const Profile = ({User}) => {
                 ) : (
                   experiences.map((experience, index) => (
                     <div key={experience?._id} className="relative">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="absolute top-0 right-0 h-8 w-8"
-                        onClick={() => handelExperienceModal(experience)}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
 
                       <div className="flex gap-4">
                         <Avatar className="w-12 h-12">
@@ -403,14 +369,6 @@ const Profile = ({User}) => {
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                 Education
               </h2>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handelEducationModal()}
-              >
-                <Plus className="h-4 w-4 mr-1" />
-                Add
-              </Button>
             </div>
             <Card>
               <CardHeader>
@@ -425,15 +383,6 @@ const Profile = ({User}) => {
                 ) : (
                   education.map((edu) => (
                     <div key={edu._id} className="relative">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="absolute top-0 right-0 h-8 w-8"
-                        onClick={() => handelEducationModal(edu)}
-                      >
-                        <Pencil className="h-4 w-4" />
-                        <span className="sr-only">Edit education</span>
-                      </Button>
 
                       <div className="flex gap-4">
                         <Avatar className="w-12 h-12">
@@ -492,14 +441,6 @@ const Profile = ({User}) => {
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                 Certificates
               </h2>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleCertificateModal()}
-              >
-                <Plus className="h-4 w-4 mr-1" />
-                Add
-              </Button>
             </div>
 
             <Card>
@@ -515,15 +456,6 @@ const Profile = ({User}) => {
                 ) : (
                   certifications.map((cert) => (
                     <div key={cert._id} className="relative">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="absolute top-0 right-0 h-8 w-8"
-                        onClick={() => handleCertificateModal(cert)}
-                      >
-                        <Pencil className="h-4 w-4" />
-                        <span className="sr-only">Edit certification</span>
-                      </Button>
 
                       <div className="flex items-start justify-between pr-10">
                         <div className="flex-1">
@@ -679,50 +611,4 @@ const Profile = ({User}) => {
   );
 };
 
-const ProfilePage = () => {
-  const {user} = useUserStore()
-  const [User, setUser] = useState({});
-  const [loading, setLoading] = useState();
-  const { id: userId } = useParams();
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      setLoading(true);
-      try {
-        const res = await getUser(userId);
-        setUser(res.user); // or setUser(res) if your API returns raw user
-      } catch (error) {
-        console.error("Fetch error:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (userId) fetchUser();
-  }, [userId]);
-
-  useEffect(() => {
-    console.log("✅ User updated:", User);
-  }, [User]);
-  
-
-  return (
-    <div className="flex flex-grow gap-6 p-5">
-      {loading ? (
-        <div>Loading....</div>
-      ) : (
-        <>
-          {User && User._id && (
-            User._id === user._id ?
-            (<Profile User={User}/>)
-            :
-            (<OthersProfilePage User={User} />)
-          )}
-          <SuggestedUser />
-        </>
-      )}
-    </div>
-  );
-};
-
-export default ProfilePage;
+export default OthersProfilePage;

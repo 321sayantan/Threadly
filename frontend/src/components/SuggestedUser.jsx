@@ -6,6 +6,7 @@ import { Button } from './ui/button';
 import useUserStore from '@/lib/store';
 import { followOrUnfollow, suggestedUser } from '@/http/api';
 import { toast } from 'sonner';
+import { NavLink } from 'react-router';
 
 export const SuggestedUser = () => {
     const { user, setUser } = useUserStore();
@@ -72,10 +73,10 @@ export const SuggestedUser = () => {
 
                     <div className="flex-1 min-w-0">
                       <h4 className="font-medium text-sm text-social-gray-dark truncate">
-                        {users.username}
+                        <NavLink to={`/profile/${users._id}`}>{users.username}</NavLink>
                       </h4>
                       <p className="text-xs text-social-gray truncate">
-                        {users?.title}
+                        {users?.title.slice(0,20)}
                       </p>
                       <p className="text-xs text-social-gray mt-1">
                         {users?.mutualConnections} mutual connections
