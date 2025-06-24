@@ -149,6 +149,76 @@ export const editUser = async(data) => {
     }
 }
 
+export const editSkillsInterest = async(data) => {
+    try {
+        const res = await api.post("/user/editSkillsInterest", data);
+        console.log(res)
+        return res.data;
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export const editExperience = async(data) => {
+    try {
+        const res = await api.post("/user/editExperience", {experience: data});
+        console.log(res)
+        return res.data;
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export const deleteExperience = async(expID) => {
+    try {
+        const res = await api.get(`/user/deleteExperience/${expID}`);
+        console.log(res)
+        return res.data;
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export const editEducation = async (data) => {
+  try {
+    const res = await api.post("/user/editEducation", { education: data });
+    console.log(res);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const deleteEducation = async (eduID) => {
+  try {
+    const res = await api.get(`/user/deleteEducation/${eduID}`);
+    console.log(res);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const editCertificates = async (data) => {
+  try {
+    const res = await api.post("/user/editCertificates", { certificate: data });
+    console.log(res);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const deleteCertificate = async (certID) => {
+  try {
+    const res = await api.get(`/user/deleteCertificate/${certID}`);
+    console.log(res);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const getUser = async(id) => {
     try {
         const res = await api.get(`/user/getUser/${id}`);

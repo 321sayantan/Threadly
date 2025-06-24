@@ -40,7 +40,7 @@ const experienceSchema = new mongoose.Schema({
   description: {
     type: String,
     trim: true,
-    maxlength: 2000
+    // maxlength: 2000
   },
   // skills: [String], // Skills used in this role
   // achievements: [String], // Key achievements
@@ -160,9 +160,9 @@ const userSchema = new mongoose.Schema(
     skills: {type: [String], default: []},
     interests: {type: [String], default: []},
     links: socialLinksSchema,
-    experience: experienceSchema,
-    education: educationSchema,
-    certificate: certificationSchema,
+    experience: [experienceSchema],
+    education: [educationSchema],
+    certificate: [certificationSchema],
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     posts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],

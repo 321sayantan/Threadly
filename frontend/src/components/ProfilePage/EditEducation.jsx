@@ -1,40 +1,83 @@
-import React, { useState } from 'react'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../ui/dialog';
-import { Label } from '../ui/label';
-import { Input } from '../ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { Textarea } from '../ui/textarea';
-import { Button } from '../ui/button';
+import React, { useEffect, useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../ui/dialog";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { Textarea } from "../ui/textarea";
+import { Button } from "../ui/button";
+import { deleteEducation, editEducation } from "@/http/api";
+import { toast } from "sonner";
+import { Trash2 } from "lucide-react";
+import useUserStore from "@/lib/store";
 
 const EditEducation = ({ isOpen, onClose, education = {} }) => {
-    const [formData, setFormData] = useState({
-      degree: education?.degree || "",
-      fieldOfStudy: education?.fieldOfStudy || "",
-      school: education?.school || "",
-      startDate: education?.startDate || "",
-      endDate: education?.endDate || "",
-      current: education?.current || false,
-      grade: education?.grade || "",
-      description: education?.description || "",
-    });
+  const {user, setUser} = useUserStore();
+  const [formData, setFormData] = useState({});
 
-    const handleChange = (e) => {
-      const { name, value, type, checked } = e.target;
-      setFormData((prev) => ({
-        ...prev,
-        [name]: type === "checkbox" ? checked : value,
-      }));
-    };
+  useEffect(() => {
+    if (isOpen && education) {
+      setFormData({
+        _id: education?._id || "",
+        degree: education?.degree || "",
+        fieldOfStudy: education?.fieldOfStudy || "",
+        school: education?.school || "",
+        startDate: education?.startDate || "",
+        endDate: education?.endDate || "",
+        current: education?.current || false,
+        grade: education?.grade || "",
+        description: education?.description || "",
+      });
+    }
+    console.log(education);
+  }, [isOpen, education]);
 
-    const handleSelectChange = (name, value) => {
-      setFormData((prev) => ({ ...prev, [name]: value }));
-    };
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
 
-    const handleSubmit = (e) => {
-      e.preventDefault();
-      console.log("Saving education:", formData);
-      onClose(formData);
-    };
+  const handleSelectChange = (name, value) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // console.log("Saving education:", formData);
+    const res = await editEducation(formData);
+    console.log(res);
+    if (res.success) {
+      toast.success(res.message);
+    }
+    setUser({...user, education: res.education});
+    onClose(false);
+  };
+
+  const handleDelete = async ()=>{
+    const updatedEdu = user.education.filter((edu)=> edu._id !== education._id)
+    setUser({...user, education: updatedEdu});
+    const res = await deleteEducation(education._id);
+    console.log(res);
+    if(res.success)
+      toast.success(res.message);
+
+    onClose(false);
+  }
 
   return (
     <div>
@@ -42,10 +85,10 @@ const EditEducation = ({ isOpen, onClose, education = {} }) => {
         <DialogContent className="sm:max-w-[525px]">
           <DialogHeader>
             <DialogTitle>
-              {education?.id ? "Edit" : "Add"} Education
+              {education?._id ? "Edit" : "Add"} Education
             </DialogTitle>
             <DialogDescription>
-              {education?.id
+              {education?._id
                 ? "Update your education details."
                 : "Add a new education to your profile."}
             </DialogDescription>
@@ -167,12 +210,39 @@ const EditEducation = ({ isOpen, onClose, education = {} }) => {
                 />
               </div>
             </div>
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => onClose()}>
-                Cancel
-              </Button>
-              <Button type="submit">{education?.id ? "Update" : "Add"}</Button>
-            </DialogFooter>
+            {education?._id ? (
+              <DialogFooter className="flex !justify-between">
+                <Button variant="destructive" onClick={handleDelete}>
+                  <Trash2 />
+                </Button>
+                <div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => onClose()}
+                    className="mr-3"
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit">
+                    {education?._id ? "Update" : "Add"}
+                  </Button>
+                </div>
+              </DialogFooter>
+            ) : (
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => onClose()}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit">
+                  {education?._id ? "Update" : "Add"}
+                </Button>
+              </DialogFooter>
+            )}
           </form>
         </DialogContent>
       </Dialog>
@@ -180,4 +250,4 @@ const EditEducation = ({ isOpen, onClose, education = {} }) => {
   );
 };
 
-export default EditEducation
+export default EditEducation;

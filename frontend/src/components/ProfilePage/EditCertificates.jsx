@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -11,18 +11,29 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
+import { deleteCertificate, editCertificates } from "@/http/api";
+import { toast } from "sonner";
+import useUserStore from "@/lib/store";
+import { Trash2 } from "lucide-react";
 
 const EditCertificates = ({ isOpen, onClose, certification = {} }) => {
-  const [formData, setFormData] = useState({
-    name: certification?.name || "",
-    organization: certification?.organization || "",
-    issueDate: certification?.issueDate || "",
-    expirationDate: certification?.expirationDate || "",
-    // noExpiration: certification?.noExpiration || false,
-    credentialId: certification?.credentialId || "",
-    credentialUrl: certification?.credentialUrl || "",
-    description: certification?.description || "",
-  });
+  const { user, setUser } = useUserStore();
+  const [formData, setFormData] = useState({});
+
+  useEffect(() => {
+    if (isOpen && certification) {
+      setFormData({
+        _id: certification?._id || "",
+        name: certification?.name || "",
+        organization: certification?.organization || "",
+        issueDate: certification?.issueDate || "",
+        expirationDate: certification?.expirationDate || "",
+        credentialId: certification?.credentialId || "",
+        credentialUrl: certification?.credentialUrl || "",
+        description: certification?.description || "",
+      });
+    }
+  }, [isOpen, certification]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -32,11 +43,28 @@ const EditCertificates = ({ isOpen, onClose, certification = {} }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Saving certification:", formData);
-    onClose(formData);
+    // console.log("Saving certification:", formData);
+    const res = await editCertificates(formData);
+    console.log(res);
+    if (res.success) {
+      toast.success(res.message);
+    }
+    setUser({ ...user, certificate: res.certificate });
+    onClose(false);
   };
+
+  const handleDelete = async ()=>{
+    const updatedCertification = user.certificate.filter((cert)=> cert._id !== certification._id);
+    setUser({...user, certificate: updatedCertification});
+    const res = await deleteCertificate(certification._id);
+    console.log(res);
+    if(res.success)
+      toast.success(res.message);
+
+    onClose(false);
+  }
 
   return (
     <div>
@@ -44,10 +72,10 @@ const EditCertificates = ({ isOpen, onClose, certification = {} }) => {
         <DialogContent className="sm:max-w-[525px]">
           <DialogHeader>
             <DialogTitle>
-              {certification?.id ? "Edit" : "Add"} Certification
+              {certification?._id ? "Edit" : "Add"} Certification
             </DialogTitle>
             <DialogDescription>
-              {certification?.id
+              {certification?._id
                 ? "Update your certification details."
                 : "Add a new certification to your profile."}
             </DialogDescription>
@@ -61,7 +89,7 @@ const EditCertificates = ({ isOpen, onClose, certification = {} }) => {
                 <Input
                   id="name"
                   name="name"
-                  value={formData.name}
+                  value={formData?.name}
                   onChange={handleChange}
                   className="col-span-3"
                   placeholder="AWS Certified Solutions Architect"
@@ -75,7 +103,7 @@ const EditCertificates = ({ isOpen, onClose, certification = {} }) => {
                 <Input
                   id="organization"
                   name="organization"
-                  value={formData.organization}
+                  value={formData?.organization}
                   onChange={handleChange}
                   className="col-span-3"
                   placeholder="Amazon Web Services"
@@ -90,7 +118,7 @@ const EditCertificates = ({ isOpen, onClose, certification = {} }) => {
                   id="issueDate"
                   name="issueDate"
                   type="month"
-                  value={formData.issueDate}
+                  value={formData?.issueDate}
                   onChange={handleChange}
                   className="col-span-3"
                 />
@@ -130,7 +158,7 @@ const EditCertificates = ({ isOpen, onClose, certification = {} }) => {
                 <Input
                   id="credentialId"
                   name="credentialId"
-                  value={formData.credentialId}
+                  value={formData?.credentialId}
                   onChange={handleChange}
                   className="col-span-3"
                   placeholder="ABC123456789"
@@ -144,7 +172,7 @@ const EditCertificates = ({ isOpen, onClose, certification = {} }) => {
                   id="credentialUrl"
                   name="credentialUrl"
                   type="url"
-                  value={formData.credentialUrl}
+                  value={formData?.credentialUrl}
                   onChange={handleChange}
                   className="col-span-3"
                   placeholder="https://www.credly.com/badges/..."
@@ -157,7 +185,7 @@ const EditCertificates = ({ isOpen, onClose, certification = {} }) => {
                 <Textarea
                   id="description"
                   name="description"
-                  value={formData.description}
+                  value={formData?.description}
                   onChange={handleChange}
                   className="col-span-3"
                   rows={3}
@@ -165,14 +193,33 @@ const EditCertificates = ({ isOpen, onClose, certification = {} }) => {
                 />
               </div>
             </div>
+            {certification._id ? (
+              <DialogFooter className="flex !justify-between">
+                <Button type="button" variant="destructive"
+                 onClick={handleDelete}
+                 >
+                  <Trash2/>
+                </Button>
+              <div>
+              <Button type="button" variant="outline" className="mr-3" onClick={() => onClose()}>
+                Cancel
+              </Button>
+              <Button type="submit">
+                {certification?._id ? "Update" : "Add"}
+              </Button>
+                </div>
+            </DialogFooter>
+            ):
+            (
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => onClose()}>
                 Cancel
               </Button>
               <Button type="submit">
-                {certification?.id ? "Update" : "Add"}
+                {certification?._id ? "Update" : "Add"}
               </Button>
             </DialogFooter>
+            )}
           </form>
         </DialogContent>
       </Dialog>

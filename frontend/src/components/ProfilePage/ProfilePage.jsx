@@ -17,12 +17,13 @@ import {
   Users,
   Pencil,
   Plus,
+  ExternalLink,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Badge } from "../ui/badge";
-import { Link } from "react-router";
+import { Link, useParams } from "react-router";
 import useUserStore from "@/lib/store";
 import { SuggestedUser } from "../SuggestedUser";
 import { format } from "date-fns";
@@ -38,21 +39,32 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { Separator } from "@radix-ui/react-dropdown-menu";
 
 const Profile = () => {
-  const { user, setUser } = useUserStore();
+  const { user, setUser, userPosts } = useUserStore();
+  const { id: userId } = useParams();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
   const [isProfileModalOpen, setProfileModal] = useState(false);
   const [isSkillsModalOpen, setSkillModal] = useState(false);
   const [isEditExpModalOpen, setEditExpModal] = useState(false);
   const [isEditEduModalOpen, setEditEduModal] = useState(false);
   const [isEditCertificateModalOpen, setEditCertificateModal] = useState(false);
-  const experience = {};
+
+  const [selectedExperience, setSelectedExperience] = useState({});
+  const [selectedEducation, setSelectedEducation] = useState({});
+  const [selectedCertificate, setSelectedCertificate] = useState({});
+
+  const experiences = user.experience;
+  const education = user.education;
+  const certifications = user.certificate;
+  const posts = userPosts;
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await getUser(user._id); // Assuming user is defined here
+        const res = await getUser(userId); // Assuming user is defined here
         console.log("Fetched user:", res.user);
         setUser(res.user);
       } catch (error) {
@@ -61,12 +73,55 @@ const Profile = () => {
     };
 
     fetchUser();
-  }, []);
+  }, [userId]);
 
   const handelOptions = (action)=>{
     if(action == "edit")
       setProfileModal(true)
   }
+
+  const handelExperienceModal = (experience)=>{
+    if(experience){
+      setSelectedExperience(experience);
+      console.log("experience send")
+    }
+    else
+      setSelectedExperience({});      
+
+    setEditExpModal(true);
+  }
+
+  const handelEducationModal = (education)=>{
+    if (education) {
+      setSelectedEducation(education);
+      console.log("education send");
+    } else setSelectedEducation({});      
+
+    setEditEduModal(true);
+  }
+
+  const handleCertificateModal = (certificate) => {
+    if (certificate) {
+      setSelectedCertificate(certificate);
+    }
+    else{
+      setSelectedCertificate({});
+    }
+    setEditCertificateModal(true);
+  };
+
+  const formatDegree = (degree) => {
+    const degreeMap = {
+      bachelor: "Bachelor's Degree",
+      master: "Master's Degree",
+      phd: "PhD",
+      associate: "Associate Degree",
+      diploma: "Diploma",
+      certificate: "Certificate",
+      other: "Other",
+    };
+    return degreeMap[degree] || degree;
+  };
 
   return (
     <div className="min-h-screen ">
@@ -75,7 +130,6 @@ const Profile = () => {
         <div className="relative ">
           <div className="h-48 md:h-64 bg-gray-500 relative overflow-hidden rounded-t-4xl">
             <img
-              // src="https://img.lovepik.com/background/20211021/large/lovepik-blue-technology-banner-background-image_500362377.jpg"
               src={user.coverImage}
               alt="Cover photo"
               className="object-cover"
@@ -98,7 +152,7 @@ const Profile = () => {
                 <div className="flex gap-6 mt-6 ml-6 pt-4 border-t">
                   <div className="text-center ">
                     <div className="text-xl font-bold text-gray-900 dark:text-white">
-                      {user.posts.length}
+                      {posts.length}
                     </div>
                     <div className="text-sm text-gray-500 dark:text-white">
                       Posts
@@ -156,7 +210,12 @@ const Profile = () => {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-48">
-                    <DropdownMenuItem onClick={() => {setDropdownOpen(false); handelOptions("edit")}}>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setDropdownOpen(false);
+                        handelOptions("edit");
+                      }}
+                    >
                       <Pencil className="mr-2 h-4 w-4" />
                       <span>Edit</span>
                     </DropdownMenuItem>
@@ -237,16 +296,7 @@ const Profile = () => {
                     </div>
 
                     <div className="flex flex-wrap gap-2">
-                      {[
-                        "JavaScript",
-                        "TypeScript",
-                        "React",
-                        "Node.js",
-                        "Python",
-                        "AWS",
-                        "Docker",
-                        "GraphQL",
-                      ].map((skill) => (
+                      {user.skills?.map((skill) => (
                         <Badge key={skill} variant="secondary">
                           {skill}
                         </Badge>
@@ -257,13 +307,7 @@ const Profile = () => {
                   <div>
                     <h3 className="font-semibold mb-2">Interests</h3>
                     <div className="flex flex-wrap gap-2">
-                      {[
-                        "Photography",
-                        "Travel",
-                        "Open Source",
-                        "Machine Learning",
-                        "Hiking",
-                      ].map((interest) => (
+                      {user.interests?.map((interest) => (
                         <Badge key={interest} variant="outline">
                           {interest}
                         </Badge>
@@ -284,7 +328,7 @@ const Profile = () => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setEditExpModal(true)}
+                onClick={handelExperienceModal}
               >
                 <Plus className="h-4 w-4 mr-1" />
                 Add
@@ -293,81 +337,79 @@ const Profile = () => {
 
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 mb-4 text-xl">
                   <Briefcase className="w-5 h-5" />
                   Work Experience
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                {/* {experiences.map((experience) => ( */}
-                <div key={experience?.id} className="relative">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute top-0 right-0 h-8 w-8"
-                    onClick={() => setEditExpModal(true)}
-                  >
-                    <Pencil className="h-4 w-4" />
-                    {/* <span className="sr-only">Edit experience</span> */}
-                  </Button>
+                {experiences.length === 0 ? (
+                  <div className="text-center">No Work Experience</div>
+                ) : (
+                  experiences.map((experience, index) => (
+                    <div key={experience?._id} className="relative">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute top-0 right-0 h-8 w-8"
+                        onClick={() => handelExperienceModal(experience)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
 
-                  <div className="flex gap-4">
-                    <Avatar className="w-12 h-12">
-                      <AvatarImage
-                        src="/placeholder.svg?height=48&width=48"
-                        // alt={kl}
-                      />
-                      <AvatarFallback>
-                        {/* {experience?.company.substring(0, 2).toUpperCase()} */}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <h3 className="font-semibold">
-                        {/* {experience?.title} */}
-                        gjghghjgjgj
-                      </h3>
-                      <p className="text-gray-600">
-                        {/* {experience?.company} • {experience?.employmentType} */}
-                        xxxxxxx • YYYYYYYY
-                      </p>
-                      {/* <p className="text-sm text-gray-500">
-                          {new Date(experience?.startDate).toLocaleDateString(
-                            "en-US",
-                            {
-                              year: "numeric",
-                              month: "short",
-                            }
-                          )}{" "}
-                          -
-                          {experience.current
-                            ? " Present"
-                            : ` ${new Date(
-                                experience.endDate
-                              ).toLocaleDateString("en-US", {
+                      <div className="flex gap-4">
+                        <Avatar className="w-12 h-12">
+                          <AvatarImage src="/placeholder.svg?height=48&width=48" />
+                          <AvatarFallback>
+                            {experience?.company
+                              ?.substring(0, 2)
+                              ?.toUpperCase() || "NA"}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <h3 className="font-semibold">{experience?.title}</h3>
+                          <p className="text-gray-600">
+                            {experience?.company} • {experience?.employmentType}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            {new Date(experience?.startDate).toLocaleDateString(
+                              "en-US",
+                              {
                                 year: "numeric",
                                 month: "short",
-                              })}`}
-                          {!experience?.current &&
-                            experience?.startDate &&
-                            experience?.endDate &&
-                            ` • ${Math.floor(
-                              (new Date(experience?.endDate) -
-                                new Date(experience?.startDate)) /
-                                (1000 * 60 * 60 * 24 * 30)
-                            )} mos`}
-                        </p>
-                        <p className="text-sm text-gray-700 mt-2">
-                          {experience?.description}
-                        </p> */}
-                    </div>
-                  </div>
+                              }
+                            )}{" "}
+                            -{" "}
+                            {experience.current
+                              ? "Present"
+                              : new Date(experience.endDate).toLocaleDateString(
+                                  "en-US",
+                                  {
+                                    year: "numeric",
+                                    month: "short",
+                                  }
+                                )}
+                            {!experience?.current &&
+                              experience?.startDate &&
+                              experience?.endDate &&
+                              ` • ${Math.floor(
+                                (new Date(experience?.endDate) -
+                                  new Date(experience?.startDate)) /
+                                  (1000 * 60 * 60 * 24 * 30)
+                              )} mos`}
+                          </p>
+                          <p className="text-sm text-gray-700 mt-2">
+                            {experience?.description}
+                          </p>
+                        </div>
+                      </div>
 
-                  {/* {experience?.id !==
-                      experiences[experiences.length - 1].id && (
-                      <Separator className="my-4" />
-                    )} */}
-                </div>
-                {/* ))} */}
+                      {index !== experiences.length - 1 && (
+                        <hr className="my-4" />
+                      )}
+                    </div>
+                  ))
+                )}
               </CardContent>
             </Card>
 
@@ -378,7 +420,7 @@ const Profile = () => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setEditEduModal(true)}
+                onClick={() => handelEducationModal()}
               >
                 <Plus className="h-4 w-4 mr-1" />
                 Add
@@ -386,40 +428,77 @@ const Profile = () => {
             </div>
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center mb-4 gap-2 text-xl">
                   <GraduationCap className="w-5 h-5" />
                   Education
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="relative">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute top-0 right-0 h-8 w-8"
-                    onClick={() => setEditEduModal(true)}
-                  >
-                    <Pencil className="h-4 w-4" />
-                    {/* <span className="sr-only">Edit experience</span> */}
-                  </Button>
+                {education.length === 0 ? (
+                  <div className="text-center">No Education</div>
+                ) : (
+                  education.map((edu) => (
+                    <div key={edu._id} className="relative">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute top-0 right-0 h-8 w-8"
+                        onClick={() => handelEducationModal(edu)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                        <span className="sr-only">Edit education</span>
+                      </Button>
 
-                  <div className="flex gap-4">
-                    <Avatar className="w-12 h-12">
-                      <AvatarImage
-                        src="/placeholder.svg?height=48&width=48"
-                        alt="University"
-                      />
-                      <AvatarFallback>UC</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <h3 className="font-semibold">
-                        Bachelor of Science in Computer Science
-                      </h3>
-                      <p className="text-gray-600">University of California</p>
-                      <p className="text-sm text-gray-500">2015 - 2019</p>
+                      <div className="flex gap-4">
+                        <Avatar className="w-12 h-12">
+                          <AvatarImage
+                            src="/placeholder.svg?height=48&width=48"
+                            alt={edu?.school}
+                          />
+                          <AvatarFallback>
+                            {edu?.school.substring(0, 2).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <h3 className="font-semibold">
+                            {formatDegree(edu?.degree)} in {edu?.fieldOfStudy}
+                          </h3>
+                          <p className="text-gray-600">{edu?.school}</p>
+                          <p className="text-sm text-gray-500">
+                            {new Date(edu?.startDate).toLocaleDateString(
+                              "en-US",
+                              {
+                                year: "numeric",
+                                month: "short",
+                              }
+                            )}{" "}
+                            -
+                            {edu.current
+                              ? " Present"
+                              : ` ${new Date(edu?.endDate).toLocaleDateString(
+                                  "en-US",
+                                  { year: "numeric", month: "short" }
+                                )}`}
+                          </p>
+                          {edu?.grade && (
+                            <p className="text-sm text-gray-500">
+                              Grade: {edu.grade}
+                            </p>
+                          )}
+                          {edu?.description && (
+                            <p className="text-sm text-gray-700 mt-2">
+                              {edu.description}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      {edu?._id !== education[education.length - 1]?._id && (
+                        <hr className="my-4" />
+                      )}
                     </div>
-                  </div>
-                </div>
+                  ))
+                )}
               </CardContent>
             </Card>
 
@@ -430,7 +509,7 @@ const Profile = () => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setEditCertificateModal(true)}
+                onClick={() => handleCertificateModal()}
               >
                 <Plus className="h-4 w-4 mr-1" />
                 Add
@@ -445,33 +524,74 @@ const Profile = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="relative">
-                  <div>
-                    <h3 className="font-semibold">
-                      AWS Certified Solutions Architect
-                    </h3>
-                    <p className="text-sm text-gray-500">
-                      Amazon Web Services • Issued Mar 2023
-                    </p>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute top-0 right-0 h-8 w-8"
-                    onClick={() => setEditCertificateModal(true)}
-                  >
-                    <Pencil className="h-4 w-4" />
-                    {/* <span className="sr-only">Edit experience</span> */}
-                  </Button>
-                </div>
-                <div>
-                  <h3 className="font-semibold">
-                    Google Cloud Professional Developer
-                  </h3>
-                  <p className="text-sm text-gray-500">
-                    Google Cloud • Issued Jan 2022
-                  </p>
-                </div>
+                {certifications.length === 0 ? (
+                  <div className="text-center">No Certificate</div>
+                ) : (
+                  certifications.map((cert) => (
+                    <div key={cert._id} className="relative">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute top-0 right-0 h-8 w-8"
+                        onClick={() => handleCertificateModal(cert)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                        <span className="sr-only">Edit certification</span>
+                      </Button>
+
+                      <div className="flex items-start justify-between pr-10">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-semibold">{cert.name}</h3>
+                            {cert.credentialUrl && (
+                              <Link
+                                href={cert.credentialUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                <ExternalLink className="h-4 w-4 text-blue-600" />
+                                <span className="sr-only">View credential</span>
+                              </Link>
+                            )}
+                          </div>
+                          <p className="text-sm text-gray-500">
+                            {cert.organization} • Issued{" "}
+                            {new Date(cert.issueDate).toLocaleDateString(
+                              "en-US",
+                              {
+                                year: "numeric",
+                                month: "short",
+                              }
+                            )}
+                            {!cert.noExpiration &&
+                              cert.expirationDate &&
+                              ` • Expires ${new Date(
+                                cert.expirationDate
+                              ).toLocaleDateString("en-US", {
+                                year: "numeric",
+                                month: "short",
+                              })}`}
+                          </p>
+                          {cert.credentialId && (
+                            <p className="text-sm text-gray-500">
+                              Credential ID: {cert.credentialId}
+                            </p>
+                          )}
+                          {cert.description && (
+                            <p className="text-sm text-gray-700 mt-2">
+                              {cert.description}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      {cert.id !==
+                        certifications[certifications.length - 1].id && (
+                        <Separator className="my-4" />
+                      )}
+                    </div>
+                  ))
+                )}
               </CardContent>
             </Card>
           </div>
@@ -481,32 +601,31 @@ const Profile = () => {
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
               Posts
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-1">
-              {/* {Array.from({ length: 9 }).map((_, i) => ( */}
-              <div
-                // key={i}
-                className="aspect-square relative group cursor-pointer"
-              >
-                <img
-                  src={`/placeholder.svg?height=300&width=300`}
-                  //   alt={`Post ${i + 1}`}
-                  //   fill
-                  className="object-cover"
-                />
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-200 flex items-center justify-center">
-                  <div className="opacity-0 group-hover:opacity-100 flex gap-4 text-white">
-                    <div className="flex items-center gap-1">
-                      <Heart className="w-5 h-5" />
-                      <span>124</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <MessageSquare className="w-5 h-5" />
-                      <span>23</span>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-2">
+              {posts.map((post) => (
+                <div
+                  key={post._id}
+                  className="relative h-[300px] w-[300px] cursor-pointer group p-3"
+                >
+                  <img
+                    src={post?.images[0]}
+                    alt={`Post`}
+                    className="object-cover h-full w-full"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/50 transition-all duration-200">
+                    <div className="flex gap-4 text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center gap-1">
+                        <Heart className="w-5 h-5" />
+                        <span>124</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <MessageSquare className="w-5 h-5" />
+                        <span>23</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              {/* ))} */}
+              ))}
             </div>
           </div>
 
@@ -551,14 +670,24 @@ const Profile = () => {
       <EditSkillsModal
         isOpen={isSkillsModalOpen}
         onClose={setSkillModal}
-        // skills={skills}
+        skills={user.skills}
+        interest={user.interests}
       />
 
-      <EditExperience isOpen={isEditExpModalOpen} onClose={setEditExpModal} />
-      <EditEducation isOpen={isEditEduModalOpen} onClose={setEditEduModal} />
+      <EditExperience
+        isOpen={isEditExpModalOpen}
+        onClose={setEditExpModal}
+        experience={selectedExperience}
+      />
+      <EditEducation
+        isOpen={isEditEduModalOpen}
+        onClose={setEditEduModal}
+        education={selectedEducation}
+      />
       <EditCertificates
         isOpen={isEditCertificateModalOpen}
         onClose={setEditCertificateModal}
+        certification={selectedCertificate}
       />
     </div>
   );

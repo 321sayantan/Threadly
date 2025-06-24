@@ -29,7 +29,7 @@ const CreatePost = () => {
   const [file, setFile] = useState();
   const [loading, setLoading] = useState();
   const navigate = useNavigate();
-  const {post, setPost} = useUserStore()
+  const {post, setPost, user, setUser, setUserPost} = useUserStore()
 
   const handelfileupload = async (e) => {
     console.log("inside file");
@@ -64,24 +64,16 @@ const CreatePost = () => {
     }
 
     try {
-      // const res = await axios.post(
-      //   "http://localhost:8000/api/v1/post/createPost",
-      //   formdata,
-      //   {
-      //     headers: {
-      //       "Content-Type": "multipart/form-data",
-      //     },
-      //     withCredentials: true,
-      //   }
-      // );
-
       const res = await createPost(formdata);
       console.log(res);
 
       if (res.success) {
         setOpen(true);
         // window.location.href = "/";
-        setPost([res.post, ...post])
+        setPost([res.post, ...post]);
+        // const updatedPost = [user.posts, res.post];
+        // setUser({...user, posts: updatedPost});
+        setUserPost([res.post, ...post]);
         navigate(-1);
         toast.success(res.message);
       }

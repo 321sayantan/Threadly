@@ -3,7 +3,7 @@ import useUserStore from "@/lib/store";
 import { useEffect } from "react";
 
 const useGetAllPost = ()=>{
-    const {post, setPost} = useUserStore();
+    const {user, setPost, setUserPost} = useUserStore();
     useEffect(()=>{
         const fetchPost = async () => {
             const res = await fetchAllPost();
@@ -11,6 +11,9 @@ const useGetAllPost = ()=>{
             if(res.success)
             {
                 setPost(res.allPost)
+                const userPost = res.allPost.filter((p) => p.author._id === user._id);
+                setUserPost(userPost);
+                // console.log(userPost)
             }
         }
         

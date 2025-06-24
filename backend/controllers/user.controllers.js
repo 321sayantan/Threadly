@@ -2,9 +2,10 @@ import User from "../Models/user.model.js";
 import jwt from "jsonwebtoken";
 import getDataUri from "../utils/datauri.js";
 import Cloudinary from "../utils/Cloudinary.js";
-import promise from 'promise';
+import promise from "promise";
 import bcrypt from "bcryptjs";
 import getPublicIdFromUrl from "../utils/extractImageID.js";
+import mongoose from "mongoose";
 
 export const register = async (req, res) => {
   try {
@@ -37,7 +38,7 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log(req.body)
+    console.log(req.body);
     if (!email || !password) {
       return res
         .status(401)
@@ -70,7 +71,6 @@ export const login = async (req, res) => {
         success: true,
         userdata,
       });
-
   } catch (error) {
     console.log(error);
   }
@@ -88,7 +88,7 @@ export const logout = async (req, res) => {
 
 export const getUser = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).select("-password");
+    const user = await User.findById(req.params.id).populate("posts").select("-password");
     if (!user) {
       return res.status(401).json({ success: false });
     }
@@ -120,11 +120,10 @@ export const editUser = async (req, res) => {
     if (links) user.links = parsedLinks;
     if (bio) user.bio = bio;
     if (gender) user.gender = gender;
-    
 
     if (profileImage) {
       //deleting previous image if any
-      if(user.profilePicture){
+      if (user.profilePicture) {
         const imageID = getPublicIdFromUrl(user.profilePicture);
         // console.log(imageID);
         const response = await Cloudinary.uploader.destroy(
@@ -170,7 +169,7 @@ export const editUser = async (req, res) => {
       });
       user.coverImage = cloudResponse.secure_url;
     }
-    console.log("profile update")
+    console.log("profile update");
 
     await user.save();
 
@@ -182,12 +181,242 @@ export const editUser = async (req, res) => {
   }
 };
 
+export const editSkillsAndInterest = async (req, res) => {
+  try {
+    const userID = req.id;
+    const { skills, interest } = req.body;
+    const user = await User.findById(userID).select("-password");
+    if (!user) {
+      res.status(404).json({ message: "User not found", success: false });
+    }
+
+    if (skills) {
+      user.skills = skills;
+    }
+
+    if (interest) {
+      user.interests = interest;
+    }
+
+    await user.save();
+
+    res
+      .status(200)
+      .json({ message: "Skills/Interest Updated Successfully", success: true });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const editExperience = async (req, res) => {
+  try {
+    const userID = req.id;
+    const { experience } = req.body;
+
+    const user = await User.findById(userID).select("-password");
+    if (!user) {
+      res.status(404).json({ message: "User Not Found", success: false });
+    }
+    // console.log(experience)
+    if (experience._id) {
+      // console.log("with ID");
+      const index = user.experience.findIndex(
+        (exp) => exp._id.toString() === experience._id
+      );
+
+      if (index !== -1) {
+        user.experience[index] = {
+          ...user.experience[index],
+          ...experience, // new updated fields
+        };
+      }
+
+      // user.experience.map((exp)=>{
+      //   console.log(exp._id.toString())
+      // })
+    } else {
+      // console.log("without ID");
+      user.experience = [
+        { ...experience, _id: new mongoose.Types.ObjectId().toString() },
+        ...user.experience,
+      ];
+    }
+
+    await user.save();
+
+    // console.log(10, user);
+
+    res
+      .status(200)
+      .json({
+        message: "Experience Updated!",
+        success: true,
+        experience: user.experience,
+      });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const deleteExperience = async (req, res) => {
+  try {
+    const userID = req.id;
+    const expID = req.params.id;
+
+    // console.log(expID)
+
+    const user = await User.findById(userID).select("-password");
+
+    if (!user) {
+      res.status(404).json({ message: "User Not Found", success: false });
+    }
+
+    user.experience = user.experience.filter(
+      (exp) => exp._id.toString() !== expID
+    );
+
+    await user.save();
+
+    res.status(200).json({ message: "Experience Deleted!", success: true });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const editEducation = async (req, res) => {
+  try {
+    const userID = req.id;
+    const { education } = req.body;
+
+    const user = await User.findById(userID).select("-password");
+    if (!user) {
+      res.status(404).json({ message: "User Not Found!", success: false });
+    }
+
+    if (education._id) {
+      const index = user.education.findIndex((exp)=> exp._id.toString() === education._id)
+      if(index !== -1)
+      {
+        user.education[index] = {
+          ...user.education[index],
+          ...education,
+        }
+      }
+      // console.log(user.education);
+    } else {
+      user.education = [
+        { ...education, _id: new mongoose.Types.ObjectId().toString() },
+        ...user.education,
+      ];
+    }
+
+    await user.save();
+    // console.log(user)
+
+    res.status(200).json({message: "Education Updated!", success: true, education: user.education});
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const deleteEducation = async (req, res) => {
+  try {
+    const userID = req.id;
+    const eduID = req.params.id;
+
+    // console.log(expID)
+
+    const user = await User.findById(userID).select("-password");
+
+    if (!user) {
+      res.status(404).json({ message: "User Not Found", success: false });
+    }
+
+    user.education = user.education.filter(
+      (edu) => edu._id.toString() !== eduID
+    );
+
+    await user.save();
+
+    res.status(200).json({ message: "Experience Deleted!", success: true });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const editCertifications = async (req, res) => {
+  try {
+    const userID = req.id;
+    const { certificate } = req.body;
+
+    const user = await User.findById(userID).select("-password");
+    if (!user) {
+      res.status(404).json({ message: "User Not Found!", success: false });
+    }
+
+    if (certificate._id) {
+      const index = user.certificate.findIndex(
+        (cert) => cert._id.toString() === certificate._id
+      );
+      if (index !== -1) {
+        user.certificate[index] = {
+          ...user.certificate[index],
+          ...certificate,
+        };
+      }
+      // console.log(user.education);
+    } else {
+      user.certificate = [
+        { ...certificate, _id: new mongoose.Types.ObjectId().toString() },
+        ...user.certificate,
+      ];
+    }
+
+    await user.save();
+    // console.log(user)
+
+    res.status(200).json({
+      message: "Certificates Updated!",
+      success: true,
+      certificate: user.certificate,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const deleteCertificate = async (req, res) => {
+  try {
+    const userID = req.id;
+    const certID = req.params.id;
+
+    // console.log(expID)
+
+    const user = await User.findById(userID).select("-password");
+
+    if (!user) {
+      res.status(404).json({ message: "User Not Found", success: false });
+    }
+
+    user.certificate = user.certificate.filter(
+      (cert) => cert._id.toString() !== certID
+    );
+
+    await user.save();
+    // console.log(user)
+
+    res.status(200).json({ message: "Certificate Deleted!", success: true });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const getSuggestedUsers = async (req, res) => {
   try {
-    const suggestedUser = await User.find({ _id: { $ne: req.id } }).select(
-      "-password"
-    ).limit(5);
-    console.log("user suggestion")
+    const suggestedUser = await User.find({ _id: { $ne: req.id } })
+      .select("-password")
+      .limit(5);
+    console.log("user suggestion");
     if (suggestedUser.length === 0) {
       return res
         .status(401)
@@ -234,9 +463,11 @@ export const followORunfollow = async (req, res) => {
           { $pull: { followers: currentUser } }
         ),
       ]);
-      return res
-        .status(200)
-        .json({ message: "Unfollowed Successfully", isFollowing: false, success: true });
+      return res.status(200).json({
+        message: "Unfollowed Successfully",
+        isFollowing: false,
+        success: true,
+      });
     } else {
       //follow logic
       await promise.all([
@@ -249,9 +480,11 @@ export const followORunfollow = async (req, res) => {
           { $push: { followers: currentUser } }
         ),
       ]);
-      return res
-        .status(200)
-        .json({ message: "Followed Successfully", isFollowing: true, success: true });
+      return res.status(200).json({
+        message: "Followed Successfully",
+        isFollowing: true,
+        success: true,
+      });
     }
   } catch (error) {
     console.log(error);

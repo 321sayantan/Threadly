@@ -1,21 +1,47 @@
-import React, { useState } from 'react'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../ui/dialog';
-import { Label } from '../ui/label';
-import { Input } from '../ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { Textarea } from '../ui/textarea';
-import { Button } from '../ui/button';
+import React, { useEffect, useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../ui/dialog";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { Textarea } from "../ui/textarea";
+import { Button } from "../ui/button";
+import { Calendar } from "../ui/calendar";
+import { deleteExperience, editExperience } from "@/http/api";
+import { toast } from "sonner";
+import useUserStore from "@/lib/store";
+import { Trash2 } from "lucide-react";
 
 const EditExperience = ({ isOpen, onClose, experience = {} }) => {
-  const [formData, setFormData] = useState({
-    title: experience?.title || "",
-    company: experience?.company || "",
-    employmentType: experience?.employmentType || "full-time",
-    startDate: experience?.startDate || "",
-    endDate: experience?.endDate || "",
-    current: experience?.current || false,
-    description: experience?.description || "",
-  });
+  const { user, setUser } = useUserStore();
+  const [formData, setFormData] = useState({});
+
+  useEffect(() => {
+    if (isOpen && experience) {
+      setFormData({
+        _id: experience._id || "",
+        title: experience.title || "",
+        company: experience.company || "",
+        employmentType: experience.employmentType || "full-time",
+        startDate: experience.startDate || "",
+        endDate: experience.endDate || "",
+        current: experience.current || false,
+        description: experience.description || "",
+      });
+    }
+  }, [isOpen, experience]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -29,10 +55,32 @@ const EditExperience = ({ isOpen, onClose, experience = {} }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Saving experience:", formData);
-    onClose(formData);
+    // console.log("Saving experience:", formData);
+
+    const res = await editExperience(formData);
+    console.log(res);
+    if (res.success) {
+      toast.success(res.message);
+    }
+    setUser({...user, experience: res.experience});
+    onClose(false);
+  };
+
+  const handleDelete = async (e) => {
+    console.log("delete exp");
+    const updatedexp = user.experience.filter(
+      (exp) => exp._id !== experience._id
+    );
+    setUser({ ...user, experience: updatedexp });
+    // console.log(updatedexp);
+    const res = await deleteExperience(experience._id);
+    console.log(res);
+    if (res.success) {
+      toast.success(res.message);
+    }
+    onClose(false);
   };
   return (
     <div>
@@ -40,10 +88,10 @@ const EditExperience = ({ isOpen, onClose, experience = {} }) => {
         <DialogContent className="sm:max-w-[525px]">
           <DialogHeader>
             <DialogTitle>
-              {experience.id ? "Edit" : "Add"} Experience
+              {experience._id ? "Edit" : "Add"} Experience
             </DialogTitle>
             <DialogDescription>
-              {experience.id
+              {experience._id
                 ? "Update your work experience details."
                 : "Add a new work experience to your profile."}
             </DialogDescription>
@@ -78,7 +126,7 @@ const EditExperience = ({ isOpen, onClose, experience = {} }) => {
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="employmentType" className="text-right">
-                   Type
+                  Type
                 </Label>
                 <Select
                   value={formData.employmentType}
@@ -108,11 +156,11 @@ const EditExperience = ({ isOpen, onClose, experience = {} }) => {
                   type="month"
                   value={formData.startDate}
                   onChange={handleChange}
-                  className="col-span-3"
+                  className="col-span-3 dark:[&::-webkit-calendar-picker-indicator]:invert"
                 />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
-                <div className="text-right">
+                <div className="flex">
                   <Label htmlFor="current" className="mr-2">
                     Current
                   </Label>
@@ -134,6 +182,7 @@ const EditExperience = ({ isOpen, onClose, experience = {} }) => {
                     onChange={handleChange}
                     disabled={formData.current}
                     placeholder={formData.current ? "Present" : ""}
+                    className="dark:[&::-webkit-calendar-picker-indicator]:invert"
                   />
                 </div>
               </div>
@@ -152,12 +201,44 @@ const EditExperience = ({ isOpen, onClose, experience = {} }) => {
                 />
               </div>
             </div>
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => onClose()}>
-                Cancel
-              </Button>
-              <Button type="submit">{experience.id ? "Update" : "Add"}</Button>
-            </DialogFooter>
+            {experience._id ? (
+              <DialogFooter className="flex !justify-between">
+                <Button
+                  type="button"
+                  variant="destructive"
+                  className=""
+                  onClick={handleDelete}
+                >
+                  <Trash2/>
+                </Button>
+                <div className="">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => onClose(false)}
+                    className="mr-3"
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit">
+                    {experience._id ? "Update" : "Add"}
+                  </Button>
+                </div>
+              </DialogFooter>
+            ) : (
+              <DialogFooter className="">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => onClose(false)}                  
+                >
+                  Cancel
+                </Button>
+                <Button type="submit">
+                  {experience._id ? "Update" : "Add"}
+                </Button>
+              </DialogFooter>
+            )}
           </form>
         </DialogContent>
       </Dialog>
@@ -165,4 +246,4 @@ const EditExperience = ({ isOpen, onClose, experience = {} }) => {
   );
 };
 
-export default EditExperience
+export default EditExperience;

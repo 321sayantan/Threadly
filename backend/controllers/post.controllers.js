@@ -44,7 +44,7 @@ export const createPost = async (req, res) => {
         ],
       });
 
-      console.log(cloudinaryimage);
+      // console.log(cloudinaryimage);
       uploadedImages.push(cloudinaryimage.secure_url);
     }
 
@@ -59,6 +59,7 @@ export const createPost = async (req, res) => {
 
     await User.findByIdAndUpdate({_id: userID}, {$push: { posts: post._id }});
 
+    console.log(post)
     return res
       .status(200)
       .json({ message: "Post Created Successfully", success: true, post });

@@ -7,8 +7,10 @@ const userstore = (set) => ({
   ToggleTheme: false,
   Theme: "dark",
   user: {},
+  userPosts: [],
   post: [],
   setUser: (userdata) => set((state) => ({ user: userdata })),
+  setUserPost: (userPost) => set((state) => ({ userPosts: userPost})),
   setPost: (posts) => set(() => ({ post: posts })),
   setTheme: (theme) => set(() => ({ Theme: theme ? "light" : "dark", ToggleTheme: theme}))
 });

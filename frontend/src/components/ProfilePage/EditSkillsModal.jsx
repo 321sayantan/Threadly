@@ -4,10 +4,16 @@ import { Button } from '../ui/button';
 import { Plus, X } from 'lucide-react';
 import { Badge } from '../ui/badge';
 import { Input } from '../ui/input';
+import { editSkillsInterest } from '@/http/api';
+import { toast } from 'sonner';
+import useUserStore from '@/lib/store';
 
-const EditSkillsModal = ({ isOpen, onClose, skills = [] }) => {
+const EditSkillsModal = ({ isOpen, onClose, skills = [], interest = [] }) => {
+    const {user, setUser} = useUserStore();
     const [skillsList, setSkillsList] = useState(skills);
     const [newSkill, setNewSkill] = useState("");
+    const [interestList, setInterestList] = useState(interest);
+    const [newInterest, setNewInterest] = useState("");
 
     const handleAddSkill = () => {
       if (newSkill.trim() && !skillsList.includes(newSkill.trim())) {
@@ -16,21 +22,48 @@ const EditSkillsModal = ({ isOpen, onClose, skills = [] }) => {
       }
     };
 
+    const handleAddInterest = () => {
+      if (newInterest.trim() && !interestList.includes(newInterest.trim())) {
+        setInterestList([...interestList, newInterest.trim()]);
+        setNewInterest("");
+      }
+    };
+
     const handleRemoveSkill = (skillToRemove) => {
       setSkillsList(skillsList.filter((skill) => skill !== skillToRemove));
     };
 
-    const handleKeyDown = (e) => {
+    const handleRemoveInterest = (interestToRemove) => {
+      setInterestList(
+        interestList.filter((interest) => interest !== interestToRemove)
+      );
+    };
+
+    const handleSkillsKeyDown = (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
         handleAddSkill();
       }
     };
 
-    const handleSubmit = (e) => {
+    const handleInterestKeyDown = (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        handleAddInterest();
+      }
+    };
+
+    const handleSubmit = async (e) => {
       e.preventDefault();
-      console.log("Saving skills:", skillsList);
-      onClose(skillsList);
+      // console.log("Saving skills:", skillsList);
+      // console.log("Saving Interests:", interestList);
+
+      const res = await editSkillsInterest({skills: skillsList, interest: interestList});      
+      setUser({...user, skills: skillsList, interests: interestList});
+      if(res.success){
+        toast.success(res.message);
+      }
+      onClose(false);
     };
 
   return (
@@ -49,7 +82,7 @@ const EditSkillsModal = ({ isOpen, onClose, skills = [] }) => {
                 <Input
                   value={newSkill}
                   onChange={(e) => setNewSkill(e.target.value)}
-                  onKeyDown={handleKeyDown}
+                  onKeyDown={handleSkillsKeyDown}
                   placeholder="Add a skill (e.g., JavaScript)"
                   className="flex-1"
                 />
@@ -84,37 +117,39 @@ const EditSkillsModal = ({ isOpen, onClose, skills = [] }) => {
             <div className="space-y-4 py-4">
               <div className="flex gap-2">
                 <Input
-                  value={newSkill}
-                  onChange={(e) => setNewSkill(e.target.value)}
-                  onKeyDown={handleKeyDown}
+                  value={newInterest}
+                  onChange={(e) => setNewInterest(e.target.value)}
+                  onKeyDown={handleInterestKeyDown}
                   placeholder="Add your Interest (e.g., JavaScript)"
                   className="flex-1"
                 />
-                <Button type="button" onClick={handleAddSkill} size="sm">
+                <Button type="button" onClick={handleAddInterest} size="sm">
                   <Plus className="h-4 w-4 mr-1" /> Add
                 </Button>
               </div>
 
               <div className="flex flex-wrap gap-2 mt-4">
-                {skillsList.map((skill) => (
+                {interestList.map((interest) => (
                   <Badge
-                    key={skill}
+                    key={interest}
                     variant="secondary"
                     className="px-2 py-1 text-sm"
                   >
-                    {skill}
+                    {interest}
                     <button
                       type="button"
-                      onClick={() => handleRemoveSkill(skill)}
+                      onClick={() => handleRemoveInterest(interest)}
                       className="ml-1 text-gray-500 hover:text-gray-700"
                     >
                       <X className="h-3 w-3" />
-                      <span className="sr-only">Remove {skill}</span>
+                      <span className="sr-only">Remove {interest}</span>
                     </button>
                   </Badge>
                 ))}
-                {skillsList.length === 0 && (
-                  <p className="text-sm text-gray-500">No skills added yet.</p>
+                {interestList.length === 0 && (
+                  <p className="text-sm text-gray-500">
+                    No Interests added yet.
+                  </p>
                 )}
               </div>
             </div>
