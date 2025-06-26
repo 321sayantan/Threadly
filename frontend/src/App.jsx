@@ -20,6 +20,7 @@ import useUserStore from "./lib/store";
 import ProfilePage from "./components/ProfilePage/ProfilePage";
 import Feed from "./components/Feed";
 import LeftSideBar from "./components/LeftSideBar";
+import Messages from "./components/Message/messages";
 
 let commentsDialogOpen = false;
 
@@ -83,6 +84,7 @@ function AppRoutes() {
 
         <Route element={<Layout />}>
           <Route path="profile/:id" element={<ProfilePage />} />
+          <Route path="messages" element={<Messages />} />
         </Route>
       </Routes>
 

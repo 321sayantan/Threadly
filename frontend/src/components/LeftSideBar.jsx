@@ -39,7 +39,6 @@ const LeftSideBar = () => {
     if (item.name === "Logout") {
       handleLogout();
     } else if (item.name === "Create") {
-      // setisopen(true);
       navigate("/create-Post", { state: { backgroundLocation: location } });
     } else if (item.name === "Profile") {
       navigate(`/profile/${user._id}`);
@@ -48,6 +47,12 @@ const LeftSideBar = () => {
         setTheme(!ToggleTheme);
         window.location.reload();
         console.log(Theme);
+    }
+    else if(item.name === "Home"){
+        navigate("/");
+    }
+    else if(item.name === "Messages"){
+        navigate("/messages");
     }
     // else if(item.name === "Search"){
     //     navigate("/search");
