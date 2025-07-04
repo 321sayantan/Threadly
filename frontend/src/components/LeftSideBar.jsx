@@ -88,21 +88,37 @@ const LeftSideBar = () => {
   ];
 
   return (
-    <div className="sticky top-0 left-0 h-screen w-[16%] border-r border-2 bg-white dark:bg-transparent">
-      <div className="flex flex-col">
-        <h1 className="my-10 font-bold m-auto text-xl">LOGO</h1>
-        {sideBaritems.map((item, index) => {
-          return (
-            <div
-              key={index}
-              className="flex items-center space-x-2 p-4 hover:bg-gray-200 cursor-pointer dark:hover:bg-gray-800"
-              onClick={() => handelSideBarCLick(item)}
-            >
-              <div>{item.icon}</div>
-              <div className="font-medium">{item.name}</div>
-            </div>
-          );
-        })}
+    // <div className="sticky top-0 left-0 h-screen w-[16%] border-r border-2 bg-white dark:bg-transparent">
+    //   <div className="flex flex-col">
+    //     <h1 className="my-10 font-bold m-auto text-xl">LOGO</h1>
+    //     {sideBaritems.map((item, index) => {
+    //       return (
+    //         <div
+    //           key={index}
+    //           className="flex items-center space-x-2 p-4 hover:bg-gray-200 cursor-pointer dark:hover:bg-gray-800"
+    //           onClick={() => handelSideBarCLick(item)}
+    //         >
+    //           <div>{item.icon}</div>
+    //           <div className="font-medium hidden sm:block">{item.name}</div>
+    //         </div>
+    //       );
+    //     })}
+    //   </div>
+    // </div>
+    <div className="sticky top-0 left-0 h-screen w-[60px] lg:w-[16%] border-r border-2 bg-white dark:bg-transparent flex-shrink-0 transition-all duration-300">
+      <div className="flex flex-col items-center sm:items-start">
+        <h1 className="my-10 font-bold m-auto text-xl hidden sm:block">LOGO</h1>
+        {sideBaritems.map((item, index) => (
+          <div
+            key={index}
+            className="flex items-center justify-center sm:justify-start space-x-0 sm:space-x-2 p-4 
+                     hover:bg-gray-200 cursor-pointer dark:hover:bg-gray-800 w-full"
+            onClick={() => handelSideBarCLick(item)}
+          >
+            <div className="text-lg">{item.icon}</div>
+            <div className="ml-2 font-medium hidden lg:block">{item.name}</div>
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -1,46 +1,54 @@
-import React, { useEffect, useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Plus, UserPlus, Users } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { Button } from './ui/button';
-import useUserStore from '@/lib/store';
-import { followOrUnfollow, suggestedUser } from '@/http/api';
-import { toast } from 'sonner';
-import { NavLink } from 'react-router';
+import React, { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Plus, UserPlus, Users } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Button } from "./ui/button";
+import useUserStore from "@/lib/store";
+import { followOrUnfollow, suggestedUser } from "@/http/api";
+import { toast } from "sonner";
+import { NavLink } from "react-router";
 
 export const SuggestedUser = () => {
-    const { user, setUser } = useUserStore();
-    const [suggestedUsers, setSuggestedUsers] = useState([]);
+  const { user, setUser, setSuggestedUsers, suggestedUsers } = useUserStore();
+  // const [suggestedUsers, setSuggestedUsers] = useState([]);
 
-    const getSuggestedUser = async () => {
-      const res = await suggestedUser();
-      setSuggestedUsers(res.user);
-    };
+  const getSuggestedUser = async () => {
+    const res = await suggestedUser();
+    // console.log(res.user)
+    setSuggestedUsers(res.user);
 
-    const handleFollowUser = async (followedUserID) => {
-      try {
-        const res = await followOrUnfollow(followedUserID);
-        console.log(1, user);
-        const updatedUser = res.isFollowing
-          ? {
-              ...user,
-              following: [...user.following, followedUserID],
-            }
-          : {
-              ...user,
-              following: user.following.filter((id) => id !== followedUserID),
-            };
+    // setSuggestUsers(res.user);
 
-        setUser(updatedUser);
-        toast.success(res.message);
-      } catch (error) {
-        console.log(error);
-      }
-    };
+  };
 
-      useEffect(() => {
-        getSuggestedUser();
-      }, []);
+  useEffect(() => {
+    console.log(suggestedUsers);
+  }, [suggestedUsers]);
+
+  const handleFollowUser = async (followedUserID) => {
+    try {
+      const res = await followOrUnfollow(followedUserID);
+      console.log(1, user);
+      const updatedUser = res.isFollowing
+        ? {
+            ...user,
+            following: [...user.following, followedUserID],
+          }
+        : {
+            ...user,
+            following: user.following.filter((id) => id !== followedUserID),
+          };
+
+      setUser(updatedUser);
+      toast.success(res.message);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getSuggestedUser();
+  }, []);
 
   return (
     <div>
@@ -73,10 +81,12 @@ export const SuggestedUser = () => {
 
                     <div className="flex-1 min-w-0">
                       <h4 className="font-medium text-sm text-social-gray-dark truncate">
-                        <NavLink to={`/profile/${users._id}`}>{users.username}</NavLink>
+                        <NavLink to={`/profile/${users._id}`}>
+                          {users.username}
+                        </NavLink>
                       </h4>
                       <p className="text-xs text-social-gray truncate">
-                        {users?.title.slice(0,20)}
+                        {users?.title.slice(0, 20)}
                       </p>
                       <p className="text-xs text-social-gray mt-1">
                         {users?.mutualConnections} mutual connections
@@ -127,4 +137,4 @@ export const SuggestedUser = () => {
       </Card>
     </div>
   );
-}
+};

@@ -1,4 +1,7 @@
+import { useSocketStore } from '@/lib/socketStore';
+import useUserStore from '@/lib/store';
 import axios from 'axios';
+import { io } from "socket.io-client";
 
 const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1',
@@ -26,6 +29,13 @@ export const login = async (data) => {
     try{
         console.log(1,data)
         const res = await api.post('/user/login', data);
+
+        if(res.data.success){
+        useUserStore.setState({user : res.data.userdata});
+        const { initSocket } = useSocketStore.getState();
+        initSocket();
+        }
+
         return res.data;
     }
     catch (err){
@@ -37,6 +47,8 @@ export const login = async (data) => {
 export const logout = async () => {
     try{
         const res = await api.get('/user/logout');
+        const { disconnectSocket } = useSocketStore.getState();
+        disconnectSocket();
         return res.data;
     }
     catch (err){
@@ -222,6 +234,26 @@ export const deleteCertificate = async (certID) => {
 export const getUser = async(id) => {
     try {
         const res = await api.get(`/user/getUser/${id}`);
+        console.log(res)
+        return res.data;
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export const sendMessage = async(id, text) => {
+    try {
+        const res = await api.post(`message/send/${id}`, {text});
+        console.log(res)
+        return res.data;
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export const getMessage = async(id) => {
+    try {
+        const res = await api.get(`message/get/${id}`);
         console.log(res)
         return res.data;
     } catch (error) {

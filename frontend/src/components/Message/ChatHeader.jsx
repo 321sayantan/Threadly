@@ -8,7 +8,7 @@ const ChatHeader = ({ chat }) => {
         <div className="flex items-center">
           <div className="relative">
             <img
-              src={chat.avatar}
+              src={chat.profilePicture}
               alt={chat.name}
               className="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-md"
             />

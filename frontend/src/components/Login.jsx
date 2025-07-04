@@ -62,7 +62,7 @@ export function Login() {
     }
     else{
       toast.success(res.message);
-      setUser(res.userdata);
+      // setUser(res.userdata);
       // console.log(user)
       navigate("/");
     }

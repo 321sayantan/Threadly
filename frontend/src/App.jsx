@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Login } from "./components/Login";
 import Signup from "./components/Signup.jsx";
 import { ThemeProvider } from "./components/theme_Provider";
@@ -21,6 +21,7 @@ import ProfilePage from "./components/ProfilePage/ProfilePage";
 import Feed from "./components/Feed";
 import LeftSideBar from "./components/LeftSideBar";
 import Messages from "./components/Message/messages";
+import { useSocketStore } from "./lib/socketStore";
 
 let commentsDialogOpen = false;
 
@@ -101,7 +102,26 @@ function AppRoutes() {
 
 export default function App() {
   const { Theme } = useUserStore();
-  // console.log(Theme)
+  const {initSocket, disconnectSocket, onlineUsers} = useSocketStore();
+
+  useEffect(() => {
+    console.log(onlineUsers);
+  }, [onlineUsers]);
+
+  useEffect(() => {
+
+      const token = document.cookie.includes("token="); // or your logic
+      
+      if (token) {
+        initSocket();
+      }
+      
+      return () => {
+        disconnectSocket();
+      };
+
+  }, []);
+
   return (
     <ThemeProvider defaultTheme={Theme} storageKey="vite-ui-theme">
       <BrowserRouter>

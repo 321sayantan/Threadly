@@ -58,14 +58,16 @@ export const login = async (req, res) => {
         .json({ message: "Invalid Email or Password", success: false });
     }
 
-    const token = await jwt.sign({ userID: user._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ userID: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
 
     const userdata = await User.findById(user._id).select("-password");
 
     return res
-      .cookie("token", token, { httpOnly: true, sameSite: "strict" })
+      .cookie("token", token, 
+        // { httpOnly: true, sameSite: "strict" }
+      )
       .json({
         message: `Welcome back! ${user.username}`,
         success: true,
