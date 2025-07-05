@@ -29,9 +29,12 @@ export const sendMessage = async (req, res) => {
     if (newMessage) conversation.messages.push(newMessage._id);
     await Promise.all([conversation.save(), newMessage.save()]);
 
+
+    
+
     //implement socket for real time data transfer
     const receiverSocketID = getReceiverSocketId(receiverID);
-    if(receiverSocketID);
+    if(receiverSocketID)
     {
       io.to(receiverSocketID).emit("newMessage", newMessage);
       console.log(newMessage);
