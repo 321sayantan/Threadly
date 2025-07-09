@@ -1,8 +1,7 @@
 import { Server } from "socket.io";
 import express from "express";
 import http from "http";
-import { instrument } from "@socket.io/admin-ui";
-import {client} from "./redisClient.js"
+import {client, redisSub} from "./redisClient.js"
 
 const app = express();
 const server = http.createServer(app);
@@ -15,12 +14,7 @@ const io = new Server(server, {
   },
 });
 
-instrument(io, {
-  auth: false,
-  mode: "development",
-});
-
-
+const subscribedConversations = new Set();
 let userSocketMap = {};
 
 function getReceiverSocketId(userID) {
@@ -39,6 +33,20 @@ io.on("connection", async (socket) => {
   userSocketMap = await client.hgetall("onlineUsers");
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
+
+  socket.on("joinConversation", (conversationId) => {
+    // Subscribe only once
+    if (!subscribedConversations.has(conversationId)) {
+      redisSub.subscribe(`chat:${conversationId}`);
+      subscribedConversations.add(conversationId);
+    }
+
+    socket.join(conversationId); // Join Socket.IO room
+    console.log("Joined conversation")
+  });
+
+
+
   socket.on("disconnect", async () => {
     console.log("User Disconnected", socket.id);
     // delete userSocketMap[userID];
@@ -46,6 +54,15 @@ io.on("connection", async (socket) => {
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
   });
 });
+
+
+redisSub.on("message", (channel, message)=>{
+  const conversationID = channel.split(":")[1];
+  const parsedMessage = JSON.parse(message);
+  console.log("redissub")
+
+  io.to(conversationID).emit("newMessage", parsedMessage);
+})
 
 
 export { app, server, io, getReceiverSocketId };

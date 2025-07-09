@@ -48,7 +48,7 @@ export const logout = async () => {
     try{
         const res = await api.get('/user/logout');
         const { disconnectSocket } = useSocketStore.getState();
-        disconnectSocket();
+        await disconnectSocket();
         return res.data;
     }
     catch (err){
@@ -241,9 +241,9 @@ export const getUser = async(id) => {
     }
 }
 
-export const sendMessage = async(id, text) => {
+export const sendMessage = async(id, text, conversationID) => {
     try {
-        const res = await api.post(`message/send/${id}`, {text});
+        const res = await api.post(`message/send/${id}`, {text, conversationID});
         console.log(res)
         return res.data;
     } catch (error) {

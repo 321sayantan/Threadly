@@ -7,17 +7,18 @@ const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:8000";
 export const useSocketStore = create((set, get) => ({
   socket: null,
   isConnected: false,
-  onlineUsers:[],
+  onlineUsers: [],
 
   initSocket: () => {
     const existingSocket = get().socket;
     if (existingSocket) return existingSocket;
+    
 
     const socket = io(SOCKET_URL, {
       withCredentials: true,
       query: {
         userID: useUserStore.getState().user._id,
-      }
+      },
     });
 
     socket.on("connect", () => {
@@ -34,12 +35,17 @@ export const useSocketStore = create((set, get) => ({
       console.error("❌ Socket error:", err.message);
     });
 
-
-    socket.on("getOnlineUsers", (userIds)=>{
-        set({onlineUsers: userIds});
-    })
+    socket.on("getOnlineUsers", (userIds) => {
+      set({ onlineUsers: userIds });
+    });
 
     return socket;
+  },
+
+  joinConversation: (conversationId) => {
+    const socket = get().socket;
+    console.log("client joined conversation", conversationId)
+    socket.emit("joinConversation", conversationId);
   },
 
   disconnectSocket: () => {

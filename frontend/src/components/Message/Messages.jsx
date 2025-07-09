@@ -20,11 +20,12 @@ import useChatScroll from "@/hooks/useChatScroll";
 
 
 const Messages = () => {
+  const [selectedChatConversationID, setSelectedChatConversationID] = useState();
   const [selectedChat, setSelectedChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const {user,suggestedUsers} = useUserStore();
-  const {socket} = useSocketStore();
+  const {socket, joinConversation} = useSocketStore();
   const chatref = useChatScroll(messages);
 
 
@@ -121,10 +122,12 @@ const Messages = () => {
   ];
 
   const handleChatSelect = async (chat) => {
-    const res = await getMessage(chat._id);
+    const res = await getMessage(chat._id); 
     console.log(res)
     setSelectedChat(chat);
-    setMessages(res.message);
+    setMessages(res.conversation.messages);
+    setSelectedChatConversationID(res.conversation._id);
+    joinConversation(res.conversation._id);
   };
 
   const handleSendMessage = async (text) => {
@@ -136,11 +139,11 @@ const Messages = () => {
         minute: "2-digit",
       }),
     };
-    setMessages([...messages, newMessage]);
+    // setMessages([...messages, newMessage]);
 
 
-    // console.log(selectedChat._id)
-    const res = await sendMessage(selectedChat._id, text);
+    // console.log(selectedChat)
+    const res = await sendMessage(selectedChat._id, text, selectedChatConversationID);
     // console.log(res);
   };
 

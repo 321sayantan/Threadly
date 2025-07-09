@@ -7,6 +7,7 @@ import postRoute from './router/post.route.js'
 import messageRoute from './router/message.route.js'
 import dotenv from "dotenv";
 import {app, server} from "./utils/Socket.js"
+import { startMessageConsumer } from "./utils/kafkaComsumer.js";
 
 
 dotenv.config({});
@@ -27,6 +28,8 @@ app.use(
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
+
+startMessageConsumer();
 
 app.get('/', (req, res)=>{
     res.status(200).json("Hello, from backend");
