@@ -7,6 +7,7 @@ import {
   Heart,
   Home,
   LogOut,
+  LucideGitFork,
   MessageCircle,
   Moon,
   PlusSquare,
@@ -42,17 +43,14 @@ const LeftSideBar = () => {
       navigate("/create-Post", { state: { backgroundLocation: location } });
     } else if (item.name === "Profile") {
       navigate(`/profile/${user._id}`);
-    }
-    else if(item.name === "Toggle"){
-        setTheme(!ToggleTheme);
-        window.location.reload();
-        console.log(Theme);
-    }
-    else if(item.name === "Home"){
-        navigate("/");
-    }
-    else if(item.name === "Messages"){
-        navigate("/messages");
+    } else if (item.name === "Toggle") {
+      setTheme(!ToggleTheme);
+      window.location.reload();
+      console.log(Theme);
+    } else if (item.name === "Home") {
+      navigate("/");
+    } else if (item.name === "Messages") {
+      navigate("/messages");
     }
     // else if(item.name === "Search"){
     //     navigate("/search");
@@ -62,7 +60,7 @@ const LeftSideBar = () => {
     // }
   };
 
-  const sideBaritems = [
+  const DesktopSideBaritems = [
     { icon: <Home />, name: "Home" },
     { icon: <Search />, name: "Search" },
     { icon: <TrendingUp />, name: "Explore" },
@@ -87,40 +85,107 @@ const LeftSideBar = () => {
     { icon: <LogOut />, name: "Logout" },
   ];
 
+  const MobileSideBaritems = [
+    { icon: <Home />, name: "Home" },
+    { icon: <Search />, name: "Search" },
+    { icon: <TrendingUp />, name: "Explore" },
+    // { icon: <CircuitBoardIcon />, name: "Leaderboard" },
+    // { icon: <Calendar />, name: "Events" },
+    {
+      icon: <PlusSquare />,
+      name: "Create",
+    },
+    { icon: <MessageCircle />, name: "Messages" },
+    {
+      icon: (
+        <Avatar>
+          <AvatarImage src={profilePicture} className="object-cover" />
+          <AvatarFallback>CN</AvatarFallback>
+        </Avatar>
+      ),
+      name: "Profile",
+    },
+  ];
+
+  // return (
+  //   // <div className="sticky top-0 left-0 h-screen w-[16%] border-r border-2 bg-white dark:bg-transparent">
+  //   //   <div className="flex flex-col">
+  //   //     <h1 className="my-10 font-bold m-auto text-xl">LOGO</h1>
+  //   //     {sideBaritems.map((item, index) => {
+  //   //       return (
+  //   //         <div
+  //   //           key={index}
+  //   //           className="flex items-center space-x-2 p-4 hover:bg-gray-200 cursor-pointer dark:hover:bg-gray-800"
+  //   //           onClick={() => handelSideBarCLick(item)}
+  //   //         >
+  //   //           <div>{item.icon}</div>
+  //   //           <div className="font-medium hidden sm:block">{item.name}</div>
+  //   //         </div>
+  //   //       );
+  //   //     })}
+  //   //   </div>
+  //   // </div>
+  //   <div className="sticky top-0 left-0 h-screen w-[60px] lg:w-[16%] border-r border-2 bg-white dark:bg-transparent flex-shrink-0 transition-all duration-300">
+  //     <div className="flex flex-col items-center sm:items-start">
+  //       <h1 className="my-10 font-bold m-auto text-xl hidden md:block">LOGO</h1>
+  //       {sideBaritems.map((item, index) => (
+  //         <div
+  //           key={index}
+  //           className="flex items-center justify-center sm:justify-start space-x-0 sm:space-x-2 p-4
+  //                    hover:bg-gray-200 cursor-pointer dark:hover:bg-gray-800 w-full"
+  //           onClick={() => handelSideBarCLick(item)}
+  //         >
+  //           <div className="text-lg">{item.icon}</div>
+  //           <div className="ml-2 font-medium hidden lg:block">{item.name}</div>
+  //         </div>
+  //       ))}
+  //     </div>
+  //   </div>
+  // );
+
+
   return (
-    // <div className="sticky top-0 left-0 h-screen w-[16%] border-r border-2 bg-white dark:bg-transparent">
-    //   <div className="flex flex-col">
-    //     <h1 className="my-10 font-bold m-auto text-xl">LOGO</h1>
-    //     {sideBaritems.map((item, index) => {
-    //       return (
-    //         <div
-    //           key={index}
-    //           className="flex items-center space-x-2 p-4 hover:bg-gray-200 cursor-pointer dark:hover:bg-gray-800"
-    //           onClick={() => handelSideBarCLick(item)}
-    //         >
-    //           <div>{item.icon}</div>
-    //           <div className="font-medium hidden sm:block">{item.name}</div>
-    //         </div>
-    //       );
-    //     })}
-    //   </div>
-    // </div>
-    <div className="sticky top-0 left-0 h-screen w-[60px] lg:w-[16%] border-r border-2 bg-white dark:bg-transparent flex-shrink-0 transition-all duration-300">
-      <div className="flex flex-col items-center sm:items-start">
-        <h1 className="my-10 font-bold m-auto text-xl hidden sm:block">LOGO</h1>
-        {sideBaritems.map((item, index) => (
-          <div
-            key={index}
-            className="flex items-center justify-center sm:justify-start space-x-0 sm:space-x-2 p-4 
-                     hover:bg-gray-200 cursor-pointer dark:hover:bg-gray-800 w-full"
+    <>
+      {/* ---- Desktop / tablet sidebar ---- */}
+      <aside className="hidden md:flex sticky top-0 left-0 h-screen w-[60px] xl:w-[16%] mr-5 flex-col border-r bg-white dark:bg-transparent">
+        <h1 className="my-10 font-bold text-xl text-center hidden xl:block">
+          LOGO
+        </h1>
+        <h1 className="my-10 font-bold text-xl m-auto text-center xl:hidden">
+          <LucideGitFork/>
+        </h1>
+
+        <nav className="flex flex-col items-center lg:items-start flex-1 justify-between px-2">
+          {DesktopSideBaritems.map((item, idx) => (
+            <button
+              key={idx}
+              onClick={() => handelSideBarCLick(item)}
+              className="flex items-center justify-center lg:justify-start space-x-0 lg:space-x-2 p-3 rounded-md
+                       hover:bg-gray-200 dark:hover:bg-gray-800 w-full"
+            >
+              <span className="text-lg shrink-0">{item.icon}</span>
+              <span className="ml-2 font-medium hidden xl:block">
+                {item.name}
+              </span>
+            </button>
+          ))}
+        </nav>
+      </aside>
+
+      {/* ---- Mobile bottom bar ---- */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-1 h-16 bg-white dark:bg-gray-900 border-t flex items-center justify-around">
+        {MobileSideBaritems.map((item, idx) => (
+          <button
+            key={idx}
             onClick={() => handelSideBarCLick(item)}
+            className="flex flex-col items-center justify-center flex-1 h-full text-xs"
           >
-            <div className="text-lg">{item.icon}</div>
-            <div className="ml-2 font-medium hidden lg:block">{item.name}</div>
-          </div>
+            <span className="text-lg">{item.icon}</span>
+            <span className="hidden sm:inline mt-1">{item.name}</span>
+          </button>
         ))}
-      </div>
-    </div>
+      </nav>
+    </>
   );
 };
 

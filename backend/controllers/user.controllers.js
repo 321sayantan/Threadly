@@ -59,13 +59,15 @@ export const login = async (req, res) => {
     }
 
     const token = jwt.sign({ userID: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
+      // expiresIn: "1d",
     });
 
     const userdata = await User.findById(user._id).select("-password");
 
     return res
-      .cookie("token", token, 
+      .cookie(
+        "token",
+        token
         // { httpOnly: true, sameSite: "strict" }
       )
       .json({
@@ -90,7 +92,9 @@ export const logout = async (req, res) => {
 
 export const getUser = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).populate("posts").select("-password");
+    const user = await User.findById(req.params.id)
+      .populate("posts")
+      .select("-password");
     if (!user) {
       return res.status(401).json({ success: false });
     }
@@ -248,13 +252,11 @@ export const editExperience = async (req, res) => {
 
     // console.log(10, user);
 
-    res
-      .status(200)
-      .json({
-        message: "Experience Updated!",
-        success: true,
-        experience: user.experience,
-      });
+    res.status(200).json({
+      message: "Experience Updated!",
+      success: true,
+      experience: user.experience,
+    });
   } catch (error) {
     console.log(error);
   }
@@ -296,13 +298,14 @@ export const editEducation = async (req, res) => {
     }
 
     if (education._id) {
-      const index = user.education.findIndex((exp)=> exp._id.toString() === education._id)
-      if(index !== -1)
-      {
+      const index = user.education.findIndex(
+        (exp) => exp._id.toString() === education._id
+      );
+      if (index !== -1) {
         user.education[index] = {
           ...user.education[index],
           ...education,
-        }
+        };
       }
       // console.log(user.education);
     } else {
@@ -315,7 +318,11 @@ export const editEducation = async (req, res) => {
     await user.save();
     // console.log(user)
 
-    res.status(200).json({message: "Education Updated!", success: true, education: user.education});
+    res.status(200).json({
+      message: "Education Updated!",
+      success: true,
+      education: user.education,
+    });
   } catch (error) {
     console.log(error);
   }

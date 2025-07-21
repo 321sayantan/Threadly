@@ -37,6 +37,7 @@ export async function startMessageConsumer() {
     }) => {
       const messages = [];
       const conversationMap = new Map(); // conversationID -> array of message _ids
+      const lastmessageMap = {}; // conversationID -> array of message _ids
 
       for (let message of batch.messages) {
         if (!isRunning() || isStale()) break;
@@ -44,7 +45,7 @@ export async function startMessageConsumer() {
         const msg = JSON.parse(message.value.toString());
         console.log(msg);
 
-        const { senderID, receiverID, conversationID, text, createdAt } = msg;
+        const { senderID, receiverID, conversationID, text, seen, createdAt } = msg;
 
         messages.push({
           senderID,
@@ -52,6 +53,7 @@ export async function startMessageConsumer() {
           text,
           conversationID,
           createdAt,
+          seen,
         });
 
         resolveOffset(message.offset);
@@ -63,18 +65,22 @@ export async function startMessageConsumer() {
       try {
         console.log("started inserting");
         const insertedMessages = await Message.insertMany(messages);
-
+        // console.log(insertedMessages)
         for (const msg of insertedMessages) {
           const id = msg.conversationID;
           if (!conversationMap.has(id)) conversationMap.set(id, []);
           conversationMap.get(id).push(msg._id);
+          // if (!lastmessageMap.has(id)) lastmessageMap.set(id, "");
+          lastmessageMap[id] = msg.text;
         }
 
-        for (const [convID, msgID] of conversationMap.entries()) {
+        for (const [convID, msgIDs] of conversationMap.entries()) {
+          console.log(lastmessageMap[convID])
           await conversation.findByIdAndUpdate(
             convID,
             {
-              $push: { messages: { $each: msgID } },
+              $push: { messages: { $each: msgIDs } },
+              $set: { lastMessage: lastmessageMap[convID] },
             },
             { upsert: true }
           );

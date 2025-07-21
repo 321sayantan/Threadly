@@ -96,6 +96,11 @@ const Profile = ({User}) => {
     setEditCertificateModal(true);
   };
 
+
+  const handelMessageClick = ()=>{
+    console.log(User);
+  }
+
   const formatDegree = (degree) => {
     const degreeMap = {
       bachelor: "Bachelor's Degree",

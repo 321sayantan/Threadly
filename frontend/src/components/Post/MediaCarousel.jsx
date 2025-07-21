@@ -15,7 +15,7 @@ const MediaCarousel = ({ media, createpost, setMedia }) => {
 
   // aspect-auto md:aspect-[4/3]
   return (
-    <div className="relative overflow-hidden mb-[0px] bg-gray-100 dark:bg-black h-full flex items-center">
+    <div className="relative overflow-hidden mb-[0px] bg-gray-100 dark:bg-black h-[70dvh] flex items-center">
       <div className="relative aspect-auto md:aspect-[4/3] h-[90%] w-full overflow-hidden rounded-md ">
         {media.map((item, index) => (
           <div

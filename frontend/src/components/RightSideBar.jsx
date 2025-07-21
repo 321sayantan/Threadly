@@ -24,7 +24,7 @@ const RightSideBar = () => {
     // <h1>Right SideBar</h1>
     // </div>
     <>
-      <div className="h-screen top-0 right-0 py-5 px-6">
+      <div className="h-screen top-0 right-0 py-5 px-6 hidden lg:block">
         <div className="w-80 space-y-6">
           {/* User Profile Card */}
           <Card className="border-social-gray-light">
@@ -46,7 +46,7 @@ const RightSideBar = () => {
                 </h3>
                 <p className="text-sm text-social-gray mb-2">
                   Senior Software Engineer
-                  {user?.bio}
+                  {/* {user?.bio} */}
                 </p>
 
                 <div className="flex items-center text-xs text-social-gray mb-1">
@@ -56,7 +56,7 @@ const RightSideBar = () => {
 
                 <div className="flex items-center text-xs text-social-gray mb-4">
                   <MapPin className="w-3 h-3 mr-1" />
-                  {user?.location}Hooghly
+                  {user?.location} Hooghly
                 </div>
 
                 <div className="w-full border-t border-social-gray-light pt-4">

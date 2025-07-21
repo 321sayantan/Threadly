@@ -1,6 +1,7 @@
 import { useSocketStore } from '@/lib/socketStore';
 import useUserStore from '@/lib/store';
 import axios from 'axios';
+import { CloudHail } from 'lucide-react';
 import { io } from "socket.io-client";
 
 const api = axios.create({
@@ -251,12 +252,33 @@ export const sendMessage = async(id, text, conversationID) => {
     }
 }
 
-export const getMessage = async(id) => {
+export const getMessage = async(conversationID) => {
     try {
-        const res = await api.get(`message/get/${id}`);
+        const res = await api.get(`message/get/${conversationID}`);
         console.log(res)
         return res.data;
     } catch (error) {
         console.log(error)
+    }
+}
+
+export const getChatList = async () => {
+    try {
+        // console.log("chatlist")
+        const res = await api.get("/conversation/getChatList");
+        // console.log(res.data)
+        return res.data;
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export const createChat = async (id) =>{
+    try {
+        const res = await api.get(`/conversation/createChat/${id}`);
+        console.log(res.data);
+        return res.data;
+    } catch (error) {
+        
     }
 }

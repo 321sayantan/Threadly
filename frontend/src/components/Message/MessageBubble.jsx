@@ -1,9 +1,22 @@
 import useUserStore from "@/lib/store";
+import { Check, CheckCheck } from "lucide-react";
 import React from "react";
 
 const MessageBubble = ({ message, profilePic }) => {
-  const {user} = useUserStore();
+  const { user } = useUserStore();
   const isSender = message.senderID === user._id;
+
+  const getTime = (timestamp) => {
+    const time = new Date(timestamp).toLocaleTimeString("en-US", {
+      hour12: true, // Use true for 12-hour format with AM/PM
+      hour: "2-digit",
+      minute: "2-digit",
+      // second: "2-digit",
+    });
+
+    return time;
+  };
+
   return (
     <div
       className={`flex ${
@@ -31,13 +44,16 @@ const MessageBubble = ({ message, profilePic }) => {
           }`}
         >
           <p className="text-sm">{message.text}</p>
-          <p
-            className={`text-xs mt-1 ${
-              isSender ? "text-purple-100" : "text-gray-500"
-            }`}
-          >
-            {message.timestamp}
-          </p>
+          <div className="flex gap-2">
+            <p
+              className={`text-xs mt-1  ${
+                isSender ? "text-purple-100" : "text-gray-500"
+              }`}
+            >
+              {getTime(message.createdAt)}
+            </p>
+            {isSender && (message.seen ? <CheckCheck className="text-red-600 w-5 h-5"/> : <Check />)}
+          </div>
         </div>
       </div>
     </div>

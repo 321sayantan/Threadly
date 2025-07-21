@@ -23,7 +23,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Badge } from "../ui/badge";
-import { Link, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 import useUserStore from "@/lib/store";
 import { SuggestedUser } from "../SuggestedUser";
 import { format } from "date-fns";
@@ -32,7 +32,7 @@ import EditSkillsModal from "./EditSkillsModal";
 import EditExperience from "./EditExperience";
 import EditEducation from "./EditEducation";
 import EditCertificates from "./EditCertificates";
-import { getUser } from "@/http/api";
+import { createChat, getUser } from "@/http/api";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -47,6 +47,7 @@ const OthersProfilePage = ({ User }) => {
   // const { id: userId } = useParams();
 
   console.log(111, User);
+  const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const [isProfileModalOpen, setProfileModal] = useState(false);
@@ -93,6 +94,13 @@ const OthersProfilePage = ({ User }) => {
       setSelectedCertificate({});
     }
     setEditCertificateModal(true);
+  };
+
+  const handelMessageClick = async () => {
+    console.log(User);
+    const res = await createChat(User._id);
+    console.log(res);
+    navigate(`/messages/${res.conversation._id}`)
   };
 
   const formatDegree = (degree) => {
@@ -172,7 +180,7 @@ const OthersProfilePage = ({ User }) => {
 
               {/* Action Buttons */}
               <div className="flex gap-2 mt-4 md:mt-0">
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={()=>handelMessageClick()}>
                   <MessageCircle className="w-4 h-4 mr-2" />
                   Message
                 </Button>

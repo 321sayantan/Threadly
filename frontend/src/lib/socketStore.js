@@ -26,6 +26,10 @@ export const useSocketStore = create((set, get) => ({
       set({ socket, isConnected: true });
     });
 
+    socket.on("newConversation", (con)=>{
+      console.log(con)
+    });
+
     socket.on("disconnect", () => {
       console.log("🔌 Socket disconnected");
       set({ isConnected: false });
@@ -44,6 +48,7 @@ export const useSocketStore = create((set, get) => ({
 
   joinConversation: (conversationId) => {
     const socket = get().socket;
+    if(!socket) return;
     console.log("client joined conversation", conversationId)
     socket.emit("joinConversation", conversationId);
   },

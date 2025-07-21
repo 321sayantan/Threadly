@@ -61,7 +61,7 @@ export const SuggestedUser = () => {
         </CardHeader>
         <CardContent className="p-0">
           <div className="space-y-4">
-            {suggestedUsers.map((users) => (
+            {suggestedUsers?.map((users) => (
               <div
                 key={users._id}
                 className="px-3 py-3 hover:bg-social-gray-light/30 transition-colors"

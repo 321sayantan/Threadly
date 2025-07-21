@@ -8,6 +8,7 @@ import messageRoute from './router/message.route.js'
 import dotenv from "dotenv";
 import {app, server} from "./utils/Socket.js"
 import { startMessageConsumer } from "./utils/kafkaComsumer.js";
+import conversationRoute from "./router/conversation.route.js";
 
 
 dotenv.config({});
@@ -39,6 +40,7 @@ app.get('/', (req, res)=>{
 app.use('/api/v1/user', userRoute);
 app.use('/api/v1/post', postRoute);
 app.use('/api/v1/message', messageRoute);
+app.use("/api/v1/conversation", conversationRoute);
 
 server.listen(PORT, ()=>{
     console.log(`Server listening to ${PORT}`);

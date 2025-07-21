@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Send, Image, Smile } from "lucide-react";
 
-const MessageInput = ({ onSendMessage }) => {
+const MessageInput = ({ onSendMessage, handleTyping }) => {
   const [message, setMessage] = useState("");
 
   const handleSubmit = (e) => {
@@ -33,7 +33,7 @@ const MessageInput = ({ onSendMessage }) => {
           <input
             type="text"
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={(e) => {handleTyping(e.target.value); setMessage(e.target.value)}}
             placeholder="Type a message..."
             className="w-full px-4 py-3 bg-gray-50 dark:bg-transparent border border-gray-200 dark:border-gray-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
           />
