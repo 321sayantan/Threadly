@@ -23,6 +23,7 @@ import LeftSideBar from "./components/LeftSideBar";
 import Messages from "./components/Message/messages";
 import { useSocketStore } from "./lib/socketStore";
 import SelectedMessage from "./components/Message/selectedMessage";
+import ChatSideBar from "./components/Message/chatSideBar"
 
 let commentsDialogOpen = false;
 
@@ -95,7 +96,7 @@ function AppRoutes() {
       {background && (
         <Routes>
           <Route path="/create-Post" element={<CreatePost />} />
-          <Route path="/test" element={<TestDialog />} />
+          <Route path="/test" element={<ChatSideBar />} />
         </Routes>
       )}
     </>
