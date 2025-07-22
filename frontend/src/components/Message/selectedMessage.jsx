@@ -11,6 +11,7 @@ import { getMessage, sendMessage } from "@/http/api";
 import useChatScroll from "@/hooks/useChatScroll";
 import ChatSideBar from "./chatSideBar";
 import { useParams } from "react-router";
+import { useSidebar } from "@/hooks/MessageSidebarContext";
 
 const SelectedMessage = () => {
   const [selectedChatConversationID, setSelectedChatConversationID] =
@@ -22,7 +23,7 @@ const SelectedMessage = () => {
   const chatref = useChatScroll(messages);
   const [isTyping, setIsTyping] = useState(false);
   const [typingTimeOut, setTypingTimeOut] = useState(null);
-  const [showSidebar, setShowSidebar] = useState(true);
+  const {showSidebar, setShowSidebar} = useSidebar();
   const params = useParams();
 
   useEffect(() => {
@@ -174,10 +175,10 @@ const SelectedMessage = () => {
     <div className="min-h-screen w-full bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 overflow-hidden dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       <div className="relative w-full h-screen flex">
         {/* ---- Sidebar (mobile slides, desktop fixed) ---- */}
-        <ChatSideBar
+        {/* <ChatSideBar
           showSidebar={showSidebar}
           setShowSidebar={setShowSidebar}
-        />
+        /> */}
 
         {/* Close button (mobile only) */}
         <div className="lg:hidden absolute h-screen flex items-center">

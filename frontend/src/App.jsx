@@ -23,7 +23,7 @@ import LeftSideBar from "./components/LeftSideBar";
 import Messages from "./components/Message/messages";
 import { useSocketStore } from "./lib/socketStore";
 import SelectedMessage from "./components/Message/selectedMessage";
-import ChatSideBar from "./components/Message/chatSideBar"
+import MessageLayout from "./components/Message/MessageLayout";
 
 let commentsDialogOpen = false;
 
@@ -36,7 +36,7 @@ const AuthLayout = () => (
   </>
 );
 
-const Layout = () => (
+const ProfileLayout = () => (
   <div className="flex relative bg-gray-100 dark:bg-transparent">
     <LeftSideBar />
     <Outlet />
@@ -85,8 +85,11 @@ function AppRoutes() {
           <Route path="signup" element={<Signup />} />
         </Route>
 
-        <Route element={<Layout />}>
+        <Route element={<ProfileLayout />}>
           <Route path="profile/:id" element={<ProfilePage />} />
+        </Route>
+        
+        <Route element={<MessageLayout />}>
           <Route path="messages" element={<Messages />} />
           <Route path="messages/:id" element={<SelectedMessage />} />
         </Route>
@@ -105,24 +108,22 @@ function AppRoutes() {
 
 export default function App() {
   const { Theme } = useUserStore();
-  const {initSocket, disconnectSocket, onlineUsers} = useSocketStore();
+  const { initSocket, disconnectSocket, onlineUsers } = useSocketStore();
 
   useEffect(() => {
     console.log(onlineUsers);
   }, [onlineUsers]);
 
   useEffect(() => {
+    const token = document.cookie.includes("token="); // or your logic
 
-      const token = document.cookie.includes("token="); // or your logic
-      
-      if (token) {
-        initSocket();
-      }
-      
-      return () => {
-        disconnectSocket();
-      };
+    if (token) {
+      initSocket();
+    }
 
+    return () => {
+      disconnectSocket();
+    };
   }, []);
 
   return (

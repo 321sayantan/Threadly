@@ -1,19 +1,21 @@
 import React, { useState } from "react";
 import { MessageCircle, ChevronRight } from "lucide-react";
 import ChatSideBar from "./chatSideBar";
+import { useSidebar } from "@/hooks/MessageSidebarContext";
 
 const Messages = () => {
   const [selectedChat, setSelectedChat] = useState(null);
-  const [showSidebar, setShowSidebar] = useState(true);
+  const {showSidebar, setShowSidebar} = useSidebar();
+  console.log(showSidebar)
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 overflow-hidden dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       <div className="relative w-full h-screen flex">
         {/* ---- Sidebar (mobile slides, desktop fixed) ---- */}
-        <ChatSideBar
+        {/* <ChatSideBar
           showSidebar={showSidebar}
           setShowSidebar={setShowSidebar}
-        />
+        /> */}
 
         {/* Close button (mobile only) */}
         <div className="lg:hidden absolute h-screen flex items-center">

@@ -6,8 +6,9 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import ChatList from "./ChatList";
 import { getChatList } from "@/http/api";
+import { useSidebar } from "@/hooks/MessageSidebarContext";
 
-const ChatSideBar = ({showSidebar, setShowSidebar}) => {
+const ChatSideBar = () => {
   const navigate = useNavigate();
   const [selectedChat, setSelectedChat] = useState(null);
   const [chatList, setChatList] = useState([]);
@@ -16,6 +17,7 @@ const ChatSideBar = ({showSidebar, setShowSidebar}) => {
   const { user } = useUserStore();
   const { socket } = useSocketStore();
   const [filteredChats, setFilteredChats] = useState([]);
+  const { showSidebar, setShowSidebar } = useSidebar();
 
   useEffect(() => {
     socket?.on("newMessage", (newMessage) => {
@@ -27,7 +29,7 @@ const ChatSideBar = ({showSidebar, setShowSidebar}) => {
       console.log("run chatlist");
       console.log(parsedMessage);
       console.log(chatList);
-    //   const newMessage = parsedMessage;
+      //   const newMessage = parsedMessage;
 
       setChatList((prevChatList) =>
         prevChatList.map((chat) =>
@@ -36,7 +38,8 @@ const ChatSideBar = ({showSidebar, setShowSidebar}) => {
                 ...chat,
                 lastMessage: parsedMessage.text,
                 updatedAt: parsedMessage.createdAt,
-                unseen: parsedMessage.senderID === user._id
+                unseen:
+                  parsedMessage.senderID === user._id
                     ? 0
                     : parsedMessage.seen
                     ? 0
@@ -83,7 +86,8 @@ const ChatSideBar = ({showSidebar, setShowSidebar}) => {
       setChatList(res.chatList);
       console.log(res.chatList);
     };
-    getchatlist();
+
+    if (!chatList || chatList.length === 0) getchatlist();
   }, []);
 
   useEffect(() => {
@@ -111,12 +115,12 @@ const ChatSideBar = ({showSidebar, setShowSidebar}) => {
     navigate(`/messages/${chat.conversationID}`);
   };
 
-//   const [showSidebar, setShowSidebar] = useState(true);
+  //   const [showSidebar, setShowSidebar] = useState(true);
 
   // close sidebar automatically when a chat is picked
   const selectAndClose = (chat) => {
     handleChatSelect(chat);
-    if (window.innerWidth < 1024) setShowSidebar(false);
+    // if (window.innerWidth < 1024) setShowSidebar(false);
   };
 
   return (
@@ -165,7 +169,7 @@ const ChatSideBar = ({showSidebar, setShowSidebar}) => {
           <ChatList
             chats={filteredChats}
             selectedChat={selectedChat}
-            onChatSelect={selectAndClose} 
+            onChatSelect={selectAndClose}
           />
         </div>
       </aside>
