@@ -25,11 +25,6 @@ import { useSocketStore } from "./lib/socketStore";
 import SelectedMessage from "./components/Message/selectedMessage";
 import MessageLayout from "./components/Message/MessageLayout";
 
-let commentsDialogOpen = false;
-
-function setCommentsDialogOpen() {
-  commentsDialogOpen = !commentsDialogOpen;
-}
 const AuthLayout = () => (
   <>
     <Outlet />
@@ -99,7 +94,7 @@ function AppRoutes() {
       {background && (
         <Routes>
           <Route path="/create-Post" element={<CreatePost />} />
-          <Route path="/test" element={<ChatSideBar />} />
+          {/* <Route path="/test" element={<ChatSideBar />} /> */}
         </Routes>
       )}
     </>

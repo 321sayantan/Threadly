@@ -12,18 +12,22 @@ export const SuggestedUser = () => {
   const { user, setUser, setSuggestedUsers, suggestedUsers } = useUserStore();
   // const [suggestedUsers, setSuggestedUsers] = useState([]);
 
-  const getSuggestedUser = async () => {
-    const res = await suggestedUser();
-    // console.log(res.user)
-    setSuggestedUsers(res.user);
-
-    // setSuggestUsers(res.user);
-
-  };
-
   useEffect(() => {
-    console.log(suggestedUsers);
-  }, [suggestedUsers]);
+    const getSuggestedUser = async () => {
+      const res = await suggestedUser();
+      // console.log(res.user)
+      setSuggestedUsers(res.user);
+
+      // setSuggestUsers(res.user);
+    };
+
+    if (!suggestedUsers || suggestedUsers.length === 0) getSuggestedUser();
+
+  }, []);
+
+  // useEffect(() => {
+  //   console.log(suggestedUsers);
+  // }, [suggestedUsers]);
 
   const handleFollowUser = async (followedUserID) => {
     try {
@@ -45,10 +49,6 @@ export const SuggestedUser = () => {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    getSuggestedUser();
-  }, []);
 
   return (
     <div>

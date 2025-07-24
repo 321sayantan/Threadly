@@ -143,17 +143,24 @@ const LeftSideBar = () => {
   //   </div>
   // );
 
-
   return (
     <>
       {/* ---- Desktop / tablet sidebar ---- */}
-      <aside className="hidden md:flex sticky top-0 left-0 h-screen w-[60px] xl:w-[16%] mr-5 flex-col border-r bg-white dark:bg-transparent">
-        <h1 className="my-10 font-bold text-xl text-center hidden xl:block">
-          LOGO
-        </h1>
-        <h1 className="my-10 font-bold text-xl m-auto text-center xl:hidden">
-          <LucideGitFork/>
-        </h1>
+      <aside className="hidden md:flex sticky top-0 left-0 h-screen w-[60px] xl:w-[16%] flex-col border-r bg-white dark:bg-transparent">
+        <div className="my-10 hidden xl:block ml-[5%] w-40">
+          {Theme === "dark" ? (
+            <img src="/logo9.png" alt="" />
+          ) : (
+            <img src="/logo12.png" alt="" />
+          )}
+        </div>
+        <div className="my-10 m-auto text-center xl:hidden w-8">
+          {Theme === "dark" ? (
+            <img src="/logo6new.png" alt="" />
+          ) : (
+            <img src="/logo2new.png" alt="" />
+          )}
+        </div>
 
         <nav className="flex flex-col items-center lg:items-start flex-1 justify-between px-2">
           {DesktopSideBaritems.map((item, idx) => (

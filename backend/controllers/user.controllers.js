@@ -93,8 +93,12 @@ export const logout = async (req, res) => {
 export const getUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id)
-      .populate("posts")
+      .populate({
+        path: "posts",
+        populate: { path: "author", select: "-password" },
+      })
       .select("-password");
+    console.log(1, user);
     if (!user) {
       return res.status(401).json({ success: false });
     }
@@ -109,7 +113,12 @@ export const editUser = async (req, res) => {
     const id = req.id;
     const { username, title, location, links, bio, gender } = req.body;
 
-    const user = await User.findById(id).select("-password");
+    const user = await User.findById(id)
+      .populate({
+        path: "posts",
+        populate: { path: "author", select: "-password" },
+      })
+      .select("-password");
     if (!user) {
       return res
         .status(401)

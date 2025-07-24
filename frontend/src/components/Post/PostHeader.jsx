@@ -34,6 +34,7 @@ import { Badge } from "../ui/badge";
 
 const PostHeader = ({ user, timestamp, post }) => {
   const { user: currUser, setUser, post: Post, setPost } = useUserStore();
+  
 
   const handleAction = async (action) => {
     if (action === "SavePost") {
@@ -89,7 +90,7 @@ const PostHeader = ({ user, timestamp, post }) => {
               <Badge className="ml-2">Author</Badge>
             )}
           </div>
-          <p className="text-xs text-social-gray">{user.title}</p>
+          <p className="text-xs dark:text-gray-400">{user.title.length >= 65 ? `${user.title.substring(0,63)}...` : user.title}</p>
           <div className="flex items-center text-xs text-social-gray mt-0.5">
             <Clock className="w-3 h-3 mr-1" />
             <span>{timestamp}</span>

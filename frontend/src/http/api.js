@@ -234,6 +234,7 @@ export const deleteCertificate = async (certID) => {
 
 export const getUser = async(id) => {
     try {
+        console.log("getUser")
         const res = await api.get(`/user/getUser/${id}`);
         console.log(res)
         return res.data;

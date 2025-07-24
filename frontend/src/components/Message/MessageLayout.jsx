@@ -7,7 +7,7 @@ import { SidebarProvider } from "../../hooks/MessageSidebarContext";
 const MessageLayout = () => {
   return (
     <SidebarProvider>
-      <div className="flex relative bg-gray-100 dark:bg-transparent">
+      <div className="flex relative bg-gray-100 dark:bg-transparent overflow-hidden">
         <LeftSideBar />
         <ChatSideBar/>
         <Outlet />

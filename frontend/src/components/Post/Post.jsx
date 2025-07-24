@@ -95,7 +95,7 @@ export const Post = ({ Post }) => {
           user={{
             name: `${Post.author.username}`,
             avatar: `${Post.author.profilePicture}`,
-            title: "UX/UI Designer • Digital Nomad • Creative Coach",
+            title: `${Post.author.title}`,
             isVerified: true,
             connectionDegree: 1,
           }}

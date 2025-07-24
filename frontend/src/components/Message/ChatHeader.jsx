@@ -41,11 +41,26 @@ const ChatHeader = ({ chat, isTyping }) => {
               {chat?.receiver.username}
             </h2>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              {isTyping
-                ? "Typing"
-                : onlineUsers.includes(chat?.receiver._id)
-                ? "Active now"
-                : "Last seen recently"}
+              { isTyping ? (
+                <div className="flex gap-2 items-end text-green-500">
+                  <span>typing</span>
+                  <div className="flex gap-1">
+                    <span className="w-1.5 h-1.5 bg-current rounded-full animate-bounce" />
+                    <span
+                      className="w-1.5 h-1.5 bg-current rounded-full animate-bounce"
+                      style={{ animationDelay: `200ms` }}
+                    />
+                    <span
+                      className="w-1.5 h-1.5 bg-current rounded-full animate-bounce"
+                      style={{ animationDelay: `300ms` }}
+                    />
+                  </div>
+                </div>
+              ) : onlineUsers.includes(chat?.receiver._id) ? (
+                "Active now"
+              ) : (
+                "Last seen recently"
+              )}
             </p>
           </div>
         </div>

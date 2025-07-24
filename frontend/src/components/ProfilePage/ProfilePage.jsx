@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   MapPin,
   LinkIcon,
@@ -18,6 +18,8 @@ import {
   Pencil,
   Plus,
   ExternalLink,
+  ChevronRight,
+  ChevronLeft,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
@@ -41,13 +43,17 @@ import {
 } from "../ui/dropdown-menu";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 import OthersProfilePage from "./othersProfilePage";
+import { Post } from "../Post/Post";
+import PostHeader from "../Post/PostHeader";
+import EngagementBar from "../Post/EngagementBar";
+import { formatDistanceToNow } from "date-fns";
 
-const Profile = ({User}) => {
+const Profile = ({ User }) => {
   // const { user, setUser, userPosts } = useUserStore();
   // const [User, setUser] = useState({});
   // const { id: userId } = useParams();
 
-  console.log(111, User)
+  console.log(111, User);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const [isProfileModalOpen, setProfileModal] = useState(false);
@@ -96,10 +102,9 @@ const Profile = ({User}) => {
     setEditCertificateModal(true);
   };
 
-
-  const handelMessageClick = ()=>{
+  const handelMessageClick = () => {
     console.log(User);
-  }
+  };
 
   const formatDegree = (degree) => {
     const degreeMap = {
@@ -112,6 +117,18 @@ const Profile = ({User}) => {
       other: "Other",
     };
     return degreeMap[degree] || degree;
+  };
+
+  const scrollRef = useRef(null);
+
+  // scroll helpers
+  const scroll = (direction) => {
+    const gap = 16; // matches gap-4 (1rem)
+    const slideWidth = scrollRef.current.firstElementChild.offsetWidth + gap;
+    scrollRef.current.scrollBy({
+      left: direction * slideWidth * 2, // 2 posts per click
+      behavior: "smooth",
+    });
   };
 
   return (
@@ -588,35 +605,91 @@ const Profile = ({User}) => {
           </div>
 
           {/* Posts Section */}
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <div className="space-y-6 px-4 sm:px-0">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
               Posts
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-2">
-              {posts.map((post) => (
-                <div
-                  key={post._id}
-                  className="relative h-[300px] w-[300px] cursor-pointer group p-3"
-                >
-                  <img
-                    src={post?.images[0]}
-                    alt={`Post`}
-                    className="object-cover h-full w-full"
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/50 transition-all duration-200">
-                    <div className="flex gap-4 text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                      <div className="flex items-center gap-1">
-                        <Heart className="w-5 h-5" />
-                        <span>124</span>
+
+            {/* wrapper with arrows */}
+            <div className="relative">
+              {/* left arrow */}
+              <button
+                onClick={() => scroll(-1)}
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 dark:bg-slate-800/80 rounded-full p-2 shadow-md hover:scale-110 transition-transform"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+
+              {/* right arrow */}
+              <button
+                onClick={() => scroll(1)}
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 dark:bg-slate-800/80 rounded-full p-2 shadow-md hover:scale-110 transition-transform"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+
+              {/* scroll container */}
+              <div
+                ref={scrollRef}
+                className="flex overflow-x-auto snap-x snap-mandatory gap-1 pb-4 scroll-smooth"
+              >
+                {posts.map((Post) => (
+                  <div
+                    key={Post._id}
+                    className="snap-start shrink-0 w-[calc(50%-0.5rem)] sm:w-[calc(50%-0.5rem)] md:w-[calc(50%-0.5rem)] lg:w-[calc(50%-0.5rem)]"
+                  >
+                    <Card className="w-full pt-4 pb-0 max-w-[400px] h-[500px] flex flex-col mx-auto border-social-gray-light shadow-sm hover:shadow-md transition-shadow">
+                      {/* Header */}
+                      <PostHeader
+                        user={{
+                          name: Post.author.username,
+                          avatar: Post.author.profilePicture,
+                          title: Post.author.title,
+                          isVerified: true,
+                          connectionDegree: 1,
+                        }}
+                        timestamp={
+                          Post.createdAt
+                            ? formatDistanceToNow(Post.createdAt, {
+                                addSuffix: true,
+                              })
+                            : "6 hours ago"
+                        }
+                        post={Post}
+                      />
+
+                      {/* Caption (optional) */}
+                      {Post.caption && Post.caption !== "undefined" && (
+                        <div className="px-4 mb-2 text-sm shrink-0">
+                          <p className="whitespace-pre-line">{Post.caption}</p>
+                        </div>
+                      )}
+
+                      {/* Image : fills remaining space */}
+                      {Post.images.length > 0 && (
+                        <div className="flex-1 min-h-0 px-4">
+                          <img
+                            src={Post.images[0]}
+                            className="w-full h-full object-cover rounded"
+                            alt="Post"
+                          />
+                        </div>
+                      )}
+
+                      {/* Engagement bar : always at bottom */}
+                      <div className="mt-auto shrink-0">
+                        <EngagementBar
+                          initialLikes={Post.likes.length}
+                          initialComments={Post.comments.length}
+                          initialShares={0}
+                          initialSaved={0}
+                          post={Post}
+                        />
                       </div>
-                      <div className="flex items-center gap-1">
-                        <MessageSquare className="w-5 h-5" />
-                        <span>23</span>
-                      </div>
-                    </div>
+                    </Card>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
 
@@ -685,9 +758,9 @@ const Profile = ({User}) => {
 };
 
 const ProfilePage = () => {
-  const {user} = useUserStore()
-  const [User, setUser] = useState({});
-  const [loading, setLoading] = useState();
+  const { user: User, setUser } = useUserStore();
+  // const [User, setUser] = useState({});
+  const [loading, setLoading] = useState(true);
   const { id: userId } = useParams();
 
   useEffect(() => {
@@ -695,6 +768,7 @@ const ProfilePage = () => {
       setLoading(true);
       try {
         const res = await getUser(userId);
+        // console.log(res)
         setUser(res.user); // or setUser(res) if your API returns raw user
       } catch (error) {
         console.error("Fetch error:", error);
@@ -703,13 +777,13 @@ const ProfilePage = () => {
       }
     };
 
-    if (userId) fetchUser();
+    // if (userId)
+    fetchUser();
   }, [userId]);
 
   useEffect(() => {
     console.log("✅ User updated:", User);
   }, [User]);
-  
 
   return (
     <div className="flex flex-grow gap-6 p-5">
@@ -717,13 +791,16 @@ const ProfilePage = () => {
         <div>Loading....</div>
       ) : (
         <>
-          {User && User._id && (
-            User._id === user._id ?
-            (<Profile User={User}/>)
-            :
-            (<OthersProfilePage User={User} />)
-          )}
-          <SuggestedUser />
+          {User &&
+            User._id &&
+            (User._id === userId ? (
+              <Profile User={User} />
+            ) : (
+              <OthersProfilePage User={User} />
+            ))}
+          <div className="hidden xl:block">
+            <SuggestedUser />
+          </div>
         </>
       )}
     </div>

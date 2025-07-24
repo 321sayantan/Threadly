@@ -2,7 +2,7 @@ import {Kafka} from "kafkajs";
 
 export const kafka = new Kafka({
   clientId: "my-app",
-  brokers: ["192.168.42.26:9092", "192.168.0.100:9092"],
+  brokers: ["192.168.42.106:9092", "192.168.0.100:9092"],
 });
 
 let producer = null;
