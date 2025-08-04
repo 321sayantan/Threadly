@@ -20,6 +20,7 @@ import {
   ExternalLink,
   ChevronRight,
   ChevronLeft,
+  ArrowRight,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
@@ -47,6 +48,7 @@ import { Post } from "../Post/Post";
 import PostHeader from "../Post/PostHeader";
 import EngagementBar from "../Post/EngagementBar";
 import { formatDistanceToNow } from "date-fns";
+import { ProfileSkeleton } from "./ProfileSkeleton";
 
 const Profile = ({ User }) => {
   // const { user, setUser, userPosts } = useUserStore();
@@ -611,7 +613,7 @@ const Profile = ({ User }) => {
             </h2>
 
             {/* wrapper with arrows */}
-            <div className="relative">
+            <div className="relative border ">
               {/* left arrow */}
               <button
                 onClick={() => scroll(-1)}
@@ -631,7 +633,7 @@ const Profile = ({ User }) => {
               {/* scroll container */}
               <div
                 ref={scrollRef}
-                className="flex overflow-x-auto snap-x snap-mandatory gap-1 pb-4 scroll-smooth"
+                className="flex overflow-x-auto snap-x snap-mandatory gap-1 pb-4 scroll-smooth scrollbar-hide mt-5 mx-5"
               >
                 {posts.map((Post) => (
                   <div
@@ -690,6 +692,9 @@ const Profile = ({ User }) => {
                   </div>
                 ))}
               </div>
+              <button className="w-full py-3 hover:bg-gray-900 hover:cursor-pointer flex justify-center border-t">
+                See All Posts <ArrowRight className="w-5 h-5 ml-1 mt-1" />
+              </button>
             </div>
           </div>
 
@@ -758,8 +763,8 @@ const Profile = ({ User }) => {
 };
 
 const ProfilePage = () => {
-  const { user: User, setUser } = useUserStore();
-  // const [User, setUser] = useState({});
+  const { user: USER, setUser: SETUSER } = useUserStore();
+  const [User, setUser] = useState({});
   const [loading, setLoading] = useState(true);
   const { id: userId } = useParams();
 
@@ -767,9 +772,11 @@ const ProfilePage = () => {
     const fetchUser = async () => {
       setLoading(true);
       try {
+        console.log("User data ", USER);
         const res = await getUser(userId);
-        // console.log(res)
-        setUser(res.user); // or setUser(res) if your API returns raw user
+        console.log(res);
+        if (USER._id === userId) SETUSER(res.user);
+        else setUser(res.user);
       } catch (error) {
         console.error("Fetch error:", error);
       } finally {
@@ -783,26 +790,25 @@ const ProfilePage = () => {
 
   useEffect(() => {
     console.log("✅ User updated:", User);
-  }, [User]);
+    console.log("✅ User updated:", USER);
+  }, [User, USER]);
 
   return (
     <div className="flex flex-grow gap-6 p-5">
       {loading ? (
-        <div>Loading....</div>
+        // <div>Loading....</div>
+        <ProfileSkeleton/>
       ) : (
         <>
-          {User &&
-            User._id &&
-            (User._id === userId ? (
-              <Profile User={User} />
-            ) : (
-              <OthersProfilePage User={User} />
-            ))}
+          {USER && USER._id === userId && <Profile User={USER} />}
+
+          {User && User._id === userId && <OthersProfilePage User={User} />}
+
+        </>
+      )}
           <div className="hidden xl:block">
             <SuggestedUser />
           </div>
-        </>
-      )}
     </div>
   );
 };

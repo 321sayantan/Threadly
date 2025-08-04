@@ -20,6 +20,13 @@ const buttonVariants = cva(
         ghost:
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline",
+        call: "bg-[hsl(var(--call-primary))] text-white hover:opacity-90 shadow-lg animate-pulse",
+        "call-danger":
+          "bg-[hsl(var(--call-danger))] text-white hover:bg-[hsl(var(--call-danger))]/90",
+        "call-success":
+          "bg-[hsl(var(--call-success))] text-white hover:bg-[hsl(var(--call-success))]/90",
+        glass:
+          " backdrop-blur-md  text-foreground hover:bg-white/30",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
@@ -33,7 +40,7 @@ const buttonVariants = cva(
       size: "default",
     },
   }
-)
+);
 
 function Button({
   className,

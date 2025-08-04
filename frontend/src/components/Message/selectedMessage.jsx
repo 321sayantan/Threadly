@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  ChevronRight,
-} from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import ChatHeader from "./ChatHeader";
 import MessageBubble from "./MessageBubble";
 import MessageInput from "./MessageInput";
@@ -12,18 +10,21 @@ import useChatScroll from "@/hooks/useChatScroll";
 import ChatSideBar from "./chatSideBar";
 import { useParams } from "react-router";
 import { useSidebar } from "@/hooks/MessageSidebarContext";
+import useMessageStore from "@/lib/messageStore";
 
 const SelectedMessage = () => {
   const [selectedChatConversationID, setSelectedChatConversationID] =
     useState(null);
-  const [selectedChat, setSelectedChat] = useState(null);
+  // const [selectedChat, setSelectedChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const { user } = useUserStore();
   const { socket, joinConversation } = useSocketStore();
   const chatref = useChatScroll(messages);
   const [isTyping, setIsTyping] = useState(false);
   const [typingTimeOut, setTypingTimeOut] = useState(null);
-  const {showSidebar, setShowSidebar} = useSidebar();
+  const { showSidebar, setShowSidebar, } = useSidebar();
+  const setSelectedChat = useMessageStore((s) => s.setSelectedChat);
+  const selectedChat = useMessageStore((s) => s.selectedChat);
   const params = useParams();
 
   useEffect(() => {

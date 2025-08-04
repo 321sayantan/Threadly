@@ -145,6 +145,7 @@ export const getMessage = async (req, res) => {
     }
 
     const receiver = conversation.participants.find((p) => {
+      console.log(p._id, userID)
       return p._id.toString() !== userID;
     });
 

@@ -25,9 +25,9 @@ export const SuggestedUser = () => {
 
   }, []);
 
-  // useEffect(() => {
-  //   console.log(suggestedUsers);
-  // }, [suggestedUsers]);
+  useEffect(() => {
+    console.log(suggestedUsers);
+  }, [suggestedUsers]);
 
   const handleFollowUser = async (followedUserID) => {
     try {
@@ -63,26 +63,26 @@ export const SuggestedUser = () => {
           <div className="space-y-4">
             {suggestedUsers?.map((users) => (
               <div
-                key={users._id}
+                key={users?._id}
                 className="px-3 py-3 hover:bg-social-gray-light/30 transition-colors"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-center space-x-3 flex-1">
                     <Avatar className="w-12 h-12 border">
                       <AvatarImage
-                        src={users.profilePicture}
-                        alt={users.username}
+                        src={users?.profilePicture}
+                        alt={users?.username}
                         className="object-cover"
                       />
                       <AvatarFallback className="bg-social-purple-light dark:text-white text-black text-sm">
-                        {users.username.substring(0, 2).toUpperCase()}
+                        {users?.username.substring(0, 2).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
 
                     <div className="flex-1 min-w-0">
                       <h4 className="font-medium text-sm text-social-gray-dark truncate">
                         <NavLink to={`/profile/${users._id}`}>
-                          {users.username}
+                          {users?.username}
                         </NavLink>
                       </h4>
                       <p className="text-xs text-social-gray truncate">
@@ -108,7 +108,7 @@ export const SuggestedUser = () => {
                     }`}
                     onClick={() => handleFollowUser(users._id)}
                   >
-                    {user.following.includes(users._id) ? (
+                    {user?.following.includes(users._id) ? (
                       <>
                         <UserPlus className="w-3 h-3 mr-1" />
                         Following

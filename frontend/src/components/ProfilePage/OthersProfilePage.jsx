@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   MapPin,
   LinkIcon,
@@ -18,6 +18,9 @@ import {
   Pencil,
   Plus,
   ExternalLink,
+  ChevronLeft,
+  ChevronRight,
+  ArrowRight,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
@@ -40,6 +43,9 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Separator } from "@radix-ui/react-dropdown-menu";
+import PostHeader from "../Post/PostHeader";
+import EngagementBar from "../Post/EngagementBar";
+import { formatDistanceToNow } from "date-fns";
 
 const OthersProfilePage = ({ User }) => {
   // const { user, setUser, userPosts } = useUserStore();
@@ -116,6 +122,18 @@ const OthersProfilePage = ({ User }) => {
     return degreeMap[degree] || degree;
   };
 
+    const scrollRef = useRef(null);
+  
+    // scroll helpers
+    const scroll = (direction) => {
+      const gap = 16; // matches gap-4 (1rem)
+      const slideWidth = scrollRef.current.firstElementChild.offsetWidth + gap;
+      scrollRef.current.scrollBy({
+        left: direction * slideWidth * 2, // 2 posts per click
+        behavior: "smooth",
+      });
+    };
+
   return (
     <div className="min-h-screen ">
       <div className="max-w-4xl mx-auto bg-transparent rounded-4xl border">
@@ -180,7 +198,11 @@ const OthersProfilePage = ({ User }) => {
 
               {/* Action Buttons */}
               <div className="flex gap-2 mt-4 md:mt-0">
-                <Button variant="outline" size="sm" onClick={()=>handelMessageClick()}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handelMessageClick()}
+                >
                   <MessageCircle className="w-4 h-4 mr-2" />
                   Message
                 </Button>
@@ -316,7 +338,6 @@ const OthersProfilePage = ({ User }) => {
                 ) : (
                   experiences.map((experience, index) => (
                     <div key={experience?._id} className="relative">
-
                       <div className="flex gap-4">
                         <Avatar className="w-12 h-12">
                           <AvatarImage src="/placeholder.svg?height=48&width=48" />
@@ -391,7 +412,6 @@ const OthersProfilePage = ({ User }) => {
                 ) : (
                   education.map((edu) => (
                     <div key={edu._id} className="relative">
-
                       <div className="flex gap-4">
                         <Avatar className="w-12 h-12">
                           <AvatarImage
@@ -464,7 +484,6 @@ const OthersProfilePage = ({ User }) => {
                 ) : (
                   certifications.map((cert) => (
                     <div key={cert._id} className="relative">
-
                       <div className="flex items-start justify-between pr-10">
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
@@ -523,7 +542,7 @@ const OthersProfilePage = ({ User }) => {
           </div>
 
           {/* Posts Section */}
-          <div className="space-y-6">
+          {/* <div className="space-y-6">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
               Posts
             </h2>
@@ -553,6 +572,103 @@ const OthersProfilePage = ({ User }) => {
                 </div>
               ))}
             </div>
+          </div> */}
+          <div className="space-y-6 px-4 sm:px-0">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+              Posts
+            </h2>
+
+            {posts.length === 0 ? (
+              <div className="text-center">No Post Available</div>
+            ) : (
+              <div className="relative border ">
+                {/* left arrow */}
+                <button
+                  onClick={() => scroll(-1)}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 dark:bg-slate-800/80 rounded-full p-2 shadow-md hover:scale-110 transition-transform"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+
+                {/* right arrow */}
+                <button
+                  onClick={() => scroll(1)}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 dark:bg-slate-800/80 rounded-full p-2 shadow-md hover:scale-110 transition-transform"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+
+                {/* scroll container */}
+                <div
+                  ref={scrollRef}
+                  className="flex overflow-x-auto snap-x snap-mandatory gap-1 pb-4 scroll-smooth scrollbar-hide mt-5 mx-5"
+                >
+                  {posts.map((Post) => (
+                    <div
+                      key={Post._id}
+                      className="snap-start shrink-0 w-[calc(50%-0.5rem)] sm:w-[calc(50%-0.5rem)] md:w-[calc(50%-0.5rem)] lg:w-[calc(50%-0.5rem)]"
+                    >
+                      <Card className="w-full pt-4 pb-0 max-w-[400px] h-[500px] flex flex-col mx-auto border-social-gray-light shadow-sm hover:shadow-md transition-shadow">
+                        {/* Header */}
+                        <PostHeader
+                          user={{
+                            name: Post.author.username,
+                            avatar: Post.author.profilePicture,
+                            title: Post.author.title,
+                            isVerified: true,
+                            connectionDegree: 1,
+                          }}
+                          timestamp={
+                            Post.createdAt
+                              ? formatDistanceToNow(Post.createdAt, {
+                                  addSuffix: true,
+                                })
+                              : "6 hours ago"
+                          }
+                          post={Post}
+                        />
+
+                        {/* Caption (optional) */}
+                        {Post.caption && Post.caption !== "undefined" && (
+                          <div className="px-4 mb-2 text-sm shrink-0">
+                            <p className="whitespace-pre-line">
+                              {Post.caption}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Image : fills remaining space */}
+                        {Post.images.length > 0 && (
+                          <div className="flex-1 min-h-0 px-4">
+                            <img
+                              src={Post.images[0]}
+                              className="w-full h-full object-cover rounded"
+                              alt="Post"
+                            />
+                          </div>
+                        )}
+
+                        {/* Engagement bar : always at bottom */}
+                        <div className="mt-auto shrink-0">
+                          <EngagementBar
+                            initialLikes={Post.likes.length}
+                            initialComments={Post.comments.length}
+                            initialShares={0}
+                            initialSaved={0}
+                            post={Post}
+                          />
+                        </div>
+                      </Card>
+                    </div>
+                  ))}
+                </div>
+                <button className="w-full py-3 hover:bg-gray-900 hover:cursor-pointer flex justify-center border-t">
+                  See All Posts <ArrowRight className="w-5 h-5 ml-1 mt-1" />
+                </button>
+              </div>
+            )}
+
+            {/* wrapper with arrows */}
           </div>
 
           {/* Connections Section */}

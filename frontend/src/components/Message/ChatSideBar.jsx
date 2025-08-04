@@ -7,10 +7,11 @@ import { useNavigate } from "react-router";
 import ChatList from "./ChatList";
 import { getChatList } from "@/http/api";
 import { useSidebar } from "@/hooks/MessageSidebarContext";
+import useMessageStore from "@/lib/messageStore";
 
 const ChatSideBar = () => {
   const navigate = useNavigate();
-  const [selectedChat, setSelectedChat] = useState(null);
+  // const [selectedChat, setSelectedChat] = useState(null);
   const [chatList, setChatList] = useState([]);
   const [messages, setMessages] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -18,6 +19,7 @@ const ChatSideBar = () => {
   const { socket } = useSocketStore();
   const [filteredChats, setFilteredChats] = useState([]);
   const { showSidebar, setShowSidebar } = useSidebar();
+  const {selectedChat, setSelectedChat} = useMessageStore();
 
   useEffect(() => {
     socket?.on("newMessage", (newMessage) => {
@@ -111,6 +113,7 @@ const ChatSideBar = () => {
         : item
     );
     setChatList(updatedChatList);
+    setSelectedChat(chat);
 
     navigate(`/messages/${chat.conversationID}`);
   };

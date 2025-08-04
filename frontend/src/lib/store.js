@@ -20,8 +20,13 @@ const userstore = (set) => ({
 });
 
 const useUserStore = create(
-  devtools(
-    persist(userstore, { name: "userStore" }) // name of the item in the storage (must be unique)
-  )
+  // devtools(
+    persist(
+      userstore,
+      { name: "userStore" } // name of the item in the storage (must be unique)
+    )
+  // )
 );
+
 export default useUserStore;
+

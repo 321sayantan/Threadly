@@ -22,9 +22,9 @@ let s;
 
 async function getReceiverSocketId(userID) {
   onlineUsers = await client.hgetall("onlineUsers");
-  console.log("Passed UserID:", userID)
+  console.log("Passed UserID:", userID);
   console.log("socketID", onlineUsers[userID]);
-  console.log("user for this socket", s.data.userID)
+  console.log("user for this socket", s.data.userID);
   // console.log("socketUserMap", socketUserMap[onlineUsers[userID]]);
   // console.log("userSocketMap", userSocketMap[userID]);
   return onlineUsers[userID];
@@ -35,7 +35,7 @@ function isUserInRoom(userID, convID) {
 }
 
 io.on("connection", async (socket) => {
-  s=socket;
+  s = socket;
   console.log("A new User Connected: ", socket.id);
   const userID = socket.handshake.query.userID;
   if (userID) {
@@ -49,7 +49,7 @@ io.on("connection", async (socket) => {
 
   // Remove old socketID if it exists
   if (userSocketMap.has(userID)) {
-    console.log('old socket id removed')
+    console.log("old socket id removed");
     const oldSocketID = userSocketMap.get(userID);
     socketUserMap.delete(oldSocketID);
   }
@@ -58,7 +58,6 @@ io.on("connection", async (socket) => {
   socketUserMap.set(socket.id, userID);
 
   socket.data.userID = userID; // Attach userID to socket for easy access
-
 
   socket.on("typing", (data) => {
     console.log(`user ${data.userID} is typing in  ${data.chatID}`);
@@ -77,8 +76,6 @@ io.on("connection", async (socket) => {
   });
 
   socket.on("joinConversation", (conversationId) => {
-    socket.join(conversationId); // Join Socket.IO room
-
     const userID = socketUserMap.get(socket.id); // Get userID from current socket
     // Subscribe only once
     userSocketMap.set(userID, socket.id);
@@ -92,29 +89,70 @@ io.on("connection", async (socket) => {
 
     redisSub.subscribe(`chat:${conversationId}`);
 
-    // if (!subscribedConversations.has(conversationId)) {
-    //   subscribedConversations.add(conversationId);
-    // }
-
+    // io.to(conversationId).emit("room:joined", { id: socket.data.userID });
+    socket.join(conversationId); // Join Socket.IO room
+    // io.to(socket.id).emit("join:room", {conversationId});
     console.log("Joined conversation");
+  });
+
+  socket.on("user:call", async ({ to, offer, callType, receiver }) => {
+    console.log("inside user call", to, socket.id);
+    const socketID = await getReceiverSocketId(to);
+    io.to(socketID).emit("incomming", {
+      from: socket.id,
+      offer,
+      callType,
+      receiver,
+    });
+  });
+
+  socket.on("call:accepted", ({ to, ans }) => {
+    io.to(to).emit("call:accepted", { from: socket.id, ans });
+  });
+
+  socket.on("ice-candidate", async ({ to, candidate, type }) => {
+    console.log("ice-candidate ", to);
+    if (type == "socketid") {
+      io.to(to).emit("ice-candidate", { candidate });
+    } else {
+      const targetSocketId = await getReceiverSocketId(to); // map userId → socket.id
+      if (targetSocketId) {
+        io.to(targetSocketId).emit("ice-candidate", { candidate });
+      }
+    }
+  });
+
+  socket.on("call:rejected", async ({to, msg})=>{
+       const receiverSocketID = await getReceiverSocketId(to);
+       if (receiverSocketID) {
+         io.to(receiverSocketID).emit("call:rejected", {msg});
+       }
+  } )
+
+  socket.on("call:end", async ({ to }) => {
+    const receiverSocketID = await getReceiverSocketId(to);
+    console.log("ending call", receiverSocketID)
+    if (receiverSocketID) {
+      io.to(receiverSocketID).emit("call:end");
+    }
   });
 
   socket.on("leaveConversation", (conversationID) => {
     socket.leave(conversationID);
-    const userID = socketUserMap.get(socket.id);  // Get userID from current socket
+    const userID = socketUserMap.get(socket.id); // Get userID from current socket
 
-  if (roomMap.has(conversationID)) {
-    const usersInRoom = roomMap.get(conversationID);
+    if (roomMap.has(conversationID)) {
+      const usersInRoom = roomMap.get(conversationID);
 
-    usersInRoom.delete(userID);  // ✅ Remove by userID instead of socket.id
+      usersInRoom.delete(userID); // ✅ Remove by userID instead of socket.id
 
-    if (usersInRoom.size === 0) {
-      roomMap.delete(conversationID);  // 🧹 Clean up empty room
+      if (usersInRoom.size === 0) {
+        roomMap.delete(conversationID); // 🧹 Clean up empty room
+      }
     }
-  }
 
-  console.log("User", userID, "left conversation:", conversationID);
-  console.log("Updated roomMap:", roomMap);
+    console.log("User", userID, "left conversation:", conversationID);
+    console.log("Updated roomMap:", roomMap);
   });
 
   socket.on("disconnect", async () => {
@@ -163,9 +201,8 @@ redisSub.on("message", async (channel, message) => {
 
   console.log("roomMap:", roomMap, isReceiverInChatRoom);
 
-  if(isReceiverInChatRoom)
-  {
-    console.log("message seen")
+  if (isReceiverInChatRoom) {
+    console.log("message seen");
     io.to(senderSocketID).emit("messageSeen", {
       chatID: conversationID,
       messageIDs: parsedMessage._id,

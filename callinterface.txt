@@ -1,0 +1,252 @@
+import React, { useEffect, useRef, useState } from 'react'
+import { Button } from '../ui/button';
+import { Mic, MicOff, Monitor, PhoneOff, Video, VideoOff, Volume2, VolumeX } from 'lucide-react';
+import { useSidebar } from '@/hooks/MessageSidebarContext';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import Peer from '@/lib/Peer';
+
+const CallInterface = ({ isActive, callType, onEndCall }) => {
+  const [isMuted, setIsMuted] = useState(false);
+  const [isVideoOff, setIsVideoOff] = useState(false);
+  const [isSpeakerOn, setIsSpeakerOn] = useState(false);
+  const [isScreenSharing, setIsScreenSharing] = useState(false);
+  const [callDuration, setCallDuration] = useState(0);
+  const [connectionStatus, setConnectionStatus] = useState("connecting");
+    const { selectedChat: contact } = useSidebar();
+
+  const localVideoRef = useRef(null);
+  const remoteVideoRef = useRef(null);
+  const intervalRef = useRef(null);
+
+  useEffect(() => {
+    if (isActive) {
+      // Simulate connection process
+      const timer = setTimeout(() => {
+        setConnectionStatus("connected");
+      }, 2000);
+
+      // Start call duration timer
+      intervalRef.current = setInterval(() => {
+        setCallDuration((prev) => prev + 1);
+      }, 1000);
+
+      // Initialize media devices
+      initializeMedia();
+
+      return () => {
+        clearTimeout(timer);
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+        }
+      };
+    }
+  }, [isActive]);
+
+  const initializeMedia = async () => {
+    try {
+      if (callType === "video") {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        });
+        if (localVideoRef.current) {
+          localVideoRef.current.srcObject = stream;
+          remoteVideoRef.current.srcObject = stream;
+        }
+      } else {
+        await navigator.mediaDevices.getUserMedia({ audio: true });
+      }
+    } catch (error) {
+      console.error("Error accessing media devices:", error);
+      setConnectionStatus("failed");
+    }
+  };
+
+  const formatDuration = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, "0")}:${secs
+      .toString()
+      .padStart(2, "0")}`;
+  };
+
+  const toggleMute = () => {
+    setIsMuted(!isMuted);
+  };
+
+  const toggleVideo = () => {
+    setIsVideoOff(!isVideoOff);
+  };
+
+  const toggleSpeaker = () => {
+    setIsSpeakerOn(!isSpeakerOn);
+  };
+
+  const toggleScreenShare = () => {
+    setIsScreenSharing(!isScreenSharing);
+  };
+
+  if (!isActive) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-md">
+      <div className="h-full flex flex-col">
+        {/* Video Section */}
+        {callType === "video" && (
+          <div className="flex-1 relative h-96 bg-black/20">
+            {/* Remote Video */}
+            <video
+              ref={remoteVideoRef}
+              className="w-full h-full object-cover"
+              autoPlay
+              playsInline
+            />
+
+            {/* Local Video */}
+            <div className="absolute bottom-20 right-4 w-52 h-36 bg-black/50 rounded-lg overflow-hidden border-2 border-border/20">
+              <video
+                ref={localVideoRef}
+                className="w-full h-full object-cover"
+                autoPlay
+                playsInline
+                muted
+              />
+            </div>
+
+            {/* Screen Share Indicator */}
+            {isScreenSharing && (
+              <div className="absolute top-4 left-4 bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-medium">
+                Screen Sharing
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Voice Call Avatar Section */}
+        {callType === "voice" && (
+          <div className="flex-1 flex items-center justify-center bg-gradient-to-br">
+            <div className="text-center">
+              <div className="relative mb-6">
+                <Avatar className="h-52 w-52 rounded-full overflow-hidden">
+                  <AvatarImage
+                    src={contact?.receiver.profilePicture}
+                    className="object-cover w-full h-full"
+                  />
+                  <AvatarFallback className="bg-white/10 text-white text-3xl flex items-center justify-center w-full h-full">
+                    {contact?.receiver.username
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")
+                      .toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                {connectionStatus === "connecting" && (
+                  <div className="absolute inset-0 rounded-full border-4 border-white/30 border-t-white animate-spin" />
+                )}
+              </div>
+              <h2 className="text-2xl font-semibold text-white mb-2">
+                {contact?.receiver.username}
+              </h2>
+              <p className="text-white/80 text-lg">
+                {connectionStatus === "connecting" && "Connecting..."}
+                {connectionStatus === "connected" &&
+                  formatDuration(callDuration)}
+                {connectionStatus === "failed" && "Connection failed"}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Call Info for Video Calls */}
+        {callType === "video" && (
+          <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-black/50 px-4 py-2 rounded-full backdrop-blur-md">
+            <div className="text-center">
+              <p className="text-white font-medium">
+                {contact?.receiver.username}
+              </p>
+              <p className="text-white/80 text-sm">
+                {connectionStatus === "connecting" && "Connecting..."}
+                {connectionStatus === "connected" &&
+                  formatDuration(callDuration)}
+                {connectionStatus === "failed" && "Connection failed"}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Controls */}
+        <div className="p-2 absolute bottom-0 w-full backdrop-blur-sm bg-transparent">
+          <div className="flex items-center justify-center space-x-4">
+            {/* Mute */}
+            <Button
+              variant={isMuted ? "call-danger" : "glass"}
+              size="icon"
+              onClick={toggleMute}
+              className="h-12 w-12 rounded-full"
+            >
+              {isMuted ? (
+                <MicOff className="h-6 w-6" />
+              ) : (
+                <Mic className="h-6 w-6" />
+              )}
+            </Button>
+
+            {/* Video Toggle (only for video calls) */}
+            {callType === "video" && (
+              <Button
+                variant={isVideoOff ? "call-danger" : "glass"}
+                size="icon"
+                onClick={toggleVideo}
+                className="h-12 w-12 rounded-full"
+              >
+                {isVideoOff ? (
+                  <VideoOff className="h-6 w-6" />
+                ) : (
+                  <Video className="h-6 w-6" />
+                )}
+              </Button>
+            )}
+
+            {/* Speaker */}
+            <Button
+              variant={isSpeakerOn ? "call-success" : "glass"}
+              size="icon"
+              onClick={toggleSpeaker}
+              className="h-12 w-12 rounded-full"
+            >
+              {isSpeakerOn ? (
+                <Volume2 className="h-6 w-6" />
+              ) : (
+                <VolumeX className="h-6 w-6" />
+              )}
+            </Button>
+
+            {/* Screen Share (only for video calls) */}
+            {callType === "video" && (
+              <Button
+                variant={isScreenSharing ? "call-success" : "glass"}
+                size="icon"
+                onClick={toggleScreenShare}
+                className="h-12 w-12 rounded-full"
+              >
+                <Monitor className="h-6 w-6" />
+              </Button>
+            )}
+
+            {/* End Call */}
+            <Button
+              variant="call-danger"
+              size="icon"
+              onClick={onEndCall}
+              className="h-12 w-12 rounded-full hover:cursor-pointer"
+            >
+              <PhoneOff className="h-6 w-6" />
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default CallInterface
