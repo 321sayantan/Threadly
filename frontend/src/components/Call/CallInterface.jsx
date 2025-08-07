@@ -29,6 +29,8 @@ const CallInterface = ({
   const [isSpeakerOn, setIsSpeakerOn] = useState(false);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
+  const [remoteVideoPaused, setRemoteVideoPaused] = useState(false);
+  const [remoteAudioPaused, setRemoteAudioPaused] = useState(false);
 
   const stream = useMessageStore((s) => s.stream);
   const setStream = useMessageStore((s) => s.setStream);
@@ -39,6 +41,7 @@ const CallInterface = ({
   const [connectionStatus, setConnectionStatus] = useState(
     callConnected ? "connected" : "connecting"
   );
+  const timebound = useMessageStore((s) => s.timebound);
 
   const localVideoRef = useRef(null); // Local ref is fine here
   const intervalRef = useRef(null);
@@ -119,14 +122,62 @@ const CallInterface = ({
   useEffect(() => {
     const handleCallAccepted = async ({ from, ans }) => {
       console.log("Call accepted");
+      clearTimeout(timebound);
       await Peer.setRemoteDescription(ans);
       setCallConnected(true);
       setConnectionStatus("connected");
     };
     socket?.on("call:accepted", handleCallAccepted);
 
+    socket.on("media:toggle", ({ type, enabled, userID }) => {
+      console.log(`${type} from ${userID} is now ${enabled ? "on" : "off"}`);
+
+      if (type === "video" && remoteVidRef.current?.srcObject) {
+        const stream = remoteVidRef.current.srcObject;
+
+        // Toggle video tracks
+        stream.getVideoTracks().forEach((track) => {
+          track.enabled = enabled;
+        });
+
+        // Toggle audio tracks in sync with video
+        // stream.getAudioTracks().forEach((track) => {
+        //   track.enabled = enabled;
+        // });
+
+        setRemoteVideoPaused(!enabled);
+        // setRemoteAudioPaused(!enabled);
+      }
+
+      if (type === "audio" &&
+        callType === "video" &&
+        remoteVidRef.current?.srcObject
+      ) {
+        const stream = remoteVidRef.current.srcObject;
+        // Toggle audio tracks in sync with video
+        stream.getAudioTracks().forEach((track) => {
+          track.enabled = enabled;
+        });
+        setRemoteAudioPaused(!enabled);
+      }
+
+      if (
+        type === "audio" &&
+        callType === "audio" &&
+        remoteAudioRef.current?.srcObject
+      ) {
+        remoteAudioRef.current.srcObject.getAudioTracks().forEach((track) => {
+          track.enabled = enabled;
+        });
+        setRemoteAudioPaused(!enabled);
+      }
+
+      // Optionally reflect changes visually (like fading out video)
+    });
+
     return () => {
       socket?.off("call:accepted", handleCallAccepted);
+      socket.off("media:toggle");
     };
   }, [socket]);
 
@@ -159,11 +210,38 @@ const CallInterface = ({
   // }, [callType, remoteVidRef, remoteAudioRef]);
 
   const toggleMute = () => {
-    setIsMuted(!isMuted);
+    const newMuted = !isMuted;
+    setIsMuted(newMuted);
+
+    stream.getAudioTracks().forEach((track) => {
+      track.enabled = !newMuted;
+    });
+
+    socket.emit("media:toggle", {
+      type: "audio",
+      enabled: !newMuted,
+      userID: contact.fromUser || contact.receiver._id,
+    });
   };
 
   const toggleVideo = () => {
-    setIsVideoOff(!isVideoOff);
+    const newVideoState = !isVideoOff;
+    setIsVideoOff(newVideoState);
+
+    if (localVideoRef.current) {
+      if (isVideoOff) localVideoRef.current.play();
+      else localVideoRef.current.pause();
+    }
+
+    //  stream.getVideoTracks().forEach((track) => {
+    //    track.enabled = !newVideoState;
+    //  });
+    console.log(contact.fromUser || contact.receiver._id);
+    socket.emit("media:toggle", {
+      type: "video",
+      enabled: !newVideoState,
+      userID: contact.fromUser || contact.receiver._id,
+    });
   };
 
   const toggleSpeaker = () => {
@@ -183,25 +261,42 @@ const CallInterface = ({
         {callType === "video" && (
           <div className="flex-1 relative h-96 bg-black/20">
             {/* Remote Video */}
-            {!callConnected && <Skeleton className="w-full h-full"/>}
-            
-              <video
-                ref={remoteVidRef}
-                className="w-full h-full object-cover"
-                autoPlay
-                playsInline
-              />
-
+            {!callConnected && <Skeleton className="w-full h-full" />}
+            {remoteVideoPaused && (
+              <div className="w-full h-full flex justify-center items-center">
+                Paused
+              </div>
+            )}
+            {remoteAudioPaused && (
+              <div className="absolute right-3 top-2 rounded-2xl px-3 py-1 bg-gray-500">
+                Mute
+              </div>
+            )}
+            <video
+              ref={remoteVidRef}
+              className="w-full h-full object-cover"
+              autoPlay
+              playsInline
+            />
 
             {/* Local Video */}
             <div className="absolute bottom-20 right-4 w-52 h-36 bg-black/50 rounded-lg overflow-hidden border-2 border-border/20">
+              {isVideoOff && (
+                <div className="w-full h-full backdrop-blur-sm flex justify-center items-center">
+                  Paused
+                </div>
+              )}
+
               <video
                 ref={localVideoRef}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover backdrop-blur-sm"
                 autoPlay
                 playsInline
                 muted
               />
+              <div className="absolute right-2 bottom-3">
+                {isMuted ? <MicOff /> : <Mic />}
+              </div>
             </div>
 
             {/* Screen Share Indicator */}

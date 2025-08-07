@@ -496,17 +496,21 @@ export default function App() {
   const [incomingCall, setIncomingCall] = useState(null);
   const [isCallActive, setIsCallActive] = useState(false);
   const [incomingOffer, setIncomingOffer] = useState(null);
-  const [selectedContact, setSelectedContact] = useState(null);
+  // const [selectedContact, setSelectedContact] = useState(null);
   const isCallLobbyOpen = useMessageStore((s) => s.isCallLobbyOpen);
   const callType = useMessageStore((s) => s.callType);
   const setCallType = useMessageStore((s) => s.setCallType);
   const setIsCallLobbyOpen = useMessageStore((s) => s.setIsCallLobbyOpen);
   const remoteVideoRef = useRef(null);
-  const contact = useMessageStore((s) => s.selectedChat);
+  const selectedContact = useMessageStore((s) => s.selectedChat);
+  const setSelectedContact = useMessageStore((s) => s.setSelectedChat);
+  const callContact = useMessageStore((s) => s.callContact);
+  const setCallContact = useMessageStore((s) => s.setCallContact);
   const stream = useMessageStore((s) => s.stream);
   const setStream = useMessageStore((s) => s.setStream);
   const setCallConnected = useMessageStore((s) => s.setCallConnected);
   const { user } = useUserStore();
+  const setTimebound = useMessageStore((s) => s.setTimebound);
 
   let socket = useSocketStore.getState().socket;
 
@@ -537,7 +541,8 @@ export default function App() {
     socket?.on("incomming", (data) => {
       console.log("incomming call", data);
       setCallType(data.callType);
-      setSelectedContact(data);
+      // setSelectedContact(data);
+      setCallContact(data);
       setIncomingOffer(data);
       setIncomingCall(true);
     });
@@ -561,13 +566,13 @@ export default function App() {
       toast("The call has been disconnected.");
     });
 
-    socket?.on("call:rejected", ({msg}) => {
+    socket?.on("call:rejected", ({ msg }) => {
       setIsCallActive(false);
       setIncomingCall(false);
       const pc = Peer.getPeer();
       pc.getSenders().forEach((sender) => sender.track?.stop());
       pc.getReceivers().forEach((receiver) => receiver.track?.stop());
-      if(!msg) toast("Call Rejected");
+      if (!msg) toast("Call Rejected");
     });
 
     return () => {
@@ -580,13 +585,17 @@ export default function App() {
 
   const handleStartCall = () => {
     const timebound = setTimeout(() => {
-      socket.emit("call:rejected", { to: contact.receiver._id, msg: "Call Timeout!" });
+      socket.emit("call:rejected", {
+        to: callContact.receiver._id,
+        msg: "Call Timeout!",
+      });
       setIsCallActive(false);
       const pc = Peer.getPeer();
       pc.getSenders().forEach((sender) => sender.track?.stop());
       pc.getReceivers().forEach((receiver) => receiver.track?.stop());
       toast("Call Timeout!");
     }, 10 * 1000);
+    setTimebound(timebound);
     setIsCallActive(true);
     setIsCallLobbyOpen(false);
     toast(
@@ -607,7 +616,9 @@ export default function App() {
 
   const handleEndCall = () => {
     // Notify the other peer
-    socket.emit("call:end", { to: contact.receiver._id }); // or `contact._id` depending on structure
+    socket.emit("call:end", {
+      to: callContact.fromUser || callContact.receiver._id,
+    }); // or `contact._id` depending on structure
 
     const pc = Peer.getPeer();
     pc.getSenders().forEach((sender) => sender.track?.stop());
@@ -662,7 +673,9 @@ export default function App() {
   };
 
   const handleDeclineIncomingCall = () => {
-    socket.emit("call:rejected", { to: contact.receiver._id });
+    socket.emit("call:rejected", {
+      to: callContact.fromUser || callContact.receiver._id,
+    });
     setIncomingCall(false);
   };
 
@@ -673,7 +686,7 @@ export default function App() {
           isVisible={incomingCall}
           caller={123}
           callType={callType}
-          contact={selectedContact}
+          contact={callContact}
           onAccept={handleAcceptIncomingCall}
           onDecline={handleDeclineIncomingCall}
           remoteVidRef={remoteVideoRef}

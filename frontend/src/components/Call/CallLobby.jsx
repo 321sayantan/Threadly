@@ -34,6 +34,7 @@ const CallLobby = ({
   const videoRef = useRef(null);
   // const contact = useMessageStore((s) => s.selectedChat);
   contact = contact || useMessageStore((s) => s.selectedChat);
+  const setSelectedChat = useMessageStore((s)=> s.setSelectedChat);
   const socket = useSocketStore((s) => s.socket);
   const {user} = useUserStore();
   console.log(1,contact);
@@ -111,13 +112,20 @@ const CallLobby = ({
       }
     });
 
+    // setSelectedChat({
+    //   _id: contact.receiver._id,
+    //   username: user.username,
+    //   profilePicture: user.profilePicture,
+    // });
+
     console.log(2, "offer");
     socket.emit("user:call", {
       to: contact.receiver._id,
+      from: user._id,
       offer,
       callType,
       receiver: {
-        id: contact.receiver._id,
+        _id: contact.receiver._id,
         username: user.username,
         profilePicture: user.profilePicture,
       },

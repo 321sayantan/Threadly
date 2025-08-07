@@ -95,11 +95,12 @@ io.on("connection", async (socket) => {
     console.log("Joined conversation");
   });
 
-  socket.on("user:call", async ({ to, offer, callType, receiver }) => {
+  socket.on("user:call", async ({ to, from, offer, callType, receiver }) => {
     console.log("inside user call", to, socket.id);
     const socketID = await getReceiverSocketId(to);
     io.to(socketID).emit("incomming", {
       from: socket.id,
+      fromUser: from,
       offer,
       callType,
       receiver,
@@ -136,6 +137,13 @@ io.on("connection", async (socket) => {
       io.to(receiverSocketID).emit("call:end");
     }
   });
+
+  socket.on("media:toggle", async (data)=>{
+    const receiverSocketID = await getReceiverSocketId(data.userID);
+    if (receiverSocketID) {
+      io.to(receiverSocketID).emit("media:toggle", data);
+    }
+  })
 
   socket.on("leaveConversation", (conversationID) => {
     socket.leave(conversationID);

@@ -39,7 +39,7 @@ export const sendMessage = async (req, res) => {
     };
 
     //kafka
-    produceMessage(newMessage);
+    // produceMessage(newMessage);
 
     // 🧠 Redis Key
     const redisKey = `message:conversation:${conversationID}`;

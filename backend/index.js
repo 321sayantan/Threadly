@@ -30,7 +30,7 @@ app.use(
   })
 );
 
-startMessageConsumer();
+// startMessageConsumer();
 
 app.get('/', (req, res)=>{
     res.status(200).json("Hello, from backend");
