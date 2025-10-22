@@ -8,8 +8,11 @@
 /dist
 
 # Ignore environment variable files
-/.env
-/backend/.env
+*.env
+# /backend/.env
+# /frontend/.env
+
+*.txt
 
 # Ignore log files
 *.log

@@ -26,6 +26,8 @@ import { login } from "@/http/api";
 import clsx from "clsx";
 import { Loader2 } from "lucide-react";
 import useUserStore from "@/lib/store";
+import { BackgroundPaths } from "@/components/ui/shadcn-io/background-paths";
+import Squares from "@/components/ui/squares/Squares";
 
 export function Login() {
   const [email, setEmail] = useState("");
@@ -71,7 +73,15 @@ export function Login() {
   };
   return (
     <div className="flex h-screen items-center justify-center bg-background">
-      <Card className="w-[350px] shadow-2xl">
+      {/* <BackgroundPaths title="Background Paths" /> */}
+      <Squares
+        speed={0.1}
+        squareSize={50}
+        direction="diagonal" // up, down, left, right, diagonal
+        borderColor="#2B2B2B"
+        hoverFillColor="#222"
+      />
+      <Card className="absolute w-[350px] shadow-2xl">
         <CardHeader>
           <CardTitle>LOGIN</CardTitle>
           <CardDescription>Login to connect with your friends</CardDescription>
@@ -99,31 +109,29 @@ export function Login() {
                   type={textboxType}
                   onChange={(e) => setPassword(e.target.value)}
                 />
-                                <div className="flex justify-end mt-[-30px] mr-2.5 mb-1.5">
-                                  <span>
-                                    {togglePass ? (
-                                      <FaRegEye onClick={togglePassword} />
-                                    ) : (
-                                      <FaRegEyeSlash onClick={togglePassword} />
-                                    )}
-                                  </span>
-                                </div>
+                <div className="flex justify-end mt-[-30px] mr-2.5 mb-1.5">
+                  <span>
+                    {togglePass ? (
+                      <FaRegEye onClick={togglePassword} />
+                    ) : (
+                      <FaRegEyeSlash onClick={togglePassword} />
+                    )}
+                  </span>
+                </div>
               </div>
             </div>
           </CardContent>
           <CardFooter className="flex justify-center">
-            {
-              loading ? (
-                <Button className="w-full mt-3.5" disabled={loading}>
-                  <Loader2 className="animate-spin mr-2" size={14} />
-                  Please Wait...
-                </Button>
-              ) : (
-                <Button type="submit" className="w-full mt-3.5">
-                  Login
-                </Button>
-              )
-            }
+            {loading ? (
+              <Button className="w-full mt-3.5" disabled={loading}>
+                <Loader2 className="animate-spin mr-2" size={14} />
+                Please Wait...
+              </Button>
+            ) : (
+              <Button type="submit" className="w-full mt-3.5">
+                Login
+              </Button>
+            )}
           </CardFooter>
         </form>
         <span className="text-center text-sm">

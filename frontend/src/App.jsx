@@ -12,7 +12,7 @@ import {
   useLocation,
 } from "react-router";
 import HomeLayout from "./components/HomeLayout";
-import { ScaleLoader } from "react-spinners";
+import { ClimbingBoxLoader, ScaleLoader } from "react-spinners";
 import { CommentDialog } from "./components/Post/CommentDialog";
 import CreatePost from "./components/CreatePost";
 import TestDialog from "./components/TestDialog";
@@ -586,7 +586,7 @@ export default function App() {
   const handleStartCall = () => {
     const timebound = setTimeout(() => {
       socket.emit("call:rejected", {
-        to: callContact.receiver._id,
+        to: callContact.fromUser || callContact.receiver._id,
         msg: "Call Timeout!",
       });
       setIsCallActive(false);
@@ -615,10 +615,18 @@ export default function App() {
   };
 
   const handleEndCall = () => {
+
+    const remoteUserId =
+      callContact?.fromUser ||
+      callContact?.receiver?._id ||
+      callContact?._id ||
+      null;
+
     // Notify the other peer
     socket.emit("call:end", {
-      to: callContact.fromUser || callContact.receiver._id,
-    }); // or `contact._id` depending on structure
+      to: remoteUserId,
+    });
+
 
     const pc = Peer.getPeer();
     pc.getSenders().forEach((sender) => sender.track?.stop());

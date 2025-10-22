@@ -13,6 +13,7 @@ const ChatHeader = ({ chat, isTyping }) => {
   // const setShowCallInterface = useMessageStore((s) => s.setShowCallInterface);
   const setIsCallLobbyOpen = useMessageStore((s) => s.setIsCallLobbyOpen);
   const setCallType = useMessageStore((s) => s.setCallType);
+  const setCallContact = useMessageStore((s) => s.setCallContact);
   console.log(chat);
 
   const handleProfileClick = (id) => {
@@ -23,6 +24,7 @@ const ChatHeader = ({ chat, isTyping }) => {
   const handleCall = (type) => {
     // socket.emit("join:room", {ConversationID: chat.ConversationID});
     console.log("video call started");
+    setCallContact(chat?.receiver);
     setCallType(type);
     setIsCallLobbyOpen(true);
   };

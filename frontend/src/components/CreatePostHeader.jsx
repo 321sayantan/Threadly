@@ -19,10 +19,11 @@ export const CreatePostHeader = () => {
   }
   return (
     <div onClick={handelCreatePost}>
-      <Card className="w-[600px] mb-6 border-social-gray-light p-1">
-        <CardContent className="p-2">
+      <Card className="w-[600px] max-w-screen mb-6 border-social-gray-light p-1">
+        <CardContent className="p-4">
           <div className="flex space-x-3">
-            <Avatar className="w-14 h-14">
+            {/* Avatar */}
+            <Avatar className="w-12 h-12 flex-shrink-0">
               <AvatarImage
                 src={user.profilePicture}
                 alt={user.username}
@@ -33,20 +34,26 @@ export const CreatePostHeader = () => {
               </AvatarFallback>
             </Avatar>
 
-            <div className="flex-1">
+            {/* Content Area */}
+            <div className="flex-1 min-w-0">
               <Textarea
                 placeholder={`What's on your mind, ${user.username}?`}
                 value={postContent}
-                onChange={(e) => setPostContent(e.target.value)}
-                // onClick={handleTextareaClick}
-                className="resize-none border-social-gray-light bg-social-gray-light/30 placeholder:text-social-gray min-h-[50px]"
+                onChange={(e) => {
+                  setPostContent(e.target.value);
+
+                  // Auto-resize textarea
+                  e.target.style.height = "auto";
+                  e.target.style.height = `${e.target.scrollHeight}px`;
+                }}
+                className="w-full resize-none overflow-hidden border-social-gray-light bg-social-gray-light/30 placeholder:text-social-gray min-h-[50px] max-h-[300px]"
               />
 
               {isExpanded && (
                 <div className="mt-4 space-y-4">
                   {/* Media Options */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex space-x-4">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <div className="flex space-x-3 flex-wrap">
                       <Button
                         variant="ghost"
                         size="sm"
@@ -84,38 +91,14 @@ export const CreatePostHeader = () => {
                       </Button>
                     </div>
 
-                    <Button
+                    {/* <Button
                       variant="ghost"
                       size="sm"
                       className="text-social-gray hover:text-social-purple hover:bg-social-purple-light/10"
                     >
                       <Smile className="w-5 h-5" />
-                    </Button>
+                    </Button> */}
                   </div>
-
-                  {/* Action Buttons */}
-                  {/* <div className="flex justify-end space-x-3">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => {
-            setIsExpanded(false);
-            setPostContent("");
-          }}
-          className="border-social-gray text-social-gray-dark hover:bg-social-gray-light"
-        >
-          Cancel
-        </Button>
-
-        <Button
-          size="sm"
-        //   onClick={handlePostSubmit}
-        //   disabled={!postContent.trim()}
-          className="bg-social-purple hover:bg-social-purple-dark text-white disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Post
-        </Button>
-                      </div> */}
                 </div>
               )}
             </div>

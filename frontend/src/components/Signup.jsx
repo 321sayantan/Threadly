@@ -24,6 +24,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import {register} from "@/http/api";
 import { Loader2 } from 'lucide-react';
+import Squares from "@/components/ui/squares/Squares";
 // import clsx from "clsx";
 
 
@@ -80,7 +81,14 @@ const signup = () => {
 
   return (
     <div className="flex h-screen items-center justify-center bg-background">
-      <Card className="w-[350px] shadow-2xl">
+      <Squares
+        speed={0.1}
+        squareSize={50}
+        direction="diagonal" // up, down, left, right, diagonal
+        borderColor="#2B2B2B"
+        hoverFillColor="#222"
+      />
+      <Card className="absolute w-[350px] shadow-2xl">
         <CardHeader>
           <CardTitle>Signup</CardTitle>
           <CardDescription>Signup to connect with your friends</CardDescription>

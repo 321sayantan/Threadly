@@ -315,3 +315,57 @@ export const bookmarkPost = async (req, res) => {
     console.log(error);
   }
 };
+
+
+
+import TeraboxUploader from "terabox-upload-tool";
+
+const credentials = {
+  ndus: "YuVxQL9peHuiDyCMPjLbM3pIcszleM7CKPyGPwdQ", //Required: Get this from your session (See guide below)
+  appId: "250528", //Required: Get this from your session (See guide below)
+  uploadId: "N1-MTAzLjU3LjI0MC44NToxNzU2NTQzNzk1OjkwNjQ1MDEwMzk5NzcwOTAxNTE=", //Required: Get this from your session (See guide below)
+  jsToken:
+    "A2AE7841C5A635FBFDEAF776B8E52730B25CA3A6011516B5A653E719917CAE0C3D08A980670C47F44BD9519CF01225BAA2E110A6CF5B10725AA0A56EF0757549", //Required: Get this from your session (See guide below)
+  browserId: "XUoYfQhW8nL1t7ezzV7uyHfWjjUbcBiNqWmO91f9ht50MXmeG2F7_cVG1eE=", //Required: Get this from your session (See guide below)
+};
+
+const uploader = new TeraboxUploader(credentials);
+
+// export const videoUpload = async (req, res) => {
+//   try {
+//     const userID = req.id;
+//     const videoFile = req.file;  
+
+//     return res
+//       .status(200)
+//       .json({ message: "Video uploaded successfully", success: true, video: newVideo });
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
+
+export async function videoUpload(req, res) {
+  try {
+    const userID = req.id;
+    const videoFile = req.file;
+    console.log(videoFile.path.toString());
+
+    const result = await uploader.uploadFile(
+      videoFile.path.toString(),
+      (progress) => {
+        console.log(progress); // Send progress percentage
+      },
+      "/myUploads"
+    );
+    if (result.success) {
+      console.log("File uploaded successfully!");
+      console.log("File details:", result.fileDetails);
+      res.status(200).json({ message: "Video uploaded successfully", success: true, video: result.fileDetails });
+    } else {
+      console.log("Upload failed:", result.message);
+      res.status(500).json({ message: "Video upload failed", success: false });
+    }
+  } catch (error) {
+    console.log("An error occurred during the upload:", error.message);
+  }
+}

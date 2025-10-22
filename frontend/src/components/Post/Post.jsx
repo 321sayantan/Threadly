@@ -89,7 +89,7 @@ export const Post = ({ Post }) => {
 
   return (
     <>
-      <Card className="w-[600px] m-auto mb-8 mx-5 overflow-hidden border-social-gray-light shadow-sm hover:shadow-md transition-shadow">
+      <Card className="w-[600px] max-w-screen m-auto mb-8 mx-0 overflow-hidden border-social-gray-light shadow-sm hover:shadow-md transition-shadow">
         {/* <PostHeader user={user} timestamp={timestamp} /> */}
         <PostHeader
           user={{

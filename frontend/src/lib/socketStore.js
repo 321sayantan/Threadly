@@ -2,7 +2,10 @@ import { create } from "zustand";
 import { io } from "socket.io-client";
 import useUserStore from "./store";
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:8000";
+const SOCKET_URL =
+  // import.meta.env.VITE_SOCKET_URL ||
+  // "http://13.234.64.165:8000"
+  "http://localhost:8000";
 
 export const useSocketStore = create((set, get) => ({
   socket: null,
@@ -12,7 +15,6 @@ export const useSocketStore = create((set, get) => ({
   initSocket: () => {
     const existingSocket = get().socket;
     if (existingSocket) return existingSocket;
-    
 
     const socket = io(SOCKET_URL, {
       withCredentials: true,
@@ -26,8 +28,8 @@ export const useSocketStore = create((set, get) => ({
       set({ socket, isConnected: true });
     });
 
-    socket.on("newConversation", (con)=>{
-      console.log(con)
+    socket.on("newConversation", (con) => {
+      console.log(con);
     });
 
     socket.on("disconnect", () => {
@@ -48,8 +50,8 @@ export const useSocketStore = create((set, get) => ({
 
   joinConversation: (conversationId) => {
     const socket = get().socket;
-    if(!socket) return;
-    console.log("client joined conversation", conversationId)
+    if (!socket) return;
+    console.log("client joined conversation", conversationId);
     socket.emit("joinConversation", conversationId);
   },
 

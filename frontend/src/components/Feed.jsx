@@ -7,7 +7,7 @@ const Feed = () => {
     navigate("/create-Post", { state: { backgroundLocation: location } });
   }
   return (
-    <div className="flex flex-col my-5 items-center flex-1">
+    <div className="flex flex-col max-w-full my-5 items-center flex-1">
       <CreatePostHeader  />
       <Posts />
     </div>

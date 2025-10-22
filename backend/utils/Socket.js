@@ -8,7 +8,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:5173", "https://admin.socket.io"],
+    origin: ["http://localhost:5173"],
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -125,6 +125,7 @@ io.on("connection", async (socket) => {
 
   socket.on("call:rejected", async ({to, msg})=>{
        const receiverSocketID = await getReceiverSocketId(to);
+       console.log("call timeout")
        if (receiverSocketID) {
          io.to(receiverSocketID).emit("call:rejected", {msg});
        }

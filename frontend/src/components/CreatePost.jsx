@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { Button } from "./ui/button";
 import MediaCarousel from "./Post/MediaCarousel";
 import axios from "axios";
@@ -95,7 +95,9 @@ const CreatePost = () => {
       <Dialog open={open} onOpenChange={(open) => !open && navigate(-1)}>
         {/* <DialogTrigger asChild>{component}</DialogTrigger> */}
         <DialogContent onInteractOutside={() => setOpen(false)}>
-          <div className="text-xl">Create Post</div>
+          <DialogTitle>
+            <div className="text-xl">Create Post</div>
+          </DialogTitle>
           <textarea
             className="focus:outline-0 text-l"
             placeholder="Write a caption..."
