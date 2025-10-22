@@ -1,17 +1,19 @@
 import { Redis } from "ioredis";
 
+const hostIP = process.env.PRODUCTION === "1" ? process.env.HOST_IP : "localhost";
+
 export const client = new Redis({
-  host: process.env.HOST_IP,
+  host: hostIP,
   port: process.env.REDIS_PORT,
-  // password: process.env.REDIS_PASSWORD,
+  ...(process.env.PRODUCTION === "1" && { password: process.env.REDIS_PASSWORD }),
 });
 export const redisPub = new Redis({
-  host: process.env.HOST_IP,
+  host: hostIP,
   port: process.env.REDIS_PORT,
-  // password: process.env.REDIS_PASSWORD,
+  ...(process.env.PRODUCTION === "1" && { password: process.env.REDIS_PASSWORD }),
 });
 export const redisSub = new Redis({
-  host: process.env.HOST_IP,
+  host: hostIP,
   port: process.env.REDIS_PORT,
-  // password: process.env.REDIS_PASSWORD,
+  ...(process.env.PRODUCTION === "1" && { password: process.env.REDIS_PASSWORD }),
 });

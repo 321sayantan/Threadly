@@ -4,9 +4,11 @@ import axios from "axios";
 import { CloudHail } from "lucide-react";
 import { io } from "socket.io-client";
 
+const baseURL = import.meta.env.PRODUCTION === "1" ? "https://13.234.64.165:8000/api/v1" : "http://localhost:8000/api/v1";
+
 const api = axios.create({
   //   baseURL: import.meta.env.VITE_API_URL || "http://13.234.64.165:8000/api/v1",
-  baseURL: "http://localhost:8000/api/v1",
+  baseURL: baseURL,
   // headers: {
   //     'Content-Type': 'application/json'
   // },
@@ -57,7 +59,7 @@ export const logout = async () => {
 export const createPost = async (formdata) => {
   try {
     const res = await axios.post(
-      "http://localhost:8000/api/v1/post/createPost",
+      `${baseURL}/post/createPost`,
       formdata,
       {
         headers: {

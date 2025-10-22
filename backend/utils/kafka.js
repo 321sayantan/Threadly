@@ -1,8 +1,10 @@
 import {Kafka} from "kafkajs";
 
+const isProduction = process.env.PRODUCTION === "1";
+
 export const kafka = new Kafka({
   clientId: "my-app",
-  brokers: [process.env.KAFKA_BROKER],
+  brokers: isProduction ? [process.env.KAFKA_BROKER] : ["localhost:9092"],
 });
 
 let producer = null;

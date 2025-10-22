@@ -23,7 +23,7 @@ app.use(cookieParser());
 app.use(urlencoded({extended:true}));
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.PRODUCTION === "1" ? ["https://13.234.64.165"] : ["http://localhost:5173"],
     credentials: true,
     // httpOnly: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
