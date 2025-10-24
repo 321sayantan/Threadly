@@ -14,7 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [22.x]
+        node-version: [20.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -24,22 +24,19 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    #- run: npm ci  
-    
-   # Create .env file with secrets (if needed)
+
     - name: Set up .env for frontend
       run: |
-        touch .env
-        echo "${{ secrets.Frontend_Key }}" > .env
+          touch .env
+          echo "${{ secrets.Frontend_Key }}" > .env
       working-directory: ./frontend
 
-    # Install frontend dependencies
     - name: Install frontend dependencies
       run: npm ci
       working-directory: ./frontend
 
-    # Build frontend
     - name: Build frontend
       run: npm run build
       working-directory: ./frontend
+
       
