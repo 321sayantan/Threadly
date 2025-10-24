@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { Button } from "./ui/button";
-import MediaCarousel from "./Post/MediaCarousel";
+import MediaCarousel from "./Post/MediaCarousel.jsx";
 import axios from "axios";
 import { Navigate, useNavigate } from "react-router";
 import { toast } from "sonner";

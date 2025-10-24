@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/tooltip";
 import useUserStore from "@/lib/store";
 import { toast } from "sonner";
-import { Toaster } from "../ui/sonner";
+// import { Toaster } from "../ui/sonner";
 import { deletePost, followOrUnfollow } from "@/http/api";
 import { Badge } from "../ui/badge";
 

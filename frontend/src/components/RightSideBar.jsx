@@ -14,7 +14,7 @@ import useUserStore from "@/lib/store";
 import { followOrUnfollow, suggestedUser } from "@/http/api";
 import { format } from "date-fns";
 import { toast } from "sonner";
-import { SuggestedUser } from "./SuggestedUser";
+import { SuggestedUser } from "./SuggestedUser.jsx";
 
 const RightSideBar = () => {
   const { user } = useUserStore();

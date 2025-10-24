@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { MessageCircle, ChevronRight } from "lucide-react";
-import ChatSideBar from "./chatSideBar";
+// import ChatSideBar from "./ChatSideBar.jsx";
 import { useSidebar } from "@/hooks/MessageSidebarContext";
 
 const Messages = () => {

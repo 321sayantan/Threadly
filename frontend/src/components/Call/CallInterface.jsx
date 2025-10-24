@@ -19,7 +19,7 @@ import { useSocketStore } from "@/lib/socketStore";
 import useMessageStore from "@/lib/messageStore";
 import { Skeleton } from "../ui/skeleton";
 import { cn } from "@/lib/utils";
-import { ClimbingBoxLoader } from "react-spinners";
+// import { ClimbingBoxLoader } from "react-spinners";
 
 const CallInterface = ({
   isActive,

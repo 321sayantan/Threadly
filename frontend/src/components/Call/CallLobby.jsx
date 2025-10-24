@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
-import { useSidebar } from "@/hooks/MessageSidebarContext";
+// import { useSidebar } from "@/hooks/MessageSidebarContext";
 import useMessageStore from "@/lib/messageStore";
 import Peer from "@/lib/Peer";
 import { useSocketStore } from "@/lib/socketStore";

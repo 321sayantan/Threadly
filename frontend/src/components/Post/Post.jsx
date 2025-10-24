@@ -1,9 +1,9 @@
 import React from "react";
 import { Card } from "../ui/card";
-import PostHeader from "./PostHeader";
-import MediaCarousel from "./MediaCarousel";
-import EngagementBar from "./EngagementBar";
-import Comment from "./Comment";
+import PostHeader from "./PostHeader.jsx";
+import MediaCarousel from "./MediaCarousel.jsx";
+import EngagementBar from "./EngagementBar.jsx";
+import Comment from "./Comment.jsx";
 import { formatDistanceToNow } from "date-fns";
 
 const samplePost = {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import LeftSideBar from "./LeftSideBar";
+import LeftSideBar from "./LeftSideBar.jsx";
 import Feed from "./Feed";
 import { Outlet } from "react-router-dom";
 import RightSideBar from "./RightSideBar";

@@ -1,6 +1,6 @@
 import React from 'react'
 import Posts from './Posts'
-import { CreatePostHeader } from './CreatePostHeader'
+import { CreatePostHeader } from './CreatePostHeader.jsx'
 
 const Feed = () => {
   function handelCreatePost() {

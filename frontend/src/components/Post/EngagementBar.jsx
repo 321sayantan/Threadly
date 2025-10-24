@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { Bookmark, Heart, MessageCircle, Share2, UndoIcon } from "lucide-react";
-import { CommentDialog } from "./CommentDialog";
+import { CommentDialog } from "./CommentDialog.jsx";
 import { dislikePost, likePost } from "@/http/api";
 import useUserStore from "@/lib/store";
 

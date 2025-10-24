@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { ChevronRight } from "lucide-react";
-import ChatHeader from "./ChatHeader";
-import MessageBubble from "./MessageBubble";
-import MessageInput from "./MessageInput";
+import ChatHeader from "./ChatHeader.jsx";
+import MessageBubble from "./MessageBubble.jsx";
+import MessageInput from "./MessageInput.jsx";
 import useUserStore from "@/lib/store";
 import { useSocketStore } from "@/lib/socketStore";
 import { getMessage, sendMessage } from "@/http/api";
 import useChatScroll from "@/hooks/useChatScroll";
-import ChatSideBar from "./chatSideBar";
+// import ChatSideBar from "./chatSideBar";
 import { useParams } from "react-router";
 import { useSidebar } from "@/hooks/MessageSidebarContext";
 import useMessageStore from "@/lib/messageStore";

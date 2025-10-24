@@ -28,13 +28,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Link, useParams } from "react-router";
 import useUserStore from "@/lib/store";
-import { SuggestedUser } from "../SuggestedUser";
 import { format } from "date-fns";
-import EditProfileModal from "./EditProfileModal";
-import EditSkillsModal from "./EditSkillsModal";
-import EditExperience from "./EditExperience";
-import EditEducation from "./EditEducation";
-import EditCertificates from "./EditCertificates";
+import { SuggestedUser } from "../SuggestedUser.jsx";
+import EditProfileModal from "./EditProfileModal.jsx";
+import EditSkillsModal from "./EditSkillsModal.jsx";
+import EditExperience from "./EditExperience.jsx";
+import EditEducation from "./EditEducation.jsx";
+import EditCertificates from "./EditCertificates.jsx";
 import { getUser } from "@/http/api";
 import {
   DropdownMenu,
@@ -44,11 +44,11 @@ import {
 } from "../ui/dropdown-menu";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 import OthersProfilePage from "./OthersProfilePage.jsx";
-import { Post } from "../Post/Post";
-import PostHeader from "../Post/PostHeader";
-import EngagementBar from "../Post/EngagementBar";
+// import { Post } from "../Post/Post";
+import PostHeader from "../Post/PostHeader.jsx";
+import EngagementBar from "../Post/EngagementBar.jsx";
 import { formatDistanceToNow } from "date-fns";
-import { ProfileSkeleton } from "./ProfileSkeleton";
+import { ProfileSkeleton } from "./ProfileSkeleton.jsx";
 
 const Profile = ({ User }) => {
   // const { user, setUser, userPosts } = useUserStore();

@@ -17,7 +17,7 @@ import {
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import CreatePost from "./CreatePost";
+// import CreatePost from "./CreatePost";
 
 const LeftSideBar = () => {
   const { Theme, ToggleTheme, setTheme, user } = useUserStore();

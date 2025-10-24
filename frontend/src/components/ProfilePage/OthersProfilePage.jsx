@@ -30,11 +30,11 @@ import { Link, useNavigate, useParams } from "react-router";
 import useUserStore from "@/lib/store";
 import { SuggestedUser } from "../SuggestedUser";
 import { format } from "date-fns";
-import EditProfileModal from "./EditProfileModal";
-import EditSkillsModal from "./EditSkillsModal";
-import EditExperience from "./EditExperience";
-import EditEducation from "./EditEducation";
-import EditCertificates from "./EditCertificates";
+import EditProfileModal from "./EditProfileModal.jsx";
+import EditSkillsModal from "./EditSkillsModal.jsx";
+import EditExperience from "./EditExperience.jsx";
+import EditEducation from "./EditEducation.jsx";
+import EditCertificates from "./EditCertificates.jsx";
 import { createChat, getUser } from "@/http/api";
 import {
   DropdownMenu,

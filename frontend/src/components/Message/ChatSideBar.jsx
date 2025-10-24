@@ -1,4 +1,4 @@
-import useChatScroll from "@/hooks/useChatScroll";
+// import useChatScroll from "@/hooks/useChatScroll";
 import { useSocketStore } from "@/lib/socketStore";
 import useUserStore from "@/lib/store";
 import { ChevronLeft, Search } from "lucide-react";

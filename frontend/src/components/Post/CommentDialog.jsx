@@ -10,9 +10,9 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Link } from "react-router";
 import { MessageSquareOff, MoreHorizontal } from "lucide-react";
-import Comment from "./Comment";
-import PostComments from "./PostComments";
-import MediaCarousel from "./MediaCarousel";
+import Comment from "./Comment.jsx";
+import PostComments from "./PostComments.jsx";
+import MediaCarousel from "./MediaCarousel.jsx";
 
 export const CommentDialog = ({ open, setOpen, commentBtn, post }) => {
   const getInitials = (name) => {
