@@ -9,34 +9,37 @@ on:
 
 jobs:
   build:
-
     runs-on: self-hosted
 
     strategy:
       matrix:
-        node-version: [20.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        node-version: [22.x]
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
+      - uses: actions/checkout@v4
 
-    - name: Set up .env for frontend
-      run: |
+      # 🟢 Setup Node.js inside frontend folder
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: ./frontend/package-lock.json  # 👈 Important!
+
+      # 🟢 Set up environment file inside frontend
+      - name: Set up .env for frontend
+        run: |
           touch .env
           echo "${{ secrets.Frontend_Key }}" > .env
-      working-directory: ./frontend
+        working-directory: ./frontend
 
-    - name: Install frontend dependencies
-      run: npm ci
-      working-directory: ./frontend
+      # 🟢 Install dependencies inside frontend
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: ./frontend
 
-    - name: Build frontend
-      run: npm run build
-      working-directory: ./frontend
+      # 🟢 Build frontend
+      - name: Build frontend
+        run: npm run build
+        working-directory: ./frontend
 
-      
