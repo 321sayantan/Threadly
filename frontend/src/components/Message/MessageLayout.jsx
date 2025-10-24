@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import LeftSideBar from "../LeftSideBar";
-import ChatSideBar from "./chatSideBar";
+import LeftSideBar from "../LeftSideBar.jsx";
+import ChatSideBar from "./ChatSideBar.jsx";
 import { Outlet } from "react-router";
 import { SidebarProvider } from "../../hooks/MessageSidebarContext";
 import useMessageStore from "@/lib/messageStore";

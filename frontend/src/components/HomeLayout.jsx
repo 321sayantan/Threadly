@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import LeftSideBar from "./LeftSideBar.jsx";
 import Feed from "./Feed";
 import { Outlet } from "react-router-dom";
-import RightSideBar from "./RightSideBar";
+import RightSideBar from "./RightSideBar.jsx";
 import { ScaleLoader } from "react-spinners";
 import useGetAllPost from "@/hooks/useGetAllPost";
 

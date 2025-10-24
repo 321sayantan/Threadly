@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Login } from "./components/Login";
+import { Login } from "./components/Login.jsx";
 import Signup from "./components/Signup.jsx";
 import { ThemeProvider } from "./components/theme_Provider";
 import {
@@ -11,26 +11,26 @@ import {
   Routes,
   useLocation,
 } from "react-router";
-import HomeLayout from "./components/HomeLayout";
+import HomeLayout from "./components/HomeLayout.jsx";
 import { ClimbingBoxLoader, ScaleLoader } from "react-spinners";
 import { CommentDialog } from "./components/Post/CommentDialog";
-import CreatePost from "./components/CreatePost";
-import TestDialog from "./components/TestDialog";
-import useUserStore from "./lib/store";
-import ProfilePage from "./components/ProfilePage/ProfilePage";
-import Feed from "./components/Feed";
-import LeftSideBar from "./components/LeftSideBar";
+import CreatePost from "./components/CreatePost.jsx";
+// import TestDialog from "./components/TestDialog";
+import useUserStore from "./lib/store.js";
+import ProfilePage from "./components/ProfilePage/ProfilePage.jsx";
+import Feed from "./components/Feed.jsx";
+import LeftSideBar from "./components/LeftSideBar.jsx";
 import Messages from "./components/Message/Messages.jsx";
-import { useSocketStore } from "./lib/socketStore";
-import SelectedMessage from "./components/Message/selectedMessage";
-import MessageLayout from "./components/Message/MessageLayout";
-import ProtectedRoutes from "./lib/ProtectedRoutes";
-import CallLobby from "./components/Call/CallLobby";
-import IncomingCall from "./components/Call/IncomingCall";
-import useMessageStore from "./lib/messageStore";
+import { useSocketStore } from "./lib/socketStore.js";
+import SelectedMessage from "./components/Message/selectedMessage.jsx";
+import MessageLayout from "./components/Message/MessageLayout.jsx";
+import ProtectedRoutes from "./lib/ProtectedRoutes.jsx";
+import CallLobby from "./components/Call/CallLobby.jsx";
+import IncomingCall from "./components/Call/IncomingCall.jsx";
+import useMessageStore from "./lib/messageStore.js";
 import { toast } from "sonner";
-import CallInterface from "./components/Call/CallInterface";
-import Peer from "./lib/Peer";
+import CallInterface from "./components/Call/CallInterface.jsx";
+import Peer from "./lib/Peer.js";
 import { ClockFading, Phone } from "lucide-react";
 
 const AuthLayout = () => (

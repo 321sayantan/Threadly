@@ -4,7 +4,7 @@ import useUserStore from "@/lib/store";
 import { ChevronLeft, Search } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import ChatList from "./ChatList";
+import ChatList from "./ChatList.jsx";
 import { getChatList } from "@/http/api";
 import { useSidebar } from "@/hooks/MessageSidebarContext";
 import useMessageStore from "@/lib/messageStore";

@@ -28,7 +28,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Link, useNavigate, useParams } from "react-router";
 import useUserStore from "@/lib/store";
-import { SuggestedUser } from "../SuggestedUser";
+import { SuggestedUser } from "../SuggestedUser.jsx";
 import { format } from "date-fns";
 import EditProfileModal from "./EditProfileModal.jsx";
 import EditSkillsModal from "./EditSkillsModal.jsx";
