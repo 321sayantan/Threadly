@@ -26,12 +26,16 @@ jobs:
         cache: 'npm'
     #- run: npm ci  
     
+   # Create .env file with secrets (if needed)
+    - name: Set up .env for frontend
+      run: |
+        touch .env
+        echo "${{ secrets.Frontend_Key }}" > .env
+      working-directory: ./frontend
+
     # Install frontend dependencies
     - name: Install frontend dependencies
-    - run: npm ci
-    - run: |
-          touch .env
-          echo "${{ secrets.Frontend_Key }}" > .env
+      run: npm ci
       working-directory: ./frontend
 
     # Build frontend
