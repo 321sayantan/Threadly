@@ -43,7 +43,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Separator } from "@radix-ui/react-dropdown-menu";
-import OthersProfilePage from "./othersProfilePage";
+import OthersProfilePage from "./OthersProfilePage.jsx";
 import { Post } from "../Post/Post";
 import PostHeader from "../Post/PostHeader";
 import EngagementBar from "../Post/EngagementBar";
