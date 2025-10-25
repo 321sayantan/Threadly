@@ -8,7 +8,10 @@ class PeerService {
   getPeer() {
     if (!this.peer) {
       this.peer = new RTCPeerConnection({
-        iceServers: [{ urls: ["stun:stun.l.google.com:19302"] }],
+        iceServers: [
+          { urls: ["stun:stun.l.google.com:19302"] },
+          { urls: "turn:your-turn-server.com:3478", username: "user", credential: "pass" }
+        ]
       });
     }
     return this.peer;
