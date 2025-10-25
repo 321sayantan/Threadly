@@ -4,7 +4,7 @@ import axios from "axios";
 import { CloudHail } from "lucide-react";
 import { io } from "socket.io-client";
 
-const baseURL = import.meta.env.PRODUCTION === "1" ? "https://13.234.64.165:8000/api/v1" : "http://localhost:8000/api/v1";
+const baseURL = import.meta.env.VITE_PRODUCTION === "1" ? "/api/v1" : "http://localhost:8000/api/v1";
 
 const api = axios.create({
   //   baseURL: import.meta.env.VITE_API_URL || "http://13.234.64.165:8000/api/v1",

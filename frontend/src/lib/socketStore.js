@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { io } from "socket.io-client";
 import useUserStore from "./store";
 
-const SOCKET_URL = import.meta.env.PRODUCTION === "1" ? "https://13.234.64.165:8000" : "http://localhost:8000";
+const SOCKET_URL = import.meta.env.VITE_PRODUCTION === "1" ? "/" : "http://localhost:8000";
   // import.meta.env.VITE_SOCKET_URL ||
   // "http://13.234.64.165:8000"
   // "http://localhost:8000";
