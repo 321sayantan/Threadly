@@ -19,6 +19,7 @@ import { useSocketStore } from "@/lib/socketStore";
 import useMessageStore from "@/lib/messageStore";
 import { Skeleton } from "../ui/skeleton";
 import { cn } from "@/lib/utils";
+import { ClimbingBoxLoader } from "react-spinners";
 // import { ClimbingBoxLoader } from "react-spinners";
 
 const CallInterface = ({
@@ -39,7 +40,8 @@ const CallInterface = ({
   const stream = useMessageStore((s) => s.stream);
   const setStream = useMessageStore((s) => s.setStream);
   const { socket } = useSocketStore();
-  contact = contact || useMessageStore((s) => s.selectedChat);
+  // contact = contact || useMessageStore((s) => s.selectedChat);
+  contact = useMessageStore((s) => s.callContact);
   const callConnected = useMessageStore((s) => s.callConnected);
   const setCallConnected = useMessageStore((s) => s.setCallConnected);
   const [connectionStatus, setConnectionStatus] = useState(
@@ -310,6 +312,7 @@ const CallInterface = ({
     if (localVideoRef.current && localVideoRef.current.paused) {
       localVideoRef.current.play().catch(err => console.log("Play error:", err));
     }
+    console.log(contact);
 
     socket.emit("media:toggle", {
       type: "video",

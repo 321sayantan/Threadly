@@ -24,7 +24,7 @@ const ChatHeader = ({ chat, isTyping }) => {
   const handleCall = (type) => {
     // socket.emit("join:room", {ConversationID: chat.ConversationID});
     console.log("video call started");
-    setCallContact(chat?.receiver);
+    setCallContact(chat);
     setCallType(type);
     setIsCallLobbyOpen(true);
   };
