@@ -36,7 +36,7 @@ jobs:
       # 🟢 Set up environment file inside backend
       - name: Set up backend .env
         run: |
-            echo "${{ secrets.BACKEND_KEY }}" > .env
+          printf "%s\n" "${{ secrets.BACKEND_KEY }}" > .env
         working-directory: ./backend
         shell: bash
 
