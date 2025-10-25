@@ -35,8 +35,7 @@ jobs:
         
       # 🟢 Set up environment file inside backend
       - name: Set up environment file inside backend
-        run: |
-            printf "%s\n" "${{ secrets.BACKEND_KEY }}" > .env
+        run: echo "${{ secrets.backend_key }}" > .env
         working-directory: ./backend
 
       # 🟢 Install dependencies inside frontend
