@@ -9,9 +9,18 @@ class PeerService {
     if (!this.peer) {
       this.peer = new RTCPeerConnection({
         iceServers: [
-          { urls: ["stun:stun.l.google.com:19302"] },
-          { urls: "turn:your-turn-server.com:3478", username: "user", credential: "pass" }
-        ]
+        { urls: "stun:stun.l.google.com:19302" },
+        {
+          urls: "turn:threadly.tech:3478",
+          username: "webrtc",
+          credential: "yourpassword",
+        },
+        {
+          urls: "turns:threadly.tech:5349",
+          username: "webrtc",
+          credential: "yourpassword",
+        },
+      ],
       });
     }
     return this.peer;
