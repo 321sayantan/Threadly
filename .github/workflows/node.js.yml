@@ -24,7 +24,9 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-          cache-dependency-path: ./frontend/package-lock.json  # 👈 Important!
+          cache-dependency-path: |
+                ./frontend/package-lock.json
+                ./backend/package-lock.json
 
       # 🟢 Set up environment file inside frontend
       - name: Set up .env for frontend
@@ -32,14 +34,34 @@ jobs:
           touch .env
           echo "${{ secrets.Frontend_Key }}" > .env
         working-directory: ./frontend
+        
+      # 🟢 Set up environment file inside backend
+      - name: Set up .env for backend
+        run: |
+          touch .env
+          echo "${{ secrets.BACKEND_KEY }}" > .env
+        working-directory: ./backend
 
       # 🟢 Install dependencies inside frontend
       - name: Install frontend dependencies
         run: npm ci
         working-directory: ./frontend
 
+      # Install backend dependencies
+      - name: Install backend dependencies
+        run: npm ci
+        working-directory: ./backend
+
+      - name: Delete previous dist folder
+        run: sudo rm -rf ./dist
+        working-directory: ./frontend
+
       # 🟢 Build frontend
       - name: Build frontend
         run: npm run build
         working-directory: ./frontend
+
+      - name: Restart backend with PM2
+        run: pm2 restart all
+        working-directory: ./backend
 
