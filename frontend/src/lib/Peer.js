@@ -10,12 +10,12 @@ class PeerService {
       this.peer = new RTCPeerConnection({
         iceServers: [
           {
-            urls: "turn:threadly.tech:3478?transport=udp",
+            urls: "turns:threadly.tech:5349?transport=tcp",
             username: "threadly",
             credential: "strongpassword123",
           },
           {
-            urls: "turns:threadly.tech:5349?transport=tcp",
+            urls: "turn:threadly.tech:3478?transport=udp",
             username: "threadly",
             credential: "strongpassword123",
           },
