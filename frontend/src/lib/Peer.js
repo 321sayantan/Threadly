@@ -9,18 +9,18 @@ class PeerService {
     if (!this.peer) {
       this.peer = new RTCPeerConnection({
         iceServers: [
-        { urls: "stun:stun.l.google.com:19302" },
-        {
-          urls: "turn:threadly.tech:3478",
-          username: "webrtc",
-          credential: "yourpassword",
-        },
-        {
-          urls: "turns:threadly.tech:5349",
-          username: "webrtc",
-          credential: "yourpassword",
-        },
-      ],
+          {
+            urls: "turn:threadly.tech:3478?transport=udp",
+            username: "threadly",
+            credential: "strongpassword123",
+          },
+          {
+            urls: "turns:threadly.tech:5349?transport=tcp",
+            username: "threadly",
+            credential: "strongpassword123",
+          },
+          { urls: "stun:stun.l.google.com:19302" },
+        ],
       });
     }
     return this.peer;
