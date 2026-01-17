@@ -200,6 +200,7 @@ const SelectedMessage = () => {
           {/* Messages */}
           <div
             className="flex-1 overflow-y-auto p-6 space-y-4 dark:bg-black"
+            // style={{background: 'url(/background3.png)', backgroundSize: 'cover'}}
             ref={chatref}
           >
             {messages.map((message) => (

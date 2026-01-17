@@ -32,6 +32,7 @@ import { toast } from "sonner";
 import CallInterface from "./components/Call/CallInterface.jsx";
 import Peer from "./lib/Peer.js";
 import { ClockFading, Phone } from "lucide-react";
+import Login_new from "./components/Login_new.jsx";
 
 const AuthLayout = () => (
   <>
@@ -80,7 +81,8 @@ function AppRoutes() {
     <>
       <Routes location={background || location}>
         <Route element={<AuthLayout />}>
-          <Route path="login" element={<Login />} />
+          {/* <Route path="login" element={<Login />} /> */}
+          <Route path="login" element={<Login_new />} />
           <Route path="signup" element={<Signup />} />
         </Route>
 

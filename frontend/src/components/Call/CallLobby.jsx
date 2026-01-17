@@ -98,7 +98,7 @@ const CallLobby = ({
   // }, []);
 
   const startCall = async () => {
-    console.log(stream);
+    console.log(0,stream);
     const offer = await Peer.createOffer(stream);
 
     // ✅ Send ICE candidates to receiver
@@ -118,7 +118,7 @@ const CallLobby = ({
     //   profilePicture: user.profilePicture,
     // });
 
-    console.log(2, "offer");
+    console.log(2, "offer", offer);
     socket.emit("user:call", {
       to: contact.receiver._id,
       from: user._id,

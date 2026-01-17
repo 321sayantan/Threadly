@@ -2,6 +2,8 @@
 class PeerService {
   constructor() {
     this.peer = null;
+    this.candidateQueue = [];
+    this.remoteDescriptionSet = false;
   }
 
   // 1️⃣ create the peer once, immediately
@@ -27,44 +29,87 @@ class PeerService {
   }
 
   // 2️⃣ add local tracks BEFORE creating offer
+  // async createOffer(localStream) {
+  //   const pc = this.getPeer();
+
+  //   // add every track from local stream
+  //   localStream.getTracks().forEach((track) => pc.addTrack(track, localStream));
+
+  //   const offer = await pc.createOffer();
+  //   await pc.setLocalDescription(offer);
+
+  //   // return plain object for signalling
+  //   return offer;
+  // }
+
   async createOffer(localStream) {
-    const pc = this.getPeer();
-
-    // add every track from local stream
+  const pc = this.getPeer();
+  if (pc.getSenders().length === 0) {
     localStream.getTracks().forEach((track) => pc.addTrack(track, localStream));
-
-    const offer = await pc.createOffer();
-    await pc.setLocalDescription(offer);
-
-    // return plain object for signalling
-    return offer;
   }
+  const offer = await pc.createOffer();
+  await pc.setLocalDescription(offer);
+  return offer;
+}
 
   // 3️⃣ add local tracks, then create answer
+  // async createAnswer(offer, localStream) {
+  //   const pc = this.getPeer();
+
+  //   // set remote offer first
+  //   await pc.setRemoteDescription(offer);
+
+  //   // add local tracks
+  //   localStream.getTracks().forEach((track) => pc.addTrack(track, localStream));
+
+  //   const answer = await pc.createAnswer();
+  //   await pc.setLocalDescription(answer);
+
+  //   return answer;
+  // }
+
   async createAnswer(offer, localStream) {
-    const pc = this.getPeer();
-
-    // set remote offer first
-    await pc.setRemoteDescription(offer);
-
-    // add local tracks
+  const pc = this.getPeer();
+  await pc.setRemoteDescription(offer);
+  if (pc.getSenders().length === 0) {
     localStream.getTracks().forEach((track) => pc.addTrack(track, localStream));
-
-    const answer = await pc.createAnswer();
-    await pc.setLocalDescription(answer);
-
-    return answer;
   }
+  const answer = await pc.createAnswer();
+  await pc.setLocalDescription(answer);
+  return answer;
+}
+
 
   // 4️⃣ set remote answer
+  // async setRemoteDescription(desc) {
+  //   const pc = this.getPeer();
+  //   await pc.setRemoteDescription(desc);
+  // }
+
   async setRemoteDescription(desc) {
     const pc = this.getPeer();
     await pc.setRemoteDescription(desc);
+    this.remoteDescriptionSet = true;
+
+    // Add queued candidates
+    this.candidateQueue.forEach(candidate => {
+      pc.addIceCandidate(candidate);
+    });
+    this.candidateQueue = [];
   }
 
   // utilities -------------------------------------------------
-  addIceCandidate(candidate) {
-    this.getPeer().addIceCandidate(candidate);
+  // addIceCandidate(candidate) {
+  //   this.getPeer().addIceCandidate(candidate);
+  // }
+
+  async addIceCandidate(candidate) {
+    const pc = this.getPeer();
+    if (this.remoteDescriptionSet) {
+      await pc.addIceCandidate(candidate);
+    } else {
+      this.candidateQueue.push(candidate);
+    }
   }
 
   onIceCandidate(cb) {

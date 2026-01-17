@@ -146,7 +146,7 @@ const LeftSideBar = () => {
   return (
     <>
       {/* ---- Desktop / tablet sidebar ---- */}
-      <aside className="hidden md:flex sticky top-0 left-0 h-screen w-[60px] xl:w-[16%] flex-col border-r bg-white dark:bg-transparent">
+      <aside className="hidden md:flex sticky top-0 left-0 h-screen w-[60px] xl:w-[16%] flex-col border-r bg-white dark:bg-black">
         <div className="my-10 hidden xl:block ml-[5%] w-40">
           {Theme === "dark" ? (
             <img src="/logo9.png" alt="" />
