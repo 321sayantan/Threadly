@@ -27,7 +27,7 @@ const Home = () => {
           <ScaleLoader color="red" />
         </div>
       ) : (
-        <div className="flex relative bg-gray-100 dark:bg-transparent">
+        <div className="flex relative bg-gray-100 dark:bg-[#0b0b0e]">
           <LeftSideBar/>
           <Outlet/>
           <RightSideBar/>

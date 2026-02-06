@@ -52,7 +52,7 @@ export const SuggestedUser = () => {
 
   return (
     <div>
-      <Card className="border-social-gray-light">
+      <Card className="border-social-gray-light dark:bg-transparent shadow-[0_4px_6px_10px] shadow-[#121013]/50">
         <CardHeader className="pb-4">
           <CardTitle className="text-lg flex items-center">
             <Users className="w-5 h-5 mr-2 text-social-purple" />

@@ -273,3 +273,14 @@ export const createChat = async (id) => {
     return res.data;
   } catch (error) {}
 };
+
+export const searchUsers = async (query) => {
+  try {
+    const res = await api.get(`/user/search?query=${query}`);
+    console.log(res.data);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    return error.response.data;
+  }
+};

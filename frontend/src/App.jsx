@@ -33,6 +33,7 @@ import CallInterface from "./components/Call/CallInterface.jsx";
 import Peer from "./lib/Peer.js";
 import { ClockFading, Phone } from "lucide-react";
 import Login_new from "./components/Login_new.jsx";
+import SearchPage from "./components/Search/SearchPage.jsx";
 
 const AuthLayout = () => (
   <>
@@ -41,7 +42,7 @@ const AuthLayout = () => (
 );
 
 const ProfileLayout = () => (
-  <div className="flex relative bg-gray-100 dark:bg-transparent">
+  <div className="flex relative bg-gray-100 dark:bg-[#0b0b0e]">
     <LeftSideBar />
     <Outlet />
   </div>
@@ -90,6 +91,10 @@ function AppRoutes() {
         <Route element={<ProtectedRoutes />}>
           <Route path="/" element={<HomeLayout />}>
             <Route index element={<Feed />} />
+          </Route>
+
+          <Route element={<ProfileLayout />}>
+            <Route path="search" element={<SearchPage />} />
           </Route>
 
           <Route element={<ProfileLayout />}>

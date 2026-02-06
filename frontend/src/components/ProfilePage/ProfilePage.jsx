@@ -135,7 +135,7 @@ const Profile = ({ User }) => {
 
   return (
     <div className="min-h-screen ">
-      <div className="max-w-4xl mx-auto bg-transparent rounded-4xl border">
+      <div className="max-w-4xl mx-auto bg-transparent dark:bg-[#0b0b0e] rounded-4xl border">
         {/* Cover Photo & Profile Header */}
         <div className="relative ">
           <div className="h-48 md:h-64 bg-gray-500 relative overflow-hidden rounded-t-4xl">

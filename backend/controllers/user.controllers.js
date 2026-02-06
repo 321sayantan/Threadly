@@ -508,3 +508,42 @@ export const followORunfollow = async (req, res) => {
     console.log(error);
   }
 };
+export const searchUsers = async (req, res) => {
+  try {
+    const { query } = req.query;
+    
+    if (!query || query.trim() === '') {
+      return res.status(400).json({
+        message: "Search query is required",
+        success: false
+      });
+    }
+
+    // Search users by username, bio, skills, company, or school
+    const users = await User.find({
+      $or: [
+        { username: { $regex: query, $options: 'i' } },
+        { bio: { $regex: query, $options: 'i' } },
+        { skills: { $in: [new RegExp(query, 'i')] } },
+        { 'experience.company': { $regex: query, $options: 'i' } },
+        { 'experience.position': { $regex: query, $options: 'i' } },
+        { 'education.school': { $regex: query, $options: 'i' } },
+        { 'education.degree': { $regex: query, $options: 'i' } }
+      ]
+    })
+    .select('-password')
+    .limit(20);
+
+    return res.status(200).json({
+      success: true,
+      users,
+      count: users.length
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Error searching users",
+      success: false
+    });
+  }
+};

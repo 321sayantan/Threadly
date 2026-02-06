@@ -27,7 +27,7 @@ const RightSideBar = () => {
       <div className="h-screen top-0 right-0 py-5 px-6 hidden lg:block">
         <div className="w-80 space-y-6">
           {/* User Profile Card */}
-          <Card className="border-social-gray-light">
+          <Card className="dark:bg-transparent shadow-[0_4px_6px_10px] shadow-[#121013]/50 border-none">
             <CardContent className="px-6">
               <div className="flex flex-col items-center text-center">
                 <Avatar className="w-20 h-20 mb-4 border">
